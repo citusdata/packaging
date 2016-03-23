@@ -16,11 +16,8 @@ class Citus < Formula
   def install
     config_args = %W[--prefix=#{prefix} PG_CONFIG=#{Formula["postgresql"].opt_bin}/pg_config]
 
-    # workaround for https://github.com/Homebrew/homebrew/issues/49948
-    make_args = ["libpq=-L#{Formula["postgresql"].opt_lib} -lpq"]
-
     system "./configure", *config_args
-    system "make", *make_args
+    system "make"
 
     mkdir "stage"
     system "make", "install", "DESTDIR=#{buildpath}/stage"
