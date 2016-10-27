@@ -79,8 +79,12 @@ detect_os ()
   if [[ ( -z "${os}" ) && ( -z "${dist}" ) ]]; then
     if [ -e /etc/os-release ]; then
       . /etc/os-release
-      dist=`echo ${VERSION_ID} | awk -F '.' '{ print $1 }'`
       os=${ID}
+      if [ "${os}" = "poky" ]; then
+        dist=`echo ${VERSION_ID}`
+      else
+        dist=`echo ${VERSION_ID} | awk -F '.' '{ print $1 }'`
+      fi
 
     elif [ `which lsb_release 2>/dev/null` ]; then
       # get major version (e.g. '5' or '6')
