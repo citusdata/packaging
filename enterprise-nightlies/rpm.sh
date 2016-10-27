@@ -32,11 +32,11 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for postgresql95-server..."
-  if yum list -q postgresql95-server &> /dev/null; then
-    echo "Detected postgresql95-server..."
+  echo "Checking for postgresql96-server..."
+  if yum list -q postgresql96-server &> /dev/null; then
+    echo "Detected postgresql96-server..."
   else
-    echo -n "Installing pgdg95 repo... "
+    echo -n "Installing pgdg96 repo... "
 
     yum install -d0 -e0 -y "${repo_url}"
     echo "done."
@@ -143,7 +143,7 @@ detect_repo_url ()
   family_short='rhel'
   pkg_dist="${dist}"
   pkg_os="${os}"
-  pkg_version='2'
+  pkg_version='3'
 
   case "${os}" in
     amzn)
@@ -162,7 +162,6 @@ detect_repo_url ()
     fedora)
       family='fedora'
       family_short='fedora'
-      pkg_version='3'
       ;;
     centos)
       # defaults are suitable
@@ -175,9 +174,9 @@ detect_repo_url ()
       ;;
   esac
 
-  repo_url="https://download.postgresql.org/pub/repos/yum/9.5/${family}"
+  repo_url="https://download.postgresql.org/pub/repos/yum/9.6/${family}"
   repo_url+="/${family_short}-${pkg_dist}-x86_64"
-  repo_url+="/pgdg-${pkg_os}95-9.5-${pkg_version}.noarch.rpm"
+  repo_url+="/pgdg-${pkg_os}96-9.6-${pkg_version}.noarch.rpm"
 }
 
 main ()
