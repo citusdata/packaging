@@ -17,21 +17,5 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	+pg_buildext install build-%v postgresql-%v-citus
 
-	# Install alternatives for our binaries. Could simply link to pg_wrapper,
-	# but there's no harm in just using the binary installed with the latest
-	# version. Below inspired by a similar block in pg_repack's installer.
-	set -ex; \
-	binaries="csql copy_to_distributed_table"; \
-	latest=`egrep -o '\([^\(\)]+\)' debian/changelog | tr -d '()' | head -n 1`; \
-	for v in $(shell pg_buildext supported-versions); do \
-		i=$$(echo $$v | tr -d .); \
-		for bin in $$binaries; do \
-			if dpkg --compare-versions "$$latest" lt '5.3.0.citus~~'; then \
-				echo "update-alternatives --install /usr/bin/$$bin citus-$$bin /usr/lib/postgresql/$$v/bin/$$bin $$i" >> debian/postgresql-$$v-citus.postinst.debhelper; \
-			fi; \
-			echo "update-alternatives --remove citus-$$bin /usr/lib/postgresql/$$v/bin/$$bin" >> debian/postgresql-$$v-citus.prerm.debhelper; \
-		done \
-	done
-
 %:
 	dh $@
