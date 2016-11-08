@@ -1,21 +1,18 @@
-%global pgmajorversion 95
-%global pgpackageversion 9.5
+%global pgmajorversion 96
+%global pgpackageversion 9.6
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}_%{pgmajorversion}
-Version:	5.2.2.citus
+Version:	6.0.0.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v5.2.2.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v6.0.0.tar.gz
 URL:		https://github.com/citusdata/citus
-BuildRequires:	postgresql%{pgmajorversion}-devel libxml2-devel
-BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
+BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
-Requires(post):	%{_sbindir}/update-alternatives
-Requires(postun):	%{_sbindir}/update-alternatives
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -48,22 +45,6 @@ make %{?_smp_mflags}
 %clean
 %{__rm} -rf %{buildroot}
 
-%post
-%if "%{version}" < "5.3.0"
-%{_sbindir}/update-alternatives --install %{_bindir}/copy_to_distributed_table \
-    %{sname}-copy_to_distributed_table %{pginstdir}/bin/copy_to_distributed_table %{pgmajorversion}0
-%{_sbindir}/update-alternatives --install %{_bindir}/csql \
-    %{sname}-csql %{pginstdir}/bin/csql %{pgmajorversion}0
-%endif
-
-%postun
-if [ $1 -eq 0 ] ; then
-    %{_sbindir}/update-alternatives --remove %{sname}-csql \
-	%{pginstdir}/bin/csql
-    %{_sbindir}/update-alternatives --remove %{sname}-copy_to_distributed_table \
-	%{pginstdir}/bin/copy_to_distributed_table
-fi
-
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
@@ -76,14 +57,13 @@ fi
 %{pginstdir}/include/server/citus_config.h
 %{pginstdir}/include/server/distributed/*.h
 %{pginstdir}/lib/%{sname}.so
-%if "%{version}" < "5.3.0"
-%{pginstdir}/bin/copy_to_distributed_table
-%{pginstdir}/bin/csql
-%endif
 %{pginstdir}/share/extension/%{sname}-*.sql
 %{pginstdir}/share/extension/%{sname}.control
 
 %changelog
+* Tue Nov 8 2016 - Jason Petersen <jason@citusdata.com> 6.0.0.citus-1
+- Update to Citus 6.0.0
+
 * Tue Nov 8 2016 - Jason Petersen <jason@citusdata.com> 5.2.2.citus-1
 - Update to Citus 5.2.2
 
