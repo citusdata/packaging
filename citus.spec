@@ -5,11 +5,11 @@
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}_%{pgmajorversion}
-Version:	6.0.0.citus
+Version:	6.0.1.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v6.0.0.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v6.0.1.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -61,6 +61,9 @@ make %{?_smp_mflags}
 %{pginstdir}/share/extension/%{sname}.control
 
 %changelog
+* Wed Nov 30 2016 - Burak Yucesoy <burak@citusdata.com> 6.0.1.citus-1
+- Update to Citus 6.0.1
+
 * Tue Nov 8 2016 - Jason Petersen <jason@citusdata.com> 6.0.0.citus-1
 - Update to Citus 6.0.0
 

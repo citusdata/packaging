@@ -1,4 +1,4 @@
 pkgname=citus
 pkgdesc='Citus (Open-Source)'
-pkglatest=6.0.0.citus-1
+pkglatest=6.0.1.citus-1
 releasepg=9.5,9.6
