@@ -7,7 +7,6 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Obsoletes:	%{sname}_%{pgmajorversion} <= 6.0.1.citus-1%{dist}
 Version:	6.0.1.citus
 Release:	2%{dist}
 License:	AGPLv3
