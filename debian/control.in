@@ -13,7 +13,6 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
 Provides: postgresql-PGVERSION-citus
 Conflicts: postgresql-PGVERSION-citus
-Replaces: postgresql-PGVERSION-citus (<< 6.0.1.citus-2~)
 Description: sharding and distributed joins for PostgreSQL
  Citus is a distributed database implemented as a PostgreSQL extension. It
  provides functions to easily split a PostgreSQL table into shards to be
