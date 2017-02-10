@@ -74,7 +74,7 @@ citus (6.1.0.citus-1) stable; urgency=low
 
   * Improves and standardizes error messages
 
- -- Burak Yucesoy <burak@citusdata.com>  Wed, 9 Feb 2017 16:17:41 +0000
+ -- Burak Yucesoy <burak@citusdata.com>  Thu, 9 Feb 2017 16:17:41 +0000
 
 citus (6.0.1.citus-3) stable; urgency=low
 
