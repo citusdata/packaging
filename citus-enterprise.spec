@@ -4,16 +4,18 @@
 %global sname citus-enterprise
 
 Summary:	PostgreSQL-based distributed RDBMS
-Name:		%{sname}_%{pgmajorversion}
+Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
+Provides:	citus_%{pgmajorversion}
+Conflicts:	citus_%{pgmajorversion}
+Obsoletes:	%{sname}_%{pgmajorversion} <= 6.0.1.citus-1%{dist}
 Version:	6.0.1.citus
-Release:	1%{dist}
+Release:	2%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/citus-enterprise/archive/v6.0.1.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
-Conflicts:	citus_%{pgmajorversion}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -62,7 +64,10 @@ make %{?_smp_mflags}
 %{pginstdir}/share/extension/citus.control
 
 %changelog
-* Wed Nov 30 2016 - Burak Yucesoy <jason@citusdata.com> 6.0.1.citus-1
+* Fri Feb 10 2017 - Burak Yucesoy <burak@citusdata.com> 6.0.1.citus-2
+- Transitional package to guide users to new package name
+
+* Wed Nov 30 2016 - Burak Yucesoy <burak@citusdata.com> 6.0.1.citus-1
 - Update to Citus Enterprise 6.0.1
 
 * Tue Nov 8 2016 - Jason Petersen <jason@citusdata.com> 6.0.0.citus-1
