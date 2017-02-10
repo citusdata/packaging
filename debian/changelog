@@ -1,3 +1,15 @@
+citus-enterprise (6.0.1.citus-3) stable; urgency=low
+
+  * First build using new versioning practices
+
+ -- Burak Yucesoy <burak@citusdata.com>  Fri, 10 Feb 2017 17:10:22 +0000
+
+citus-enterprise (6.0.1.citus-2) stable; urgency=low
+
+  * Transitional package to guide users to new package name
+
+ -- Burak Yucesoy <burak@citusdata.com>  Fri, 10 Feb 2017 17:05:34 +0000
+
 citus-enterprise (6.0.1.citus-1) stable; urgency=low
 
   * Fixes a bug causing failures during pg_upgrade

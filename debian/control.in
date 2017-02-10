@@ -3,7 +3,7 @@ Section: database
 Priority: optional
 Maintainer: Citus Data <packaging@citusdata.com>
 Uploaders: Jason Petersen <jason@citusdata.com>
-Build-Depends: debhelper (>= 9), autotools-dev, postgresql-server-dev-all (>= 158~)
+Build-Depends: debhelper (>= 9), autotools-dev, postgresql-server-dev-all (>= 158~), libedit-dev, libpam0g-dev, libselinux1-dev, libxslt1-dev, libssl-dev
 Standards-Version: 3.9.7
 Homepage: https://github.com/citusdata/citus-enterprise
 XS-Testsuite: autopkgtest
@@ -11,8 +11,9 @@ XS-Testsuite: autopkgtest
 Package: postgresql-PGVERSION-citus-enterprise
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
+Provides: postgresql-PGVERSION-citus
 Conflicts: postgresql-PGVERSION-citus
-Replaces: postgresql-PGVERSION-citus
+Replaces: postgresql-PGVERSION-citus-enterprise (<< 6.0.1.citus-2~)
 Description: sharding and distributed joins for PostgreSQL
  Citus is a distributed database implemented as a PostgreSQL extension. It
  provides functions to easily split a PostgreSQL table into shards to be
