@@ -1,3 +1,15 @@
+citus-rebalancer (6.0.0.citus-3) stable; urgency=low
+
+  * First build using new versioning practices
+
+ -- Jason Petersen <jason@citusdata.com>  Tue, 21 Feb 2017 15:53:19 +0000
+
+citus-rebalancer (6.0.0.citus-2) stable; urgency=low
+
+  * Transitional package to guide users to new package name
+
+ -- Jason Petersen <jason@citusdata.com>  Tue, 21 Feb 2017 15:44:46 +0000
+
 citus-rebalancer (6.0.0.citus-1) stable; urgency=low
 
   * Adds compatibility with Citus 6.0 and higher

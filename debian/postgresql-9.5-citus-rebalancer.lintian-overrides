@@ -1,2 +1,2 @@
-postgresql-9.5-citus-rebalancer binary: new-package-should-close-itp-bug
-postgresql-9.5-citus-rebalancer binary: hardening-no-fortify-functions
+postgresql-9.5-citus-rebalancer-6.0 binary: new-package-should-close-itp-bug
+postgresql-9.5-citus-rebalancer-6.0 binary: hardening-no-fortify-functions
