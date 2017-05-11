@@ -1,3 +1,25 @@
+citus-enterprise (6.1.1.citus-1) stable; urgency=low
+
+  * Fixes a crash caused by router executor use after connection timeouts
+
+  * Fixes a crash caused by relation cache invalidation during COPY
+
+  * Fixes bug related to DDL use within PL/pgSQL functions
+
+  * Fixes a COPY bug related to types lacking binary output functions
+
+  * Fixes a bug related to modifications with parameterized partition values
+
+  * Fixes improper value interpolation in worker sequence generation
+
+  * Guards shard pruning logic against zero-shard tables
+
+  * Fixes possible NULL pointer dereference and buffer underflow, via PVS-Studio
+
+  * Fixes a INSERT...SELECT bug that could push down non-partition column JOINs
+
+ -- Metin Doslu <metin@citusdata.com>  Thu, 11 May 2017 12:00:00 +0000
+
 citus-enterprise (6.1.0.citus-1) stable; urgency=low
 
   * Implements reference tables, transactionally replicated to all nodes
