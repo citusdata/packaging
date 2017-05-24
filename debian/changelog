@@ -1,3 +1,9 @@
+citus-rebalancer (6.2.0.citus-1) stable; urgency=low
+
+  * Adds compatibility with Citus 6.2 and higher
+
+ -- Jason Petersen <jason@citusdata.com>  Wed, 24 May 2017 17:00:58 +0000
+
 citus-rebalancer (6.1.0.citus-1) stable; urgency=low
 
   * Adds compatibility with Citus 6.1 and higher
