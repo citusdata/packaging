@@ -1,3 +1,9 @@
+citus-enterprise (6.2.1.citus-1) stable; urgency=low
+
+  * Relaxes version-check logic to avoid breaking non-distributed commands
+
+ -- Jason Petersen <jason@citusdata.com>  Wed, 24 May 2017 22:36:07 +0000
+
 citus-enterprise (6.2.0.citus-1) stable; urgency=low
 
   * Increases SQL subquery coverage by pushing down more kinds of queries

@@ -1,2 +1,2 @@
-postgresql-9.5-citus-enterprise binary: new-package-should-close-itp-bug
-postgresql-9.5-citus-enterprise binary: package-has-long-file-name
+new-package-should-close-itp-bug
+package-has-long-file-name
