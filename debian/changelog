@@ -1,3 +1,9 @@
+citus-enterprise (6.2.2.citus-1) stable; urgency=low
+
+  * Fixes a common cause of deadlocks when rebalancing tables with foreign keys
+
+ -- Burak Velioglu <velioglub@citusdata.com>  Wed, 07 Jun 2017 09:42:17 +0000
+
 citus-enterprise (6.1.2.citus-1) stable; urgency=low
 
   * Fixes a common cause of deadlocks when rebalancing tables with foreign keys
