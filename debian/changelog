@@ -1,3 +1,15 @@
+citus (6.2.3.citus-1) stable; urgency=low
+
+  * Fixes a crash during execution of local CREATE INDEX CONCURRENTLY
+
+  * Fixes a bug preventing usage of quoted column names in COPY
+
+  * Fixes a bug in prepared INSERTs with implicit cast in partition column
+
+  * Relaxes locks in VACUUM to ensure concurrent execution with INSERT
+
+ -- Burak Yucesoy <burak@citusdata.com>  Thu, 13 Jul 2017 11:27:17 +0000
+
 citus (6.2.2.citus-1) stable; urgency=low
 
   * Fixes a common cause of deadlocks when repairing tables with foreign keys
