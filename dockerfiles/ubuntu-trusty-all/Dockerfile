@@ -1,6 +1,25 @@
 # vim:set ft=dockerfile:
 FROM ubuntu:trusty
 
+# See https://github.com/tianon/docker-brew-debian/issues/49 for discussion of the following
+#
+# https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
+RUN set -x \
+	&& apt-get update \
+	&& { \
+		which gpg \
+# prefer gnupg2, to match APT's Recommends
+		|| apt-get install -y --no-install-recommends gnupg2 \
+		|| apt-get install -y --no-install-recommends gnupg \
+	; } \
+# Ubuntu includes "gnupg" (not "gnupg2", but still 2.x), but not dirmngr, and gnupg 2.x requires dirmngr
+# so, if we're not running gnupg 1.x, explicitly install dirmngr too
+	&& { \
+		gpg --version | grep -q '^gpg (GnuPG) 1\.' \
+		|| apt-get install -y --no-install-recommends dirmngr \
+	; } \
+	&& rm -rf /var/lib/apt/lists/*
+
 # install build tools and PostgreSQL development files
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
     && echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
