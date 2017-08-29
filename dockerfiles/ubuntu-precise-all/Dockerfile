@@ -2,7 +2,11 @@
 FROM ubuntu:precise
 
 # install build tools and PostgreSQL development files
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        dirmngr \
+        gnupg2 \
+    && apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
     && echo 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -31,11 +35,6 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys B97B0AFCAA1A4
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
          -o /usr/bin/jq \
     && chmod +x /usr/bin/jq
-
-# install latest Citus release to get header files
-RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.deb.sh | bash \
-    && apt-get install -y postgresql-9.5-citus-6.0 postgresql-9.6-citus-6.0 \
-    && rm -rf /var/lib/apt/lists/*
 
 # patch pg_buildext to use multiple processors
 COPY make_pg_buildext_parallel.patch /
