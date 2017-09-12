@@ -1,3 +1,15 @@
+citus (7.0.1.citus-1) stable; urgency=low
+
+  * Fixes a bug that could cause memory leaks in INSERT ... SELECT queries
+
+  * Fixes a bug that could cause incorrect execution of prepared statements
+
+  * Fixes a bug that could cause excessive memory usage during COPY
+
+  * Incorporates latest changes from core PostgreSQL code
+
+ -- Burak Yucesoy <burak@citusdata.com>  Tue, 12 Sep 2017 17:53:50 +0000
+
 citus (7.0.0.citus-1) stable; urgency=low
 
   * Adds support for PostgreSQL 10
