@@ -9,7 +9,7 @@ Homepage: https://github.com/citusdata/shard_rebalancer
 
 Package: postgresql-PGVERSION-citus-rebalancer
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION, postgresql-PGVERSION-citus-enterprise-7.0 (>= 7.0.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION, postgresql-PGVERSION-citus-enterprise-7.0 (>= 7.0.1)
 Provides: postgresql-PGVERSION-citus-rebalancer
 Conflicts: postgresql-PGVERSION-citus-rebalancer
 Description: Dynamic shard balancer for Citus

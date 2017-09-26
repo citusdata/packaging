@@ -1,6 +1,6 @@
 pkgname=citus-rebalancer
 hubproj=shard_rebalancer
 pkgdesc='Shard Rebalancer'
-pkglatest=7.0.0.citus-1
+pkglatest=7.0.1.citus-1
 releasepg=9.6
 versioning=fancy

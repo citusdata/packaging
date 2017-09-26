@@ -1,3 +1,9 @@
+citus-rebalancer (7.0.1.citus-1) stable; urgency=low
+
+  * Fixes a bug that caused crash
+
+ -- Burak Yucesoy <burak@citusdata.com>  Mon, 25 Sep 2017 23:19:56 +0000
+
 citus-rebalancer (7.0.0.citus-1) stable; urgency=low
 
   * Adds ability to view rebalance plans
