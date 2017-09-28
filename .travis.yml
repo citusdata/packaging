@@ -24,7 +24,7 @@ before_install:
   - sudo make -C tools install
   - export PACKAGING_SECRET_KEY="$(openssl aes-256-cbc -K $encrypted_a39e3f1ee8ba_key -iv $encrypted_a39e3f1ee8ba_iv -in signing_key.asc.enc -d | base64)"
 install: true
-script: build_new_release # && build_new_nightly
+script: build_new_release && build_new_nightly
 deploy:
   - provider: packagecloud
     username: "citusdata"
