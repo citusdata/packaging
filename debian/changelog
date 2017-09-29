@@ -1,3 +1,9 @@
+citus-enterprise (7.0.2.citus-1) stable; urgency=low
+
+  * Updates task-tracker to limit file access
+
+ -- Burak Yucesoy <burak@citusdata.com>  Thu, 29 Sep 2017 01:29:42 +0000
+
 citus-enterprise (6.2.4.citus-1) stable; urgency=low
 
   * Updates task-tracker to limit file access
