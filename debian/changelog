@@ -1,3 +1,21 @@
+citus (7.0.3.citus-1) stable; urgency=low
+
+  * Fixes several bugs that could cause crash
+
+  * Fixes a bug that could cause deadlock while creating reference tables
+
+  * Fixes a bug that could cause false-positives in deadlock detection
+
+  * Fixes a bug that could cause  2PC recovery not to work from MX workers
+
+  * Fixes a bug that could cause cache incohorency
+
+  * Fixes a bug that could cause maintenance daemon to skip cache invalidations
+
+  * Improves performance of transaction recovery by using correct index
+
+ -- Burak Yucesoy <burak@citusdata.com>  Mon, 16 Oct 2017 11:52:07 +0000
+
 citus (7.0.2.citus-1) stable; urgency=low
 
   * Updates task-tracker to limit file access
