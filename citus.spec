@@ -7,7 +7,7 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	7.1.1.citus
+Version:	   7.1.2.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
@@ -63,6 +63,9 @@ make %{?_smp_mflags}
 %{pginstdir}/share/extension/%{sname}.control
 
 %changelog
+* Wed Dec 13 2017 - Burak Velioglu <velioglub.com> 7.1.2.citus-1
+- Update to Citus 7.1.2
+
 * Tue Dec 05 2017 - Burak Velioglu <velioglub@citusdata.com> 7.1.1.citus-1
 - Update to Citus 7.1.1
 
