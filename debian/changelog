@@ -1,3 +1,9 @@
+citus (6.2.5.citus-1) stable; urgency=low
+
+  * Fixes a bug that could crash the coordinator while reporting a remote error
+
+ -- Burak Velioglu <velioglub@citusdata.com>  Thu, 11 Jan 2018 11:27:26 +0000
+
 citus (6.2.4.citus-1) stable; urgency=low
 
   * Updates task-tracker to limit file access
