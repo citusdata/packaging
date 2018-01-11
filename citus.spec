@@ -7,11 +7,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	7.1.2.citus
+Version:	6.2.5.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v7.1.2.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v6.2.5.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -63,20 +63,8 @@ make %{?_smp_mflags}
 %{pginstdir}/share/extension/%{sname}.control
 
 %changelog
-* Fri Jan 05 2018 - Burak Velioglu <velioglub@citusdata.com> 7.1.2.citus-1
-- Update to Citus 7.1.2
-
-* Tue Dec 05 2017 - Burak Velioglu <velioglub@citusdata.com> 7.1.1.citus-1
-- Update to Citus 7.1.1
-
-* Wed Nov 15 2017 - Burak Velioglu <velioglub@citusdata.com> 7.1.0.citus-1
-- Update to Citus 7.1.0
-
-* Mon Oct 16 2017 - Burak Yucesoy <burak@citusdata.com> 7.0.3.citus-1
-- Update to Citus 7.0.3
-
-* Thu Sep 28 2017 - Burak Yucesoy <burak@citusdata.com> 7.0.2.citus-1
-- Update to Citus 7.0.2
+* Thu Jan 11 2018 - Burak Velioglu <velioglub@citusdata.com> 6.2.5.citus-1
+- Update to Citus 6.2.5
 
 * Thu Sep 28 2017 - Burak Yucesoy <burak@citusdata.com> 6.2.4.citus-1
 - Update to Citus 6.2.4
