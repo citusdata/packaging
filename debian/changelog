@@ -1,3 +1,9 @@
+citus-enterprise (7.2.2.citus-1) stable; urgency=low
+
+  * Fixes a bug that could cause SELECTs to crash during a rebalance
+
+ -- Burak Velioglu <velioglub@citusdata.com>  Thu, 17 May 2018 09:56:29 +0000
+
 citus-enterprise (7.4.0.citus-1) stable; urgency=low
 
   * Adds support for non-pushdownable subqueries and CTEs in UPDATE/DELETE queries
