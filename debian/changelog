@@ -1,3 +1,9 @@
+citus-enterprise (6.2.6.citus-1) stable; urgency=low
+
+  * Adds support for respecting enable_hashagg in the master planner
+
+ -- Burak Velioglu <velioglub@citusdata.com>  Mon, 09 Jul 2018 09:57:16 +0000
+
 citus-enterprise (7.4.1.citus-1) stable; urgency=low
 
   * Fixes a bug that could cause transactions to incorrectly proceed after failure
