@@ -10,7 +10,7 @@ citus (7.5.0.citus-1) stable; urgency=low
 
   * Fixes ALTER TABLE ADD COLUMN constraint check
 
-  * Fixes a bug where INSERT ... SELECT was allowed to update distribution column
+  * Fixes a bug where INSERT ... SELECT allows to update distribution column
 
   * Allows DDL commands to be sequentialized via citus.multi_shard_modify_mode
 
@@ -20,11 +20,11 @@ citus (7.5.0.citus-1) stable; urgency=low
 
   * Fixes a bug that might cause shards to have a wrong owner
 
-  * GUC select_opens_transaction_block defers opening transaction block on workers
+  * Adds select_opens_transaction_block GUC
 
   * Utils to implement DDLs for policies in future, warn about being unsupported
 
-  * Intermediate results use separate connections to avoid interfering with tasks
+  * Makes Intermediate results to use separate connections
 
   * Adds a node_conninfo GUC to set outgoing connection settings
 
