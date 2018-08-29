@@ -1,3 +1,11 @@
+citus (7.5.1.citus-1) stable; urgency=low
+
+  * Improves query pushdown planning performance
+
+  * Fixes a bug that could cause modifying CTEs to select wrong execution mode
+
+ -- Burak Velioglu <velioglub@citusdata.com>  Wed, 29 Aug 2018 8:4:35 +0000
+
 citus (6.2.6.citus-1) stable; urgency=low
 
   * Adds support for respecting enable_hashagg in the master planner
