@@ -1,3 +1,9 @@
+hll (2.11.citus-1) stable; urgency=low
+
+  * Support for PostgreSQL 11
+
+ -- Burak Yucesoy <burak@citusdata.com>  Sat, 25 Aug 2018 02:45:28 +0000
+
 hll (2.10.2.citus-1) stable; urgency=low
 
   * Support for testing against PostgreSQL 10
