@@ -8,11 +8,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	7.5.2.citus
+Version:	v7.5.3.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:       https://github.com/citusdata/citus-enterprise/archive/v7.5.2.tar.gz
+Source0:       https://github.com/citusdata/citus-enterprise/archive/vv7.5.3.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -75,6 +75,9 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
+* Tue Nov 27 2018 - Burak Velioglu <velioglub@citusdata.com> v7.5.3.citus-1
+- Update to Citus Enterprise v7.5.3
+
 * Thu Nov 15 2018 - Burak Velioglu <velioglub@citusdata.com> 7.5.2.citus-1
 - Update to Citus Enterprise 7.5.2
 
