@@ -14,9 +14,6 @@ env:
   matrix:
     - TARGET_PLATFORM=el/7
     - TARGET_PLATFORM=el/6
-    - TARGET_PLATFORM=fedora/28
-    - TARGET_PLATFORM=fedora/27
-    - TARGET_PLATFORM=fedora/26
     - TARGET_PLATFORM=ol/7
     - TARGET_PLATFORM=ol/6
 before_install:
