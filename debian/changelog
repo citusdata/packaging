@@ -1,3 +1,11 @@
+citus (8.1.1.citus-1) stable; urgency=low
+
+  * Fixes maintenance daemon panic due to unreleased spinlock
+
+  * Fixes an issue with having clause when used with complex joins
+
+ -- Hanefi Onaldi <hanefi@citusdata.com>  Mon, 7 Jan 2019 16:26:13 +0000
+
 citus (8.1.0.citus-1) stable; urgency=low
 
   * Turns on ssl by default for new installations of citus
