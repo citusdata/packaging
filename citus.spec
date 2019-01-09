@@ -7,11 +7,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	8.1.1.citus
+Version:	8.0.3.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:       https://github.com/citusdata/citus/archive/v8.1.1.tar.gz
+Source0:       https://github.com/citusdata/citus/archive/v8.0.3.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -74,6 +74,9 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
+* Wed Jan 9 2019 - Burak Velioglu <velioglub@citusdata.com> 8.0.3.citus-1
+- Update to Citus 8.0.3
+
 * Mon Jan 7 2019 - Burak Velioglu <velioglub@citusdata.com> 8.1.1.citus-1
 - Update to Citus 8.1.1
 
