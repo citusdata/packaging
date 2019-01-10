@@ -1,3 +1,11 @@
+citus-enterprise (8.0.3.citus-1) stable; urgency=low
+
+  * Fixes maintenance daemon panic due to unreleased spinlock
+
+  * Fixes an issue with having clause when used with complex joins
+
+ -- Hanefi Onaldi <hanefi@citusdata.com>  Thu, 10 Jan 2019 8:38:25 +0000
+
 citus-enterprise (8.1.1.citus-1) stable; urgency=low
 
   * Fixes maintenance daemon panic due to unreleased spinlock
