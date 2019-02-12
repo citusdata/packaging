@@ -1,3 +1,10 @@
+citus (8.0.0.PGDG-2) unstable; urgency=medium
+
+  * Team upload.
+  * Recompile against new heap_getattr() API in PostgreSQL 11.2.
+
+ -- Christoph Berg <christoph.berg@credativ.de>  Tue, 12 Feb 2019 15:24:56 +0100
+
 citus (8.0.0.PGDG-1) unstable; urgency=low
 
   * Adds support for PostgreSQL 11
