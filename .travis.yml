@@ -14,7 +14,6 @@ env:
   matrix:
     - TARGET_PLATFORM=debian/stretch
     - TARGET_PLATFORM=debian/jessie
-    - TARGET_PLATFORM=debian/wheezy
     - TARGET_PLATFORM=ubuntu/bionic
     - TARGET_PLATFORM=ubuntu/xenial
     - TARGET_PLATFORM=ubuntu/trusty
