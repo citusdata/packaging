@@ -1,3 +1,18 @@
+citus-ha (2.0.0) testing; urgency=low
+
+  * Rework of the CLI to citusha <verb> <object>
+
+  * CLI can be used to find the uri of the monitor and the formations
+
+  * Added support for a proxy port (eg. the pgbouncer port fronting the database)
+
+  * Added support for a cutsom listen address that postgres will listen on
+
+  * Keeps the secondary running in read only mode during failover
+
+ -- Nils Dijk <nils@citusdata.com>  Fri, 22 Feb 2019 16:17:00 +0100
+
+
 citus-ha (1.0.0) testing; urgency=low
 
   * First release of HA
