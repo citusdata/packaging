@@ -8,11 +8,11 @@ Summary:	Auto-HA support for Citus
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.0.0
+Version:	2.0.0
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-ha/archive/v1.0.0.tar.gz
+Source0:	https://github.com/citusdata/citus-ha/archive/v2.0.0.tar.gz
 URL:		https://github.com/citusdata/citus-ha
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -62,5 +62,8 @@ PATH=%{pginstdir}/bin:$PATH
 
 
 %changelog
+* Fri Feb 22 2019 - Nils Dijk <nils@citusdata.com> 2.0.0
+- Official release for 2.0.0
+
 * Fri Oct 5 2018 - Burak Velioglu <velioglub@citusdata.com> 1.0.0
 - Official release for 1.0.0
