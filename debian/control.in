@@ -19,7 +19,7 @@ Description: Citus high availability CLI
 
 Package: postgresql-PGVERSION-citus-ha
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
+Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION, citus-ha
 Provides: postgresql-PGVERSION-citus-ha
 Conflicts: postgresql-PGVERSION-citus-ha
 Description: Citus high availability support

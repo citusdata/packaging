@@ -4,7 +4,7 @@ citus-ha (2.0.1) testing; urgency=low
 
   * Implement support for VPATH builds, BINDIR, and DESTDIR
 
- -- Nils Dijk <nils@citusdata.com>  Fri, 22 Feb 2019 17:15:00 +0100
+ -- Nils Dijk <nils@citusdata.com>  Fri, 1 Mar 2019 14:53:00 +0100
 
 
 citus-ha (2.0.0) testing; urgency=low
