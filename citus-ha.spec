@@ -8,7 +8,7 @@ Summary:	Auto-HA support for Citus
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	2.0.0
+Version:	2.0.1
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
@@ -33,8 +33,6 @@ make %{?_smp_mflags}
 %install
 PATH=%{pginstdir}/bin:$PATH
 %make_install
-%{__mkdir} -p %{buildroot}%{pginstdir}/bin
-%{__cp} /usr/pgsql-%{pgpackageversion}/bin/citusha %{buildroot}%{pginstdir}/bin/citusha
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{extname}.md
@@ -60,6 +58,10 @@ PATH=%{pginstdir}/bin:$PATH
   %endif
 %endif
 
+
+%changelog
+* Fri Mar 1 2019 - Nils Dijk <nils@citusdata.com> 2.0.1
+- Official release for 2.0.1
 
 %changelog
 * Fri Feb 22 2019 - Nils Dijk <nils@citusdata.com> 2.0.0
