@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+HANAME := $(lastword $(shell grep "Package: citus-ha" debian/control))
+
 include /usr/share/postgresql-common/pgxs_debian_control.mk
 clean: debian/control
 
@@ -18,7 +20,7 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	+make -C $(shell pwd)/src/bin/citusha install \
-		DESTDIR=$(CURDIR)/debian/citus-ha \
+		DESTDIR=$(CURDIR)/debian/${HANAME} \
 		BINDIR=/usr/bin
 	+pg_buildext install $(shell pwd)/src/monitor build-%v postgresql-%v-citus-ha
 
