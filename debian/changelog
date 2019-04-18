@@ -1,3 +1,19 @@
+citus-ha (2.1.0) testing; urgency=low
+ 
+  * Fix: wait until postgres is ready after pg_ctl start before connecting
+ 
+  * Fix default HBA connection privileges from coordinator to worker nodes
+ 
+  * Feature: allow formations to run without secondaries
+ 
+  * Added nodename and nodeport to the output of `citusha show state`
+ 
+  * Use absolute pgdata path for monitor config and keeper config
+ 
+  * Deduplicate pg_ctl if the same is on the path twice
+
+ -- Nils Dijk <nils@citusdata.com>  Thu, 18 Apr 2019 17:43:00 +0100
+
 citus-ha (2.0.1) testing; urgency=low
 
   * Build system improvements
