@@ -1,0 +1,27 @@
+Source: pgautofailover
+Section: database
+Priority: optional
+Maintainer: Citus Data <packaging@citusdata.com>
+Uploaders: Nils Dijk <nils@citusdata.com>
+Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~), libedit-dev, libpam0g-dev, libselinux1-dev, libxslt1-dev
+Standards-Version: 3.9.7
+Homepage: https://github.com/citusdata/pg_auto_failover
+
+Package: pgautofailover-cli
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Provides: pg_autoctl
+Conflicts: pg_autoctl
+Recommends: postgresql-10-pgautofailover | postgresql-11-pgautofailover
+Description: pg_auto_failover CLI
+ This CLI is used to manage pg_auto_failover installations to provide High
+ Availability to Postgres.
+
+Package: postgresql-PGVERSION-pgautofailover
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION, pgautofailover-cli
+Provides: postgresql-PGVERSION-pgautofailover
+Conflicts: postgresql-PGVERSION-pgautofailover
+Description: Postgres high availability support
+ This extension implements a set of functions to provide High Availability to
+ Postgres.
