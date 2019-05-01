@@ -10,8 +10,8 @@ Homepage: https://github.com/citusdata/pg_auto_failover
 Package: pgautofailover-cli
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Provides: pg_autoctl
-Conflicts: pg_autoctl
+Provides: pgautofailover-cli
+Conflicts: pgautofailover-cli
 Recommends: postgresql-10-pgautofailover | postgresql-11-pgautofailover
 Description: pg_auto_failover CLI
  This CLI is used to manage pg_auto_failover installations to provide High
