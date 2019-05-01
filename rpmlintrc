@@ -1,0 +1,9 @@
+addFilter("E: binary-or-shlib-defines-rpath .*");
+addFilter("W: devel-file-in-non-devel-package .*");
+addFilter("W: incoherent-version-in-changelog .*el7");
+addFilter("W: invalid-url .*404: Not Found");
+addFilter("W: no-soname .*");
+addFilter("W: non-standard-dir-in-usr .*");
+addFilter("W: shared-lib-calls-exit .*");
+addFilter("W: spelling-error .*(pg_auto_failover)");
+addFilter("\w*-debuginfo[^:]*: W: only-non-binary-in-usr-lib");

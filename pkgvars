@@ -1,0 +1,6 @@
+pkgname=pg_auto_failover
+hubproj=citus-ha
+pkgdesc=''
+pkglatest=1.0.0
+releasepg=10,11
+versioning=fancy
