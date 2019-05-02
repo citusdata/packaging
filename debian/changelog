@@ -1,4 +1,4 @@
-pgautofailover (1.0.0) testing; urgency=low
+pg-auto-failover (1.0.0) testing; urgency=low
 
   * First release of pg_auto_failover
 
