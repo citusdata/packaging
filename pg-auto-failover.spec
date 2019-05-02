@@ -1,16 +1,16 @@
 %global pgmajorversion 11
 %global pgpackageversion 11
 %global pginstdir /usr/pgsql-%{pgpackageversion}
-%global sname pg_auto_failover
+%global sname pg-auto-failover
 %global extname pgautofailover
 
-Summary:	todo
+Summary:	Postgres extension for automated failover and high-availability
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
 Version:	1.0.0
 Release:	1%{dist}
-License:	todo
+License:	PostgreSQL License
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.0.0.tar.gz
 URL:		https://github.com/citusdata/pg_auto_failover
@@ -33,8 +33,6 @@ make %{?_smp_mflags}
 %install
 PATH=%{pginstdir}/bin:$PATH
 %make_install
-%{__mkdir} -p %{buildroot}%{pginstdir}/bin
-%{__cp} /usr/pgsql-%{pgpackageversion}/bin/pg_autoctl %{buildroot}%{pginstdir}/bin/pg_autoctl
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{extname}.md
