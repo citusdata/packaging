@@ -9,7 +9,7 @@ Homepage: https://github.com/citusdata/pg_auto_failover
 
 Package: pg-auto-failover-cli
 Architecture: any
-Depends: ${misc:Depends}
+Depends: ${shlibs:Depends},${misc:Depends}
 Provides: pg-auto-failover-cli
 Conflicts: pg-auto-failover-cli
 Recommends: postgresql-10-auto-failover | postgresql-11-auto-failover
@@ -19,7 +19,7 @@ Description: Command line interface and service to manage pg auto failover Clust
 
 Package: postgresql-PGVERSION-auto-failover
 Architecture: any
-Depends: ${misc:Depends}, postgresql-PGVERSION, pg-auto-failover-cli
+Depends: ${shlibs:Depends},${misc:Depends}, postgresql-PGVERSION, pg-auto-failover-cli
 Provides: postgresql-PGVERSION-auto-failover
 Conflicts: postgresql-PGVERSION-auto-failover
 Description: Postgres high availability support
