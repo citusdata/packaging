@@ -10,7 +10,7 @@ Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
 Version:	1.0.0
 Release:	1%{dist}
-License:	PostgreSQL License
+License:	PostgreSQL
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.0.0.tar.gz
 URL:		https://github.com/citusdata/pg_auto_failover
