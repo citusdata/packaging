@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-HANAME := $(lastword $(shell grep "Package: pg-auto-failover-cli" debian/control))
+CLINAME := $(lastword $(shell grep "Package: pg-auto-failover-cli" debian/control))
 
 include /usr/share/postgresql-common/pgxs_debian_control.mk
 clean: debian/control
@@ -20,7 +20,7 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	+make -C $(shell pwd)/src/bin/pg_autoctl install \
-		DESTDIR=$(CURDIR)/debian/${HANAME} \
+		DESTDIR=$(CURDIR)/debian/${CLINAME} \
 		BINDIR=/usr/bin
 	+pg_buildext install $(shell pwd)/src/monitor build-%v postgresql-%v-auto-failover
 
