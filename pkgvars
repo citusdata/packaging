@@ -1,5 +1,5 @@
 pkgname=pg-auto-failover
-hubproj=citus-ha
+hubproj=pg_auto_failover
 pkgdesc='Postgres extension for automated failover and high-availability'
 pkglatest=1.0.0
 releasepg=10,11

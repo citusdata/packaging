@@ -1,5 +1,6 @@
 citus_package.log
 debian-jessie/
 debian-stretch/
+ubuntu-bionic/
 ubuntu-trusty/
 ubuntu-xenial/

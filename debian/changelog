@@ -2,4 +2,4 @@ pg-auto-failover (1.0.0) testing; urgency=low
 
   * First release of pg_auto_failover
 
- -- Nils Dijk <nils@citusdata.com>  Thu, 2 May 2019 16:00:00 +0200
+ -- Nils Dijk <nils@citusdata.com>  Fri, 3 May 2019 16:00:00 +0200
