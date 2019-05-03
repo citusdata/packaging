@@ -1,4 +1,4 @@
-pkgname=pg-auto-failover
+pkgname=auto-failover
 hubproj=pg_auto_failover
 pkgdesc='Postgres extension for automated failover and high-availability'
 pkglatest=1.0.0
