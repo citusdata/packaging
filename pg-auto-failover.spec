@@ -61,9 +61,7 @@ PATH=%{pginstdir}/bin:$PATH
 
 %changelog
 * Mon May 3 2019 - Nils Dijk <nils@citusdata.com> 1.0.1
-- Fix a problem where the service was not restarted when shutdown (#2)
-- Clarify name in background workers for the monitor (#3)
-- Show full version number in `pg_autoctl version` (#4)
+- Official release for 1.0.1
 
 * Thu May 2 2019 - Nils Dijk <nils@citusdata.com> 1.0.0
 - Official release for 1.0.0
