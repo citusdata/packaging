@@ -1,26 +1,28 @@
-Source: citus-ha
+Source: pg-auto-failover-enterprise
 Section: database
 Priority: optional
 Maintainer: Citus Data <packaging@citusdata.com>
-Uploaders: Burak Velioglu <velioglub@citusdata.com>
+Uploaders: Nils Dijk <nils@citusdata.com>
 Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~), libedit-dev, libpam0g-dev, libselinux1-dev, libxslt1-dev
 Standards-Version: 3.9.7
 Homepage: https://github.com/citusdata/citus-ha
 
-Package: citus-ha
+Package: pg-auto-failover-cli-enterprise
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Provides: citus-ha
-Conflicts: citus-ha
-Recommends: postgresql-10-citus-ha | postgresql-11-citus-ha
+Depends: ${shlibs:Depends},${misc:Depends}
+Provides: pg-auto-failover-cli
+Conflicts: pg-auto-failover-cli
+Recommends: postgresql-10-auto-failover-enterprise | postgresql-11-auto-failover-enterprise
 Suggests: postgresql-11-citus-8.1 | postgresql-10-citus-8.1 | postgresql-10-citus-enterprise-8.1 | postgresql-11-citus-enterprise-8.1
-Description: Citus high availability CLI
- This CLI is used to manage HA installations of a Citus cluster.
+Description: Command line interface and service to manage pg auto failover Clusters
+ This CLI is used to manage pg_auto_failover installations to provide High
+ Availability to Postgres.
 
-Package: postgresql-PGVERSION-citus-ha
+Package: postgresql-PGVERSION-auto-failover-enterprise
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION, citus-ha
-Provides: postgresql-PGVERSION-citus-ha
-Conflicts: postgresql-PGVERSION-citus-ha
-Description: Citus high availability support
- This extension implements a set of functions for HA on Citus clusters.
+Depends: ${shlibs:Depends},${misc:Depends}, postgresql-PGVERSION, pg-auto-failover-cli-enterprise
+Provides: postgresql-PGVERSION-auto-failover
+Conflicts: postgresql-PGVERSION-auto-failover
+Description: Postgres high availability support
+ This extension implements a set of functions to provide High Availability to
+ Postgres.

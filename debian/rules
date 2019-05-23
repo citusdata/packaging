@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-HANAME := $(lastword $(shell grep "Package: citus-ha" debian/control))
+CLINAME := $(lastword $(shell grep "Package: pg-auto-failover-cli-enterprise" debian/control))
 
 include /usr/share/postgresql-common/pgxs_debian_control.mk
 clean: debian/control
@@ -8,21 +8,21 @@ clean: debian/control
 .PHONY: debian/control
 
 override_dh_auto_build:
-	+make -C $(shell pwd)/src/bin/citusha
+	+make -C $(shell pwd)/src/bin/pg_autoctl
 	+pg_buildext build $(shell pwd)/src/monitor build-%v
 
 override_dh_auto_clean:
-	+make -C $(shell pwd)/src/bin/citusha clean
+	+make -C $(shell pwd)/src/bin/pg_autoctl clean
 	+pg_buildext clean $(shell pwd)/src/monitor build-%v
 
 override_dh_auto_test:
 	# nothing to do here, see debian/tests/* instead
 
 override_dh_auto_install:
-	+make -C $(shell pwd)/src/bin/citusha install \
-		DESTDIR=$(CURDIR)/debian/${HANAME} \
+	+make -C $(shell pwd)/src/bin/pg_autoctl install \
+		DESTDIR=$(CURDIR)/debian/${CLINAME} \
 		BINDIR=/usr/bin
-	+pg_buildext install $(shell pwd)/src/monitor build-%v postgresql-%v-citus-ha
+	+pg_buildext install $(shell pwd)/src/monitor build-%v postgresql-%v-auto-failover-enterprise
 
 %:
 	dh $@

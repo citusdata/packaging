@@ -1,3 +1,10 @@
+pg-auto-failover-enterprise (1.0.2) testing; urgency=low
+
+  * First release of pg-auto-failover-enterprise
+
+ -- Nils Dijk <nils@citusdata.com>  Mon, 6 May 2019 16:00:00 +0200
+
+
 citus-ha (2.1.0) testing; urgency=low
  
   * Fix: wait until postgres is ready after pg_ctl start before connecting
