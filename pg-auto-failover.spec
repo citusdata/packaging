@@ -8,11 +8,11 @@ Summary:	Postgres extension for automated failover and high-availability
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.0.1
+Version:	1.0.2
 Release:	1%{dist}
 License:	PostgreSQL
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.0.1.tar.gz
+Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.0.2.tar.gz
 URL:		https://github.com/citusdata/pg_auto_failover
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -60,6 +60,9 @@ PATH=%{pginstdir}/bin:$PATH
 
 
 %changelog
+* Thu May 23 2019 - Nils Dijk <nils@citusdata.com> 1.0.2
+- Official release for 1.0.2
+
 * Mon May 3 2019 - Nils Dijk <nils@citusdata.com> 1.0.1
 - Official release for 1.0.1
 
