@@ -1,6 +1,6 @@
-pkgname=citus-ha
+pkgname=pg-auto-failover-enterprise
 hubproj=citus-ha
-pkgdesc='Citus HA'
-pkglatest=2.1.0
+pkgdesc='Postgres extension for automated failover and high-availability'
+pkglatest=1.0.2
 releasepg=10,11
 versioning=fancy
