@@ -75,7 +75,7 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
-* Thu Jul 11 2019 - Burak Velioglu <velioglub@citusdata.com> 8.3.0.citus-1
+* Thu Jul 11 2019 - Hanefi Onaldi <Hanefi.Onaldi@microsoft.com> 8.3.0.citus-1
 - Update to Citus Enterprise 8.3.0
 
 * Thu Jun 13 2019 - Burak Velioglu <velioglub@citusdata.com> 8.2.2.citus-1
