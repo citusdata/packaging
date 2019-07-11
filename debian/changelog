@@ -44,7 +44,7 @@ citus-enterprise (8.3.0.citus-1) stable; urgency=low
 
   * Fixes a bug that prevents stack size to be adjusted
 
- -- Burak Velioglu <velioglub@citusdata.com>  Thu, 11 Jul 2019 13:29:10 +0000
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Thu, 11 Jul 2019 13:29:10 +0000
 
 citus-enterprise (8.2.2.citus-1) stable; urgency=low
 
