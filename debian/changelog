@@ -18,7 +18,7 @@ citus (8.3.0.citus-1) stable; urgency=low
 
   * Makes COPY adapt to connection use behaviour of previous commands
 
-  * Replaces SESSION_LIFESPAN with configurable number of connections at xact end
+  * Replaces SESSION_LIFESPAN with configurable no. of connections at xact end
 
   * Propagates ALTER FOREIGN TABLE commands to workers
 
