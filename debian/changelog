@@ -1,3 +1,9 @@
+citus-rebalancer (8.3.0.citus-1) stable; urgency=low
+
+  * Adds compatibility with Citus 8.3
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Fri, 12 Jul 2019 08:30:00 +0000
+
 citus-rebalancer (8.2.0.citus-1) stable; urgency=low
 
   * Adds compatibility with Citus 8.2
