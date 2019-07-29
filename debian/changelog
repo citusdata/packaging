@@ -1,3 +1,9 @@
+citus (8.3.1.citus-1) stable; urgency=low
+
+  * Improves Adaptive Executor performance
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Mon, 29 Jul 2019 10:25:50 +0000
+
 citus (8.3.0.citus-1) stable; urgency=low
 
   * Adds a new distributed executor: Adaptive Executor
