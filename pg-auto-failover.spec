@@ -60,7 +60,7 @@ PATH=%{pginstdir}/bin:$PATH
 
 
 %changelog
-* Tue Jul 30 2019 - Murat Tuncer <murat.tuncer@microsoft.com> 1.03
+* Tue Jul 30 2019 - Murat Tuncer <murat.tuncer@microsoft.com> 1.0.3
 - Official release for 1.0.3
 
 * Thu May 23 2019 - Nils Dijk <nils@citusdata.com> 1.0.2
