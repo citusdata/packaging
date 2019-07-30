@@ -1,3 +1,9 @@
+citus-enterprise (8.3.1.citus-1) stable; urgency=low
+
+  * Improves Adaptive Executor performance
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Tue, 30 Jul 2019 11:18:34 +0000
+
 citus-enterprise (8.3.0.citus-1) stable; urgency=low
 
   * Adds a new distributed executor: Adaptive Executor
@@ -358,7 +364,7 @@ citus-enterprise (7.4.0.citus-1) stable; urgency=low
 
   * Removes broadcast join logic
 
-  * Deprecates large_table_shard_count and master_expire_table_cache()  
+  * Deprecates large_table_shard_count and master_expire_table_cache()
 
   * Modifies master_update_node to lock write on shards hosted by node over update
 
