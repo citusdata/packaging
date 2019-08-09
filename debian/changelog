@@ -1,3 +1,9 @@
+citus-enterprise (8.3.2.citus-1) stable; urgency=low
+
+  * Improves Adaptive Executor performance
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Fri, 9 Aug 2019 14:2:58 +0000
+
 citus-enterprise (8.3.1.citus-1) stable; urgency=low
 
   * Improves Adaptive Executor performance
