@@ -1,3 +1,9 @@
+citus (8.3.2.citus-1) stable; urgency=low
+
+  * Fixes performance issues by skipping unnecessary relation access recordings
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Fri, 9 Aug 2019 11:15:57 +0000
+
 citus (8.3.1.citus-1) stable; urgency=low
 
   * Improves Adaptive Executor performance
