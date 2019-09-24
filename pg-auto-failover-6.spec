@@ -29,7 +29,6 @@ Postgres.
 %build
 PATH=%{pginstdir}/bin:$PATH
 make %{?_smp_mflags}
-make man
 
 %install
 PATH=%{pginstdir}/bin:$PATH
@@ -38,22 +37,12 @@ PATH=%{pginstdir}/bin:$PATH
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{extname}.md
 
-# install man pages
-%{__mkdir} -p %{buildroot}/usr/share/man/man1
-%{__cp} docs/_build/man/pg_auto_failover.1 %{buildroot}/usr/share/man/man1/
-%{__cp} docs/_build/man/pg_autoctl.1 %{buildroot}/usr/share/man/man1/
-%{__mkdir} -p %{buildroot}/usr/share/man/man5
-%{__cp} docs/_build/man/pg_autoctl.5 %{buildroot}/usr/share/man/man5/
-
 %clean
 %{__rm} -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
 %doc %{pginstdir}/doc/extension/README-%{extname}.md
-%doc /usr/share/man/man1/pg_auto_failover.1.gz
-%doc /usr/share/man/man1/pg_autoctl.1.gz
-%doc /usr/share/man/man5/pg_autoctl.5.gz
 %{pginstdir}/lib/%{extname}.so
 %{pginstdir}/share/extension/%{extname}-*.sql
 %{pginstdir}/share/extension/%{extname}.control
