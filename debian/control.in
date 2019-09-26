@@ -13,7 +13,7 @@ Depends: ${shlibs:Depends},${misc:Depends}
 Provides: pg-auto-failover-cli-enterprise
 Conflicts: pg-auto-failover-cli
 Recommends: postgresql-10-auto-failover-enterprise | postgresql-11-auto-failover-enterprise
-Suggests: postgresql-11-citus-8.1 | postgresql-10-citus-8.1 | postgresql-10-citus-enterprise-8.1 | postgresql-11-citus-enterprise-8.1
+Suggests: postgresql-11-citus-8.3 | postgresql-10-citus-8.3 | postgresql-10-citus-enterprise-8.3 | postgresql-11-citus-enterprise-8.3
 Description: Command line interface and service to manage pg auto failover Clusters
  This CLI is used to manage pg_auto_failover installations to provide High
  Availability to Postgres.
