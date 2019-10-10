@@ -12,12 +12,12 @@ env:
     # passphrase for packaging gpg secret key
     - secure: "pZmrxStWj0vXaG/YAyJORvxfaKQHvr+O+66yjFF52gQTVd2zNb83Mn4zDLNqMwU3nkXEKYuFbpXKbDSMX9zNbE7W/w1ARSa8MVXnMVM3jbj+OCaBu7fyVrA0tvT3EZkMh943paTRcSyPSzd61P3CNOkcY1RycDHBbJtNrzSdUbdAy6//TWgNxC66dxSeHASRJIIs49caxQssMMSGRgC5aGH4KLU5eSdP3wnWDEHr+aLqaI2DF2W3lNMI0WJwtGN6cLEYzAsA3BkoPoYRFDd4jjTpolVdrFBXRaT1EIg0FXjsvjyFrQfQLBIqvSx42H5w4rCIYoKYYgRgCKDATLK8XxPbFsgPKLVSHFD6t9ebuYacYxS20oMakkqj5e98qMIWe2vkm+V9YNeADIlhYT+NsF9Kug2B6pLK+U+Hhj6TldFpP18snPXttRKzsg9QrGbnBUVq2wv60U7/3pWs+T3tpr9bIFyaUYbRRAwl/hv2hVkFiSdsiLB6tJphbILB7EDKBCu1iK9PC9tlYoGrqptRxj6bmlawOvcnEKRtoPNJ9eyrvHPDd8FmmW6xWbq89zJ97Ztl7VR8CzNePqvG9vwdtJigXovuXfzu4CHX+jOt3jvllB6rMprsK5r++qBzh1SS24sYqo/APtUfoYdkleWhC+tSuhbucZb2yGUCMo/ZhDo="
   matrix:
+    - TARGET_PLATFORM=el/8
     - TARGET_PLATFORM=el/7
-    - TARGET_PLATFORM=el/6
+    # - TARGET_PLATFORM=ol/8
     - TARGET_PLATFORM=ol/7
-    - TARGET_PLATFORM=ol/6
 before_install:
-  - git clone -b v0.7.7 --depth 1 https://github.com/citusdata/tools.git
+  - git clone -b release/0.7.13 --depth 1 https://github.com/citusdata/tools.git
   - sudo make -C tools install
   - export PACKAGING_SECRET_KEY="$(openssl aes-256-cbc -K $encrypted_a39e3f1ee8ba_key -iv $encrypted_a39e3f1ee8ba_iv -in signing_key.asc.enc -d | base64)"
 install: true
