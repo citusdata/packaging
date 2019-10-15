@@ -14,6 +14,7 @@ env:
     # Docker Hub URL to trigger new nightly image
     - secure: "A3mqytw2Tq/jSBYgBgMrP3sSHXhkRXMeHmsVlsrzrzgnQskJ62c+QbGMomHY71y8JSJWEWsmCCLBuayF9TwMVnbiELGQFSxX2Aw7sy3wNunk6rNKs166od3K0d9YctIBrqcBm25YUOby4FlYAluxipix4gqq8JayPkP4n3x+it9hyCGZL6WYhreEfIkmH2sISbjGZJ5PggsymlAQdBepvQRuBQTNysNFySw9ENme1tqgf3eiG/m9bvghkVphJwrkfFyC+LauhQGopjq5rXTR2yvB7zlj4LYAP65qtRQrkYOax0w5qpy4StxgsP5Q8JnW8qk+JM5lwLE8worMcYt8I6epclWOl4jkhCraIGm4XGOFzdcs/W2fBYeI9UFJBaPgt9RoxsSs8m6ER6ivDyaFkZ72gMwViogZnf5VABXoZ8tgaxYHfaT89OW2/X4x9V6ONv7jWy3xvdNUYqiDqHeWZSjMC+1JqhCEgMu23sL1u+gMXbCYSFq2dIh4pVRyK2H/StTHDP4teHlA2+OCFkfL/eQ2K0QunjPZxPU2+/V+zlUNWI4pEMV92JVQtjMZMcrDCS1DATXaasHpgphCexFEDqQwwKQoMh5j17nUBHjYxKqle5akakd/ShSi3F02uE3FGbIMSaYSreXdSjbzK8bkFU6q5rn0Fem0w20pcVyYPV8="
   matrix:
+    - TARGET_PLATFORM=debian/buster
     - TARGET_PLATFORM=debian/stretch
     - TARGET_PLATFORM=debian/jessie
     - TARGET_PLATFORM=ubuntu/bionic
