@@ -14,10 +14,12 @@ env:
   matrix:
     - TARGET_PLATFORM=el/8
     - TARGET_PLATFORM=el/7
+    # ol/8 repositories do not contain packages for our dependencies yet.
+    # see https://yum.oracle.com/repo/OracleLinux/OL8/developer/x86_64/index.html
     # - TARGET_PLATFORM=ol/8
     - TARGET_PLATFORM=ol/7
 before_install:
-  - git clone -b release/0.7.13 --depth 1 https://github.com/citusdata/tools.git
+  - git clone -b v0.7.13 --depth 1 https://github.com/citusdata/tools.git
   - sudo make -C tools install
   - export PACKAGING_SECRET_KEY="$(openssl aes-256-cbc -K $encrypted_a39e3f1ee8ba_key -iv $encrypted_a39e3f1ee8ba_iv -in signing_key.asc.enc -d | base64)"
 install: true
