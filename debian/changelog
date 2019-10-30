@@ -1,3 +1,11 @@
+citus-enterprise (9.0.1.citus-1) stable; urgency=low
+
+  * Fixes a memory leak in the executor
+
+  * Revokes usage from the citus schema from public
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Wed, 30 Oct 2019 10:39:38 +0000
+
 citus-enterprise (9.0.0.citus-1) stable; urgency=low
 
   * Moves Shard Rebalancer into Citus Enterprise
