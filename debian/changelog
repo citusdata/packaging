@@ -1,3 +1,9 @@
+topn (2.3.0) stable; urgency=low
+
+  * Adds support for PostgreSQL 12
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Thu, 31 Oct 2019 12:56:8 +0000
+
 topn (2.2.2) stable; urgency=low
 
   * PG11 beautified
