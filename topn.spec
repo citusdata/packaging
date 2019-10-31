@@ -1,15 +1,15 @@
-%global pgmajorversion 11
-%global pgpackageversion 11
+%global pgmajorversion 12
+%global pgpackageversion 12
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname topn
 
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
-Version:	2.2.2.citus
+Version:	2.3.0.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/postgresql-topn/archive/v2.2.2.tar.gz
+Source0:	https://github.com/citusdata/postgresql-topn/archive/v2.3.0.tar.gz
 URL:		https://github.com/citusdata/posgresql-topn
 BuildRequires:	postgresql%{pgmajorversion}-devel libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -57,6 +57,9 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
+* Thu Oct 31 2019 - Hanefi Onaldi <Hanefi.Onaldi@microsoft.com> 2.3.0.citus-1
+- Adds PostgreSQL 12 support
+
 * Thu Dec 21 2018 - Furkan Sahin <furkan@citusdata.com> 2.2.2.citus-1
 - PG11 beautified
 
