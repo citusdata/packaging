@@ -63,13 +63,11 @@ make %{?_smp_mflags}
 %{pginstdir}/share/extension/%{sname}.control
 %ifarch ppc64 ppc64le
   %else
-  %if %{pgmajorversion} >= 11 && %{pgmajorversion} < 90
-    %if 0%{?rhel} && 0%{?rhel} <= 6
-    %else
-      %{pginstdir}/lib/bitcode/%{sname}*.bc
-      %{pginstdir}/lib/bitcode/%{sname}/*.bc
-      %{pginstdir}/lib/bitcode/%{sname}/*/*.bc
-    %endif
+  %if 0%{?rhel} && 0%{?rhel} <= 6
+  %else
+    %{pginstdir}/lib/bitcode/%{sname}*.bc
+    %{pginstdir}/lib/bitcode/%{sname}/*.bc
+    %{pginstdir}/lib/bitcode/%{sname}/*/*.bc
   %endif
 %endif
 
