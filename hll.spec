@@ -1,15 +1,15 @@
-%global pgmajorversion 11
-%global pgpackageversion 11
+%global pgmajorversion 12
+%global pgpackageversion 12
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname hll
 
 Summary:	HyperLogLog extension for PostgreSQL
 Name:		%{sname}_%{pgmajorversion}
-Version:	2.12.citus
+Version:	2.13.citus
 Release:	1%{dist}
 License:	ASL 2.0
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/postgresql-hll/archive/v2.12.tar.gz
+Source0:	https://github.com/citusdata/postgresql-hll/archive/v2.13.tar.gz
 URL:		https://github.com/citusdata/postgresql-hll
 BuildRequires:	postgresql%{pgmajorversion}-devel libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -60,6 +60,9 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
+* Wed Nov 6 2019 - Hanefi Onaldi <Hanefi.Onaldi@Microsoft.com> 2.13.citus-1
+- Support for PostgreSQL 12
+
 * Sat Nov 3 2018 - Burak Yucesoy <burak@citusdata.com> 2.12.citus-1
 - Support for PostgreSQL 11
 
