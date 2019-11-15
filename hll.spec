@@ -5,11 +5,11 @@
 
 Summary:	HyperLogLog extension for PostgreSQL
 Name:		%{sname}_%{pgmajorversion}
-Version:	2.13.citus
+Version:	2.14.citus
 Release:	1%{dist}
 License:	ASL 2.0
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/postgresql-hll/archive/v2.13.tar.gz
+Source0:	https://github.com/citusdata/postgresql-hll/archive/v2.14.tar.gz
 URL:		https://github.com/citusdata/postgresql-hll
 BuildRequires:	postgresql%{pgmajorversion}-devel libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -60,6 +60,9 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
+* Fri Nov 15 2019 - Hanefi Onaldi <Hanefi.Onaldi@Microsoft.com> 2.14.citus-1
+- Bug fixes
+
 * Wed Nov 6 2019 - Hanefi Onaldi <Hanefi.Onaldi@Microsoft.com> 2.13.citus-1
 - Support for PostgreSQL 12
 
