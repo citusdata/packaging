@@ -1,3 +1,9 @@
+hll (2.14.citus-1) stable; urgency=low
+
+  * Bug fixes
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Fri, 15 Nov 2019 14:22:00 +0300
+
 hll (2.13.citus-1) stable; urgency=low
 
   * Support for PostgreSQL 12 and bug fixes
