@@ -193,6 +193,9 @@ detect_codename ()
       9)
         codename='stretch'
         ;;
+      10)
+        codename='buster'
+        ;;
       wheezy)
         codename="${dist}"
         ;;
@@ -200,6 +203,9 @@ detect_codename ()
         codename="${dist}"
         ;;
       stretch)
+        codename="${dist}"
+        ;;
+      buster)
         codename="${dist}"
         ;;
       *)
