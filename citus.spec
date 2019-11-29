@@ -72,7 +72,7 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
-* Thu Nov 28 2019 - Burak Velioglu <velioglub@citusdata.com> 9.1.0.citus-1
+* Thu Nov 28 2019 - Onur Tirtir <ontirtir@microsoft.com> 9.1.0.citus-1
 - Update to Citus 9.1.0
 
 * Wed Oct 30 2019 - Hanefi Onaldi <Hanefi.Onaldi@microsoft.com> 9.0.1.citus-1
