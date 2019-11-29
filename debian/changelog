@@ -46,7 +46,7 @@ citus (9.1.0.citus-1) stable; urgency=low
 
   * Revokes usage from the citus schema from public
 
- -- Burak Velioglu <velioglub@citusdata.com>  Thu, 28 Nov 2019 15:11:5 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Thu, 28 Nov 2019 15:11:05 +0000
 
 citus (9.0.1.citus-1) stable; urgency=low
 
