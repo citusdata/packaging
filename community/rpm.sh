@@ -38,6 +38,10 @@ pgdg_check ()
   else
     echo -n "Installing pgdg12 repo... "
 
+    if [ "${dist}" = "8" ]; then
+      dnf -qy module disable postgresql
+    fi
+
     yum install -d0 -e0 -y "${repo_url}"
     echo "done."
   fi
@@ -153,7 +157,7 @@ detect_repo_url ()
 {
   # set common defaults used by most flavors
   family='redhat'
-  family_short='rhel'
+  family_short='EL'
   pkg_dist="${dist}"
   pkg_os="${os}"
   pkg_version='2'
@@ -178,9 +182,9 @@ detect_repo_url ()
       ;;
   esac
 
-  repo_url="https://download.postgresql.org/pub/repos/yum/12/${family}"
+  repo_url="https://download.postgresql.org/pub/repos/yum/reporpms"
   repo_url+="/${family_short}-${pkg_dist}-x86_64"
-  repo_url+="/pgdg-${pkg_os}12-12-${pkg_version}.noarch.rpm"
+  repo_url+="/pgdg-${family}-repo-latest.noarch.rpm"
 }
 
 main ()
