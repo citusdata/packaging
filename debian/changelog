@@ -1,11 +1,17 @@
+pg-auto-failover (1.0.6) testing; urgency=low
+
+  * Official release of 1.0.6
+
+ -- Murat Tuncer <murat.tuncer@microsoft.com>  Thu, 13 Feb 2020 14:00:00 +0200
+
 pg-auto-failover (1.0.5) testing; urgency=low
-  
+ 
   * Official release of 1.0.5
 
  -- Murat Tuncer <murat.tuncer@microsoft.com>  Fri, 20 Sep 2019 14:00:00 +0200
 
 pg-auto-failover (1.0.4) testing; urgency=low
-  
+
   * Official release of 1.0.4
 
  -- Murat Tuncer <murat.tuncer@microsoft.com>  Thu, 5 Sep 2019 14:00:00 +0200
