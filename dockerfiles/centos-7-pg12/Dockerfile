@@ -27,8 +27,13 @@ RUN yum install -y centos-release-scl-rh epel-release \
         spectool \
         tar \
     && yum install -y https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && yum install -y postgresql12-devel \
+    && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
+
+# install documentation generation libraries
+RUN yum install -y python-pip python-sphinx \
+    && pip install --upgrade pip \
+    && pip install -U Sphinx
 
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
