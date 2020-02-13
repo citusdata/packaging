@@ -3,16 +3,17 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname pg-auto-failover-enterprise
 %global extname pgautofailover
+%global debug_package %{nil}
 
 Summary:	Auto-HA support for Citus
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.0.5
+Version:	1.0.6
 Release:	1%{dist}
 License:	Proprietary
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-ha/archive/v1.0.5.tar.gz
+Source0:	https://github.com/citusdata/citus-ha/archive/v1.0.6.tar.gz
 URL:		https://github.com/citusdata/citus-ha
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -29,7 +30,11 @@ Postgres.
 %build
 PATH=%{pginstdir}/bin:$PATH
 make %{?_smp_mflags}
-make man
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%else
+  make man
+%endif
+
 
 %install
 PATH=%{pginstdir}/bin:$PATH
@@ -39,11 +44,14 @@ PATH=%{pginstdir}/bin:$PATH
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{extname}.md
 
 # install man pages
-%{__mkdir} -p %{buildroot}/usr/share/man/man1
-%{__cp} docs/_build/man/pg_auto_failover.1 %{buildroot}/usr/share/man/man1/
-%{__cp} docs/_build/man/pg_autoctl.1 %{buildroot}/usr/share/man/man1/
-%{__mkdir} -p %{buildroot}/usr/share/man/man5
-%{__cp} docs/_build/man/pg_autoctl.5 %{buildroot}/usr/share/man/man5/
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%else
+  %{__mkdir} -p %{buildroot}/usr/share/man/man1
+  %{__cp} docs/_build/man/pg_auto_failover.1 %{buildroot}/usr/share/man/man1/
+  %{__cp} docs/_build/man/pg_autoctl.1 %{buildroot}/usr/share/man/man1/
+  %{__mkdir} -p %{buildroot}/usr/share/man/man5
+  %{__cp} docs/_build/man/pg_autoctl.5 %{buildroot}/usr/share/man/man5/
+%endif
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -51,9 +59,12 @@ PATH=%{pginstdir}/bin:$PATH
 %files
 %defattr(-,root,root,-)
 %doc %{pginstdir}/doc/extension/README-%{extname}.md
-%doc /usr/share/man/man1/pg_auto_failover.1.gz
-%doc /usr/share/man/man1/pg_autoctl.1.gz
-%doc /usr/share/man/man5/pg_autoctl.5.gz
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%else
+  %doc /usr/share/man/man1/pg_auto_failover.1.gz
+  %doc /usr/share/man/man1/pg_autoctl.1.gz
+  %doc /usr/share/man/man5/pg_autoctl.5.gz
+%endif
 %{pginstdir}/lib/%{extname}.so
 %{pginstdir}/share/extension/%{extname}-*.sql
 %{pginstdir}/share/extension/%{extname}.control
@@ -71,6 +82,9 @@ PATH=%{pginstdir}/bin:$PATH
 
 
 %changelog
+* Wed Feb 12 2020 - Murat Tuncer <murat.tuncer@microsoft.com> 1.0.6
+- Official release for pg-auto-failover-enterprise 1.0.6
+
 * Thu Sep 26 2019 - Murat Tuncer <murat.tuncer@microsoft.com> 1.0.5
 - Official release for pg-auto-failover-enterprise 1.0.5
 
