@@ -24,7 +24,7 @@ RUN yum groupinstall -y 'Development Tools' \
         spectool \
         tar \
     && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && yum install -y postgresql12-devel \
+    && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
 
 # install jq to process JSON API responses

@@ -27,7 +27,7 @@ RUN yum install -y centos-release-scl-rh epel-release \
         spectool \
         tar \
     && yum install -y https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && yum install -y postgresql12-devel \
+    && yum install -y postgresql12-server  postgresql12-devel \
     && yum clean all
 
 # install jq to process JSON API responses
