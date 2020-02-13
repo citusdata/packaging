@@ -24,7 +24,7 @@ RUN yum groupinstall -y 'Development Tools' \
         spectool \
         tar \
     && yum install -y https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-6-x86_64/pgdg-centos10-10-2.noarch.rpm \
-    && yum install -y postgresql10-devel \
+    && yum install -y postgresql10-server postgresql10-devel \
     && yum clean all
 
 # install jq to process JSON API responses
@@ -34,7 +34,6 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 
 
 # install latest Citus release to get header files
 RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.rpm.sh | bash \
-    && yum install -y citus80_10 \
     && yum clean all
 
 RUN touch /rpmlintrc \

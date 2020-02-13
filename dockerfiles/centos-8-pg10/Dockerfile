@@ -1,24 +1,13 @@
 # vim:set ft=dockerfile:
-FROM oraclelinux:7
-
-# FIXME: Hack around docker/docker#10180
-RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl ) \
-    && yum clean all
-
-# FIXME: make sure ol7_developer repo is available
-# see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
-RUN pushd /etc/yum.repos.d/ \
-    && rm -f * \
-    && curl -O http://yum.oracle.com/public-yum-ol7.repo \
-    && popd
+FROM centos:8
 
 # install build tools and PostgreSQL development files
-RUN yum-config-manager --enable \
-        ol7_software_collections \
-        ol7_developer \
-        ol7_developer_EPEL \
+RUN yum install -y epel-release \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
+        # ccache is needed only for CentOS 8
+        # Makefile.global has a hardcoded ccache reference in the PGDG PG package
+        ccache \
         curl \
         flex \
         gcc-c++ \
@@ -27,8 +16,7 @@ RUN yum-config-manager --enable \
         libicu-devel \
         libxml2-devel \
         libxslt-devel \
-        llvm-toolset-7-clang \
-        llvm5.0 \
+        llvm-toolset \
         openssl-devel \
         pam-devel \
         readline-devel \
@@ -36,14 +24,15 @@ RUN yum-config-manager --enable \
         rpmlint \
         spectool \
         tar \
-    && yum install -y https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-oraclelinux10-10-2.noarch.rpm \
+    && yum install -y https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+    && dnf -qy module disable postgresql \
     && yum install -y postgresql10-server postgresql10-devel \
     && yum clean all
 
 # install documentation generation libraries
-RUN yum install -y python-pip python-sphinx \
-    && pip install --upgrade pip \
-    && pip install -U Sphinx
+RUN yum install -y python2 python2-pip  \
+    && pip2 install --upgrade pip \
+    && pip2 install -U Sphinx
 
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
