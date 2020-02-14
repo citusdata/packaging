@@ -2,7 +2,7 @@ citus (9.2.1.citus-1) stable; urgency=low
 
   * Fixes a bug that could cause crashes if distribution key is NULL
 
- -- Burak Velioglu <velioglub@citusdata.com>  Fri, 14 Feb 2020 11:51:09 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Fri, 14 Feb 2020 11:51:09 +0000
 
 citus (9.2.0.citus-1) stable; urgency=low
 
