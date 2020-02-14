@@ -7,8 +7,7 @@
    "license": "agpl_3",
    "provides": {
       "citus": {
-         "abstract": "Citus Distributed Database",
-         "file": "src/backend/distributed/sql/citus--9.1-1--9.2-1.sql",
+         "abstract": "Citus Distributed Database",         
          "docfile": "README.md",
          "version": "9.2.1"
       }
