@@ -1,3 +1,15 @@
+citus (9.0.2.citus-1) stable; urgency=low
+
+  * Fixes a bug that caused some prepared stmts with function calls to fail
+
+  * Fixes a bug that caused some prepared stmts with composite types to fail
+
+  * Fixes a bug that caused missing subplan results in workers
+
+  * Improves performance of re-partition joins
+
+ -- Burak Velioglu <velioglub@citusdata.com>  Fri, 6 Mar 2020 13:53:42 +0000
+
 citus (9.2.1.citus-1) stable; urgency=low
 
   * Fixes a bug that could cause crashes if distribution key is NULL
