@@ -1,6 +1,6 @@
 pkgname=citus-enterprise
 pkgdesc='Citus Enterprise'
-pkglatest=9.2.2.citus-1
+pkglatest=9.0.2.citus-1
 releasepg=11,12
 nightlypg=11,12
 nightlyref=enterprise-master
