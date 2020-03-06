@@ -8,7 +8,7 @@ citus (9.0.2.citus-1) stable; urgency=low
 
   * Improves performance of re-partition joins
 
- -- Burak Velioglu <velioglub@citusdata.com>  Fri, 6 Mar 2020 14:10:16 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Fri, 6 Mar 2020 14:10:16 +0000
 
 citus (9.2.2.citus-1) stable; urgency=low
 
