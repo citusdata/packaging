@@ -72,7 +72,6 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
-
 * Fri Mar 6 2020 - Onur Tirtir <Onur.Tirtir@microsoft.com> 9.0.2.citus-1
 - Update to Citus 9.0.2
 
