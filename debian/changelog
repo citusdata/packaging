@@ -1,6 +1,12 @@
 citus-enterprise (9.2.2.citus-1) stable; urgency=low
 
-  * Fixes a bug that could cause crashes if distribution key is NULL
+  * Fixes a bug that caused some prepared stmts with function calls to fail
+
+  * Fixes a bug that caused some prepared stmts with composite types to fail
+
+  * Fixes a bug that caused missing subplan results in workers
+
+  * Improves performance of re-partition joins
 
  -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Fri, 6 Mar 2020 7:14:57 +0000
 
