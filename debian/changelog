@@ -1,4 +1,5 @@
 citus (9.0.2.citus-1) stable; urgency=low
+
   * Fixes build errors on EL/OL 6 based distros
 
   * Fixes a bug that caused maintenance daemon to fail on standby nodes
