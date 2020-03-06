@@ -72,20 +72,9 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
-* Fri Mar 6 2020 - Burak Velioglu <velioglub@citusdata.com> 9.0.2.citus-1
+
+* Fri Mar 6 2020 - Onur Tirtir <Onur.Tirtir@microsoft.com> 9.0.2.citus-1
 - Update to Citus 9.0.2
-
-* Fri Feb 14 2020 - Onur Tirtir <ontirtir@microsoft.com> 9.2.1.citus-1
-- Update to Citus 9.2.1
-
-* Mon Feb 10 2020 - Onur Tirtir <ontirtir@microsoft.com> 9.2.0.citus-1
-- Update to Citus 9.2.0
-
-* Wed Dec 18 2019 - Onur Tirtir <ontirtir@microsoft.com> 9.1.1.citus-1
-- Update to Citus 9.1.1
-
-* Thu Nov 28 2019 - Onur Tirtir <ontirtir@microsoft.com> 9.1.0.citus-1
-- Update to Citus 9.1.0
 
 * Wed Oct 30 2019 - Hanefi Onaldi <Hanefi.Onaldi@microsoft.com> 9.0.1.citus-1
 - Update to Citus 9.0.1
