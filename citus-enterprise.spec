@@ -73,7 +73,7 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
-* Fri Mar 6 2020 - Burak Velioglu <velioglub@citusdata.com> 9.0.2.citus-1
+* Fri Mar 6 2020 - Onur Tirtir <Onur.Tirtir@microsoft.com> 9.0.2.citus-1
 - Update to Citus Enterprise 9.0.2
 
 * Fri Mar 6 2020 - Onur Tirtir <ontirtir@microsoft.com> 9.2.2.citus-1
