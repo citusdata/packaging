@@ -1,6 +1,6 @@
 pkgname=pg-auto-failover
 hubproj=pg_auto_failover
 pkgdesc='Postgres extension for automated failover and high-availability'
-pkglatest=1.0.6
+pkglatest=1.2
 releasepg=10,11,12
 versioning=fancy
