@@ -18,7 +18,7 @@ citus (9.2.3.citus-1) stable; urgency=low
 
   * Uses Microsoft approved cipher string for default TLS setup
 
- -- Burak Velioglu <velioglub@citusdata.com>  Thu, 26 Mar 2020 8:22:48 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Thu, 26 Mar 2020 8:22:48 +0000
 
 citus (9.0.2.citus-1) stable; urgency=low
 
