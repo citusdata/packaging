@@ -11,7 +11,7 @@ Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
 Version:	9.2.3.citus
 Release:	1%{dist}
-License:	AGPLv3
+License:	Commercial
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/citus-enterprise/archive/v9.2.3.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
