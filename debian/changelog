@@ -6,7 +6,7 @@ citus-enterprise (9.2.4.citus-1) stable; urgency=low
 
   * Disallows distributed function creation when replication_model is statement
 
- -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Tue, 31 Mar 2020 8:7:33 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Tue, 31 Mar 2020 08:07:33 +0000
 
 citus-enterprise (9.2.3.citus-1) stable; urgency=low
 
