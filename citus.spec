@@ -7,11 +7,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	9.2.3.citus
+Version:	9.2.4.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:       https://github.com/citusdata/citus/archive/v9.2.3.tar.gz
+Source0:       https://github.com/citusdata/citus/archive/v9.2.4.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -72,6 +72,9 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
+* Tue Mar 31 2020 - Burak Velioglu <velioglub@citusdata.com> 9.2.4.citus-1
+- Update to Citus 9.2.4
+
 * Thu Mar 26 2020 - Onur Tirtir <Onur.Tirtir@microsoft.com> 9.2.3.citus-1
 - Update to Citus 9.2.3
 
