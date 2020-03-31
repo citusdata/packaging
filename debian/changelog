@@ -1,10 +1,6 @@
 citus-enterprise (9.2.4.citus-1) stable; urgency=low
 
-  * Fixes build errors on EL/OL 6 based distros
-
-  * Fixes a bug that caused maintenance daemon to fail on standby nodes
-
-  * Disallows distributed function creation when replication_model is statement
+  * Fixes a release problem in 9.2.3
 
  -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Tue, 31 Mar 2020 08:07:33 +0000
 
