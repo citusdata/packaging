@@ -1,3 +1,10 @@
+citus (9.2.5.citus-1) stable; urgency=low
+{
+  "message": "No commit found for the ref v9.2.5",
+  "documentation_url": "https://developer.github.com/v3/repos/contents/"
+}
+ --  <Onur.Tirtir>  Wed, 1 Apr 2020 8:33:38 +0000
+
 citus (9.2.4.citus-1) stable; urgency=low
 
   * Fixes a release problem in 9.2.3
