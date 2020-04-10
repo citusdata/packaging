@@ -155,7 +155,8 @@ finalize_zypper_repo ()
 
 detect_repo_url ()
 {
-  # set common defaults used by most flavors
+  # set common defaults used by all flavors
+  # Various repositories of different flavors are stored in EL (e.g. Centos and OL)
   family='redhat'
   family_short='EL'
   pkg_dist="${dist}"
