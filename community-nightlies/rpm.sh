@@ -157,25 +157,11 @@ detect_repo_url ()
 {
   # set common defaults used by most flavors
   family='redhat'
-  family_short='rhel'
+  family_short='EL'
   pkg_dist="${dist}"
-  pkg_os="${os}"
-  pkg_version='2'
 
   case "${os}" in
-    ol)
-      pkg_os='oraclelinux'
-      ;;
-    fedora)
-      family='fedora'
-      family_short='fedora'
-      pkg_version='2'
-      ;;
-    centos)
-      # defaults are suitable
-      ;;
-    rhel|redhatenterpriseserver)
-      pkg_os='redhat'
+    ol|centos|rhel|redhatenterpriseserver)
       ;;
     *)
       unknown_os
