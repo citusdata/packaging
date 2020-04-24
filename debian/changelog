@@ -2,6 +2,12 @@ citus-enterprise (9.2.4.citus-1) stable; urgency=low
 
   * Fixes a release problem in 9.2.3
 
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Fri, 24 Apr 2020 14:36:0 +0000
+
+citus-enterprise (9.2.4.citus-1) stable; urgency=low
+
+  * Fixes a release problem in 9.2.3
+
  --  <Jelte.Fennema@microsoft.com>  Tue, 31 Mar 2020 8:41:10 +0000
 
 citus-enterprise (9.2.3.citus-1) stable; urgency=low
