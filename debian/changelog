@@ -1,3 +1,10 @@
+citus-enterprise (9.2.5.citus-1) stable; urgency=low
+{
+  "message": "No commit found for the ref v9.2.5",
+  "documentation_url": "https://developer.github.com/v3/repos/contents/"
+}
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Fri, 24 Apr 2020 14:34:16 +0000
+
 citus-enterprise (9.2.4.citus-1) stable; urgency=low
 
   * Fixes a release problem in 9.2.3
