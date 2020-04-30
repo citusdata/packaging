@@ -59,7 +59,11 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main' > /etc/
         postgresql-server-dev-all \
         wget \
         zlib1g-dev \
+        python3-pip \
+        python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install sphinx==1.8
 
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \

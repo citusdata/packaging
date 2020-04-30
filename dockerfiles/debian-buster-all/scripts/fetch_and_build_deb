@@ -172,6 +172,6 @@ pg_buildext updatecontrol
 procs="$(nproc)"
 mjobs="$(expr $procs + 1)"
 
-DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild --preserve-envvar CONF_EXTRA_VERSION --preserve-envvar UNENCRYPTED_PACKAGE --preserve-envvar PACKAGE_ENCRYPTION_KEY -uc -us -B --lintian-opts --profile debian --allow-root
+DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild --prepend-path /usr/local/bin --preserve-envvar CONF_EXTRA_VERSION --preserve-envvar UNENCRYPTED_PACKAGE --preserve-envvar PACKAGE_ENCRYPTION_KEY -uc -us -B --lintian-opts --profile debian --allow-root
 
 cp ../*.deb /packages
