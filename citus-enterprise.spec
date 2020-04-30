@@ -145,18 +145,22 @@ if [ "\$(id -u)" -ne "0" ]; then
 fi
 
 
-eula_text="
+echo "
 Your use of this software is subject to the terms and conditions of the license
 agreement by which you acquired this software. If you are a volume license
 customer, use of this software is subject to your volume license agreement.
 You may not use this software if you have not validly acquired a license for
 the software from Microsoft or its licensed distributors.
 
-Do you accept these terms? YES/NO"
+BY USING THE SOFTWARE, YOU ACCEPT THIS AGREEMENT.
+"
 
 CITUS_ACCEPT_LICENSE="\${CITUS_ACCEPT_LICENSE:-}"
+
+interactive_license=false
 while [ -z "\$CITUS_ACCEPT_LICENSE" ]; do
-    echo "\$eula_text"
+    interactive_license=true
+    echo "Do you accept these terms? YES/NO"
     read -r CITUS_ACCEPT_LICENSE
 done
 
@@ -171,6 +175,9 @@ case "\$CITUS_ACCEPT_LICENSE" in
         exit 1
 esac
 
+if [ \$interactive_license = false ]; then
+    echo "Accepted terms by using CITUS_ACCEPT_LICENSE=YES environment variable"
+fi
 
 encryption_disclaimer_text="
 Since Citus is a distributed database, data is sent over the network between
