@@ -40,11 +40,6 @@ RUN yum-config-manager --enable \
     && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
 
-# install documentation generation libraries
-RUN yum install -y python-pip python-sphinx \
-    && pip install --upgrade pip \
-    && pip install -U Sphinx
-
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
          -o /usr/bin/jq \
@@ -60,6 +55,18 @@ RUN { \
         || yum install -y devtoolset-8-gcc ; \
     } \
     && yum clean all
+
+# install sphinx on distros with python3
+RUN { \
+        { yum search python3-pip 2>&1 | grep 'No matches found' ; } \
+        || { \
+            yum install -y python3-pip && \
+            pip3 install sphinx==1.8 \
+            ; \
+        } \
+    } \
+    && yum clean all
+
 
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros

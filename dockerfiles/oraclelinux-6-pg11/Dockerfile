@@ -45,6 +45,18 @@ RUN { \
     } \
     && yum clean all
 
+# install sphinx on distros with python3
+RUN { \
+        { yum search python3-pip 2>&1 | grep 'No matches found' ; } \
+        || { \
+            yum install -y python3-pip && \
+            pip3 install sphinx==1.8 \
+            ; \
+        } \
+    } \
+    && yum clean all
+
+
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
