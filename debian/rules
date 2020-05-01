@@ -10,6 +10,7 @@ clean: debian/control
 override_dh_auto_build:
 	+make -C $(shell pwd)/src/bin/pg_autoctl
 	+pg_buildext build $(shell pwd)/src/monitor build-%v
+	+make man
 
 override_dh_auto_clean:
 	+make -C $(shell pwd)/src/bin/pg_autoctl clean
@@ -23,6 +24,7 @@ override_dh_auto_install:
 		DESTDIR=$(CURDIR)/debian/${CLINAME} \
 		BINDIR=/usr/bin
 	+pg_buildext install $(shell pwd)/src/monitor build-%v postgresql-%v-auto-failover
+	dh_installman docs/_build/man/*
 
 %:
 	dh $@
