@@ -7,6 +7,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 # https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
 RUN set -x \
 	&& apt-get update \
+# Fix ipv6 issue on travis: https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-466594168
+	&& mkdir ~/.gnupg && echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf \
 	&& { \
 		which gpg \
 # prefer gnupg2, to match APT's Recommends

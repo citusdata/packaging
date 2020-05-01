@@ -1,0 +1,23 @@
+sudo: required
+services: [ docker ]
+language: perl
+perl: "5.18"
+env:
+  matrix:
+    - TARGET_PLATFORM=centos,8
+    - TARGET_PLATFORM=centos,7
+    - TARGET_PLATFORM=centos,6
+    - TARGET_PLATFORM=debian,buster
+    - TARGET_PLATFORM=debian,jessie
+    - TARGET_PLATFORM=debian,stretch
+    - TARGET_PLATFORM=oraclelinux,7
+    - TARGET_PLATFORM=oraclelinux,6
+    - TARGET_PLATFORM=ubuntu,bionic
+    - TARGET_PLATFORM=ubuntu,xenial
+    - TARGET_PLATFORM=pgxn
+before_install:
+  - echo $TARGET_PLATFORM > os-list.csv
+install: true
+script:
+  - ./update_dockerfiles && git diff --exit-code dockerfiles
+  - git checkout -- dockerfiles && ./update_images
