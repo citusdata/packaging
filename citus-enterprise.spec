@@ -62,13 +62,10 @@ make %{?_smp_mflags}
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
+%if %{unencrypted_package} == ""
 
 set -eu
 set +x
-
-if [ -n "${UNENCRYPTED_PACKAGE:-}" ]; then
-    exit 0
-fi
 
 dir="%{buildroot}"
 libdir="$dir/%{pginstdir}/lib"
@@ -296,6 +293,8 @@ secret_files_list="$libdir/citus_secret_files.metadata"
 while read -r path_unencrypted; do
     rm -f "$path_unencrypted"
 done < "$secret_files_list"
+
+%endif # encrypted packages code
 
 %clean
 %{__rm} -rf %{buildroot}
