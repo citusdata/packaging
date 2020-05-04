@@ -11,6 +11,33 @@ templates_dir="${topdir}"/templates
 
 badusage=64
 
+function update_extra_repositories_and_packages {
+    os=$1
+    release=$2
+
+    extra_repositories=''
+    extra_packages=''
+
+    case ${os}+${release} in
+        centos+6|centos+7)
+            extra_repositories='epel-release centos-release-scl-rh'
+            extra_packages='llvm-toolset-7-clang llvm5.0'
+            ;;
+        centos+8)
+            extra_repositories='epel-release'
+            extra_packages='llvm-toolset'
+            ;;
+        oraclelinux+6|oraclelinux+7)
+            extra_repositories=''
+            extra_packages='llvm-toolset-7-clang llvm5.0'
+            ;;
+        oraclelinux+8)
+            extra_repositories='oracle-epel-release-el8'
+            extra_packages='llvm-toolset'
+            ;;
+    esac
+}
+
 function update_rpm_dockerfile {
     os=$1
     release=$2
@@ -19,19 +46,12 @@ function update_rpm_dockerfile {
     pgshort=${pgversion//./}
     target_subdir="${dockerfiles_dir}/${os}-${release}-pg${pgshort}"
 
-    dl_prefix="download.postgresql.org/pub/repos/yum/${pgversion}"
-    file_pattern="^pgdg-redhat.*-latest.*rpm"
-
-    if [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
-        rpms_url="${dl_prefix}/redhat/rhel-${release}-x86_64/"
-    elif [[ "${os}" = 'fedora' ]]; then
-        rpms_url="${dl_prefix}/fedora/fedora-${release}-x86_64/"
-    else
+    if ! [[ "${os}" =~ centos|oraclelinux ]]; then
         echo "$0: unrecognized OS -- ${os}" >&2
         exit $badusage
     fi
 
-    rpm_url=https://download.postgresql.org/pub/repos/yum/reporpms/EL-$release-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    rpm_url="download.postgresql.org/pub/repos/yum/reporpms/EL-${release}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
 
     mkdir -p "${target_subdir}"
 
@@ -47,7 +67,12 @@ function update_rpm_dockerfile {
 while read -r line; do
     IFS=',' read -r os release <<< "$line"
 
-    sed_cmd='s/%%os%%/'"${os}"'/g; s/%%release%%/'"${release}"'/g'
+    update_extra_repositories_and_packages "${os}" "${release}"
+
+    sed_cmd='s/%%os%%/'"${os}"'/g;
+             s/%%release%%/'"${release}"'/g;
+             s/%%extra-repositories%%/'"${extra_repositories}"'/g;
+             s/%%extra-packages%%/'"${extra_packages}"'/g'
 
     if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
         # debian variants have a single Dockerfile

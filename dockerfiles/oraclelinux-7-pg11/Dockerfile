@@ -2,21 +2,24 @@
 FROM oraclelinux:7
 
 # FIXME: Hack around docker/docker#10180
-RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl ) \
+RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
     && yum clean all
 
 # FIXME: make sure ol7_developer repo is available
 # see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
-RUN pushd /etc/yum.repos.d/ \
-    && rm -f * \
-    && curl -O http://yum.oracle.com/public-yum-ol7.repo \
-    && popd
+RUN [[ oraclelinux != oraclelinux ]] || [[ 7 != 7 ]] || ( \
+        pushd /etc/yum.repos.d/ \
+        && rm -f * \
+        && curl -O http://yum.oracle.com/public-yum-ol7.repo \
+        && popd \
+        && yum-config-manager --enable \
+            ol7_software_collections \
+            ol7_developer \
+            ol7_developer_EPEL \
+        && yum clean all ) 
 
 # install build tools and PostgreSQL development files
-RUN yum-config-manager --enable \
-        ol7_software_collections \
-        ol7_developer \
-        ol7_developer_EPEL \
+RUN ( [[ -z "" ]] || yum install -y ) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         curl \
@@ -27,8 +30,6 @@ RUN yum-config-manager --enable \
         libicu-devel \
         libxml2-devel \
         libxslt-devel \
-        llvm-toolset-7-clang \
-        llvm5.0 \
         openssl-devel \
         pam-devel \
         readline-devel \
@@ -36,7 +37,9 @@ RUN yum-config-manager --enable \
         rpmlint \
         spectool \
         tar \
+        llvm-toolset-7-clang llvm5.0 \
     && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+    && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql11-server postgresql11-devel \
     && yum clean all
 

@@ -2,11 +2,24 @@
 FROM centos:6
 
 # FIXME: Hack around docker/docker#10180
-RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl ) \
+RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
     && yum clean all
 
+# FIXME: make sure ol7_developer repo is available
+# see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
+RUN [[ centos != oraclelinux ]] || [[ 6 != 7 ]] || ( \
+        pushd /etc/yum.repos.d/ \
+        && rm -f * \
+        && curl -O http://yum.oracle.com/public-yum-ol7.repo \
+        && popd \
+        && yum-config-manager --enable \
+            ol7_software_collections \
+            ol7_developer \
+            ol7_developer_EPEL \
+        && yum clean all ) 
+
 # install build tools and PostgreSQL development files
-RUN yum install -y centos-release-scl-rh epel-release \
+RUN ( [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         curl \
@@ -17,8 +30,6 @@ RUN yum install -y centos-release-scl-rh epel-release \
         libicu-devel \
         libxml2-devel \
         libxslt-devel \
-        llvm-toolset-7-clang \
-        llvm5.0 \
         openssl-devel \
         pam-devel \
         readline-devel \
@@ -26,8 +37,10 @@ RUN yum install -y centos-release-scl-rh epel-release \
         rpmlint \
         spectool \
         tar \
+        llvm-toolset-7-clang llvm5.0 \
     && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && yum install -y postgresql12-server  postgresql12-devel \
+    && ( [[ 6 < 8 ]] || dnf -qy module disable postgresql ) \
+    && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
 
 # install jq to process JSON API responses

@@ -1,13 +1,27 @@
 # vim:set ft=dockerfile:
 FROM centos:8
 
+# FIXME: Hack around docker/docker#10180
+RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
+    && yum clean all
+
+# FIXME: make sure ol7_developer repo is available
+# see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
+RUN [[ centos != oraclelinux ]] || [[ 8 != 7 ]] || ( \
+        pushd /etc/yum.repos.d/ \
+        && rm -f * \
+        && curl -O http://yum.oracle.com/public-yum-ol7.repo \
+        && popd \
+        && yum-config-manager --enable \
+            ol7_software_collections \
+            ol7_developer \
+            ol7_developer_EPEL \
+        && yum clean all ) 
+
 # install build tools and PostgreSQL development files
-RUN yum install -y epel-release \
+RUN ( [[ -z "epel-release" ]] || yum install -y epel-release) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
-        # ccache is needed only for CentOS 8
-        # Makefile.global has a hardcoded ccache reference in the PGDG PG package
-        ccache \
         curl \
         flex \
         gcc-c++ \
@@ -16,7 +30,6 @@ RUN yum install -y epel-release \
         libicu-devel \
         libxml2-devel \
         libxslt-devel \
-        llvm-toolset \
         openssl-devel \
         pam-devel \
         readline-devel \
@@ -24,8 +37,9 @@ RUN yum install -y epel-release \
         rpmlint \
         spectool \
         tar \
+        llvm-toolset \
     && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && dnf -qy module disable postgresql \
+    && ( [[ 8 < 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql11-server postgresql11-devel \
     && yum clean all
 

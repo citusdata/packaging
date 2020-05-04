@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM centos:7
+FROM oraclelinux:8
 
 # FIXME: Hack around docker/docker#10180
 RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
@@ -7,7 +7,7 @@ RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /v
 
 # FIXME: make sure ol7_developer repo is available
 # see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
-RUN [[ centos != oraclelinux ]] || [[ 7 != 7 ]] || ( \
+RUN [[ oraclelinux != oraclelinux ]] || [[ 8 != 7 ]] || ( \
         pushd /etc/yum.repos.d/ \
         && rm -f * \
         && curl -O http://yum.oracle.com/public-yum-ol7.repo \
@@ -19,7 +19,7 @@ RUN [[ centos != oraclelinux ]] || [[ 7 != 7 ]] || ( \
         && yum clean all ) 
 
 # install build tools and PostgreSQL development files
-RUN ( [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
+RUN ( [[ -z "oracle-epel-release-el8" ]] || yum install -y oracle-epel-release-el8) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         curl \
@@ -37,9 +37,9 @@ RUN ( [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-relea
         rpmlint \
         spectool \
         tar \
-        llvm-toolset-7-clang llvm5.0 \
-    && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
+        llvm-toolset \
+    && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+    && ( [[ 8 < 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
 

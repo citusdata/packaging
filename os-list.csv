@@ -4,8 +4,10 @@ centos,6
 debian,buster
 debian,jessie
 debian,stretch
+oraclelinux,8
 oraclelinux,7
 oraclelinux,6
+ubuntu,focal
 ubuntu,bionic
 ubuntu,xenial
 pgxn
