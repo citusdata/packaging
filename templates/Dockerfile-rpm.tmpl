@@ -26,7 +26,7 @@ RUN yum install -y centos-release-scl-rh epel-release \
         rpmlint \
         spectool \
         tar \
-    && yum install -y https://%%rpm_url%% \
+    && yum install -y %%rpm_url%% \
     && yum install -y postgresql%%pgshort%%-devel \
     && yum clean all
 

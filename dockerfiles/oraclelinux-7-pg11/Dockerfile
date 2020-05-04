@@ -36,7 +36,7 @@ RUN yum-config-manager --enable \
         rpmlint \
         spectool \
         tar \
-    && yum install -y https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-oraclelinux11-11-2.noarch.rpm \
+    && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && yum install -y postgresql11-server postgresql11-devel \
     && yum clean all
 # install documentation generation libraries

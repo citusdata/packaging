@@ -31,8 +31,7 @@ function update_rpm_dockerfile {
         exit $badusage
     fi
 
-    rpm=$(lftp -e 'cls -1; bye' "https://${rpms_url}" | egrep "$file_pattern" | sort -t'-' -k4 -nr | head -n1)
-    rpm_url=${rpms_url}${rpm}
+    rpm_url=https://download.postgresql.org/pub/repos/yum/reporpms/EL-$release-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
     mkdir -p "${target_subdir}"
 
