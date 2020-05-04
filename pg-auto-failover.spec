@@ -32,6 +32,7 @@ PATH=%{pginstdir}/bin:$PATH
 make %{?_smp_mflags}
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %else
+  export PYTHONPATH=$(echo /usr/local/lib64/python3.*/site-packages):$(echo /usr/local/lib/python3.*/site-packages)
   make man
 %endif
 
