@@ -21,5 +21,5 @@ before_install:
   - echo $TARGET_PLATFORM > os-list.csv
 install: true
 script:
-  #- ./update_dockerfiles && git diff --exit-code dockerfiles
+  - ./update_dockerfiles && git diff --exit-code dockerfiles
   - git checkout -- dockerfiles && ./update_images
