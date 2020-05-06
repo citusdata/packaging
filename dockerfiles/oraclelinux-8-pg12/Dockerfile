@@ -48,10 +48,6 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 
          -o /usr/bin/jq \
     && chmod +x /usr/bin/jq
 
-# install latest Citus release to get header files
-RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.rpm.sh | bash \
-    && yum clean all
-
 # install devtoolset-8-gcc on distros where it is available
 RUN { \
         { yum search devtoolset-8-gcc 2>&1 | grep 'No matches found' ; } \
