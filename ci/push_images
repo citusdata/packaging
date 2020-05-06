@@ -12,7 +12,7 @@ badusage=64
 
 nprocs="${1:-1}"
 
-if [[ $(git rev-parse --abbrev-ref HEAD) != develop ]]; then
+if [[ "$TRAVIS_PULL_REQUEST" != "false" ]] || [[ "$TRAVIS_BRANCH" != "develop" ]] ; then
     echo "PR is not merged to develop, not pushing to DockerHub"
     exit 0;
 fi
