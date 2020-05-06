@@ -52,6 +52,7 @@ source /buildfiles/pkgvars
 
 # set default values for certain packaging variables
 declare pkglatest # to make shellcheck happy
+pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
 releasepg="${releasepg:-11,12}"
