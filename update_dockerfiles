@@ -25,7 +25,7 @@ function update_extra_repositories_and_packages {
             ;;
         centos+8)
             extra_repositories='epel-release'
-            extra_packages='llvm-toolset'
+            extra_packages='llvm-toolset ccache'
             ;;
         oraclelinux+6|oraclelinux+7)
             extra_repositories=''
@@ -33,7 +33,7 @@ function update_extra_repositories_and_packages {
             ;;
         oraclelinux+8)
             extra_repositories='oracle-epel-release-el8'
-            extra_packages='llvm-toolset'
+            extra_packages='llvm-toolset ccache'
             ;;
     esac
 }

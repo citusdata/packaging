@@ -37,7 +37,7 @@ RUN ( [[ -z "epel-release" ]] || yum install -y epel-release) \
         rpmlint \
         spectool \
         tar \
-        llvm-toolset \
+        llvm-toolset ccache \
     && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && ( [[ 8 < 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql10-server postgresql10-devel \
