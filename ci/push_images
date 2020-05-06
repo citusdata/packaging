@@ -5,7 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 pgversions='10'
-topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 dockerfiles_dir="${topdir}/dockerfiles"
 
 badusage=64
