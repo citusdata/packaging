@@ -18,6 +18,8 @@ override_dh_auto_configure:
 
 override_dh_auto_install:
 	+pg_buildext install build-%v postgresql-%v-citus-enterprise
+	# Create shared library dependencies before encrypting the files
+	dh_shlibdeps
 	debian/encrypt_files.sh
 
 %:
