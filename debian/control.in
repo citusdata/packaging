@@ -9,7 +9,7 @@ Homepage: https://github.com/citusdata/pg_auto_failover
 
 Package: pg-auto-failover-cli
 Architecture: any
-Depends: ${shlibs:Depends},${misc:Depends}
+Depends: ${shlibs:Depends},${misc:Depends}, openssl
 Provides: pg-auto-failover-cli (= ${binary:Version})
 Conflicts: pg-auto-failover-cli
 Recommends: postgresql-10-auto-failover | postgresql-11-auto-failover | postgresql-12-auto-failover
