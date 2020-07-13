@@ -1,3 +1,11 @@
+citus-enterprise (9.3.3.citus-1) stable; urgency=low
+
+  * Fixes a memory leak in subtransaction memory handling
+
+  * Fixes DROP ROLE IF EXISTS bug for non-existing roles
+
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Mon, 13 Jul 2020 8:36:49 +0000
+
 citus-enterprise (9.3.0.citus-1) stable; urgency=low
 
   * Adds max_shared_pool_size to control number of connections across sessions
