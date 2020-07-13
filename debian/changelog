@@ -1,3 +1,9 @@
+citus (9.3.3.citus-1) stable; urgency=low
+
+  * Fixes a memory leak in subtransaction memory handling
+
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Mon, 13 Jul 2020 8:36:23 +0000
+
 citus (9.3.0.citus-1) stable; urgency=low
 
   * Adds max_shared_pool_size to control number of connections across sessions
