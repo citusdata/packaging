@@ -8,7 +8,7 @@
    "provides": {
       "citus": {
          "abstract": "Citus Distributed Database",
-         "file": "src/backend/distributed/sql/citus--9.3-2--9.4-1.sql"
+         "file": "src/backend/distributed/sql/citus--9.3-2--9.4-1.sql",
          "docfile": "README.md",
          "version": "9.3.4"
       }
