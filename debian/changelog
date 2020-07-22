@@ -6,7 +6,7 @@ citus (9.3.4.citus-1) stable; urgency=low
 
   * Fixes deparsing for queries with anonymous column references
 
- -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Wed, 22 Jul 2020 9:0:1 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Wed, 22 Jul 2020 9:00:01 +0000
 
 citus (9.3.3.citus-1) stable; urgency=low
 
