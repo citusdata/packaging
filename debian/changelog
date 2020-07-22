@@ -1,3 +1,13 @@
+citus (9.3.4.citus-1) stable; urgency=low
+
+  * Fixes a bug that could cause crashes with certain compile flags
+
+  * Fixes a bug with lists of configuration values in ALTER ROLE SET statements
+
+  * Fixes deparsing for queries with anonymous column references
+
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Wed, 22 Jul 2020 9:0:1 +0000
+
 citus (9.3.3.citus-1) stable; urgency=low
 
   * Fixes a memory leak in subtransaction memory handling
