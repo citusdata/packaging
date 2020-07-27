@@ -302,6 +302,7 @@ done < "$secret_files_list"
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
+%doc vendor/safestringlib/LICENSE
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %doc LICENSE
 %else
