@@ -11,8 +11,8 @@ failure=1
 # fallback to public email
 email=$(curl -sf https://api.github.com/user | jq -r '.email // empty')
 
-# find the first verified Citus Data email
-jqfilter='map(select(.verified and (.email | test("@citusdata.com$")))) | first | .email // empty'
+# find the first verified Microsoft email
+jqfilter='map(select(.verified and (.email | test("@microsoft.com$")))) | first | .email // empty'
 citusemail=$(curl -sf https://api.github.com/user/emails | jq -r "${jqfilter}")
 
 if [ -n "${citusemail}" ]; then
