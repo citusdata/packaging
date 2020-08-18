@@ -156,7 +156,7 @@ sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
 osname=$(awk '{print $1}' /etc/system-release)
 if [ "${osname}" == 'Oracle' ]; then
     locale='C'
-elif [ "${osname}" == 'Fedora' ]; then
+elif [ "${osname}" == 'Fedora' ] || [ "${osname}" == 'CentOS' ]; then
     locale='C.utf8'
 else
     locale='en_US.utf8'
