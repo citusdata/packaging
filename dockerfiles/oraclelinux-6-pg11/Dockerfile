@@ -5,7 +5,7 @@ FROM oraclelinux:6
 RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
     && yum clean all
 
-# FIXME: make sure ol7_developer repo is available
+# Enable some other repos for some dependencies in OL/7 
 # see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
 RUN [[ oraclelinux != oraclelinux ]] || [[ 6 != 7 ]] || ( \
         pushd /etc/yum.repos.d/ \
@@ -16,7 +16,8 @@ RUN [[ oraclelinux != oraclelinux ]] || [[ 6 != 7 ]] || ( \
             ol7_software_collections \
             ol7_developer \
             ol7_developer_EPEL \
-        && yum clean all ) 
+            ol7_optional_archive \
+        && yum clean all )
 
 # install build tools and PostgreSQL development files
 RUN ( [[ -z "" ]] || yum install -y ) \
