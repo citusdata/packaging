@@ -1,3 +1,9 @@
+pg-auto-failover (v1.4.0-1) stable; urgency=low
+
+  * Official v1.4.0 release of pg_auto_failover
+
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Wed, 23 Sep 2020 12:39:38 +0000
+
 pg-auto-failover (1.3.1-1) stable; urgency=low
 
   * Official 1.3.1 release of pg_auto_failover
