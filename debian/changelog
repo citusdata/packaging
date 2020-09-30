@@ -1,3 +1,11 @@
+citus-enterprise (9.4.1.citus-1) stable; urgency=low
+
+  * Fixes EXPLAIN ANALYZE output truncation
+
+  * Fixes a deadlock during transaction recovery
+
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Wed, 30 Sep 2020 9:34:32 +0000
+
 citus-enterprise (9.4.0.citus-1) stable; urgency=low
 
   * Improves COPY by honoring max_adaptive_executor_pool_size config
