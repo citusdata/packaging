@@ -1,3 +1,11 @@
+citus (9.4.2.citus-1) stable; urgency=low
+
+  * Fixes a bug that could lead to multiple maintenance daemons
+
+  * Fixes an issue preventing views in reference table modifications
+
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Thu, 22 Oct 2020 8:53:44 +0000
+
 citus (9.4.1.citus-1) stable; urgency=low
 
   * Fixes EXPLAIN ANALYZE output truncation
