@@ -6,7 +6,7 @@ citus-enterprise (9.4.2.citus-1) stable; urgency=low
 
   * Replaces citus.replication_sslmode with citus.node_conninfo
 
- -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Thu, 22 Oct 2020 7:25:5 +0000
+ -- Onur Tirtir <Onur.Tirtir@microsoft.com>  Thu, 22 Oct 2020 7:25:05 +0000
 
 citus-enterprise (9.4.1.citus-1) stable; urgency=low
 
