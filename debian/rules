@@ -7,7 +7,10 @@ override_dh_auto_build:
 	+pg_buildext build build-%v '$(CFLAGS) -fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security'
 
 override_dh_auto_clean:
-	+pg_buildext clean build-%v
+	# This breaks override_dh_auto_configure, so disable it.
+	# Shouldn't be a problem as we already do packaging in
+	# different directories for each pg version.
+	#+pg_buildext clean build-%v
 
 override_dh_auto_test:
 	# nothing to do here, see debian/tests/* instead
