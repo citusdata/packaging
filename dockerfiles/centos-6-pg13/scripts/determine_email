@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# make bash behave
+set -uo pipefail
+IFS=$'\n\t'
+
+# constants
+success=0
+failure=1
+
+# fallback to public email
+email=$(curl -sf https://api.github.com/user | jq -r '.email // empty')
+
+# first try to find Microsoft email, if fails, then it must be the
+# case that bots@citusdata.com is building nightly packages for us
+jqfilter='map(select(.verified and (.email | test("@microsoft.com$|^bots@citusdata.com$")))) | first | .email // empty'
+citusemail=$(curl -sf https://api.github.com/user/emails | jq -r "${jqfilter}")
+
+if [ -n "${citusemail}" ]; then
+    email="${citusemail}"
+fi
+
+if [ -z "${email}" ]; then
+    echo "$0: could not determine email" >&2
+    exit $failure
+fi
+
+echo "${email}"
+exit $success

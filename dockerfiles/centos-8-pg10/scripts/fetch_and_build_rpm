@@ -154,9 +154,7 @@ sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
     "${builddir}/${pkgname}.spec"
 
 osname=$(awk '{print $1}' /etc/system-release)
-if [ "${osname}" == 'Oracle' ]; then
-    locale='C'
-elif [ "${osname}" == 'Fedora' ] || [ "${osname}" == 'CentOS' ]; then
+if [ "${osname}" == 'Fedora' ] || [ "${osname}" == 'CentOS' ] || [ "${osname}" == 'Oracle' ]; then
     locale='C.utf8'
 else
     locale='en_US.utf8'
