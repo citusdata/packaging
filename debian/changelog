@@ -1,3 +1,14 @@
+citus (9.5.2.citus-1) stable; urgency=low
+
+  * Fixes distributed deadlock detection being blocked by metadata sync
+
+  * Prevents segfaults when SAVEPOINT handling cannot recover from connection
+  failures
+
+  * Fixes possible issues that might occur with single shard distributed tables
+
+ -- Gurkan Indibay <gindibay@gmail.com>  Wed, 27 Jan 2021 8:40:23 +0000
+
 citus (9.4.4.citus-1) stable; urgency=low
 
   * Fixes a bug that could cause router queries with local tables to be pushed
