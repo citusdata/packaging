@@ -79,7 +79,7 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
-* Wed Jan 27 2021 - Gurkan Indibay <gindibay@gmail.com> 9.5.2.citus-1
+* Wed Jan 27 2021 - Gurkan Indibay <gindibay@microsoft.com> 9.5.2.citus-1
 - Official 9.5.2 release of Citus
 
 * Tue Jan 5 2021 - gurkanindibay <gindibay@microsoft.com> 9.4.4.citus-1
