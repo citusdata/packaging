@@ -2,8 +2,17 @@
 
 include /usr/share/postgresql-common/pgxs_debian_control.mk
 
+# Flags taken from: https://liquid.microsoft.com/Web/Object/Read/ms.security/Requirements/Microsoft.Security.SystemsADM.10203#guide
+SECURITY_CFLAGS=-fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security
+
+GCCVERSIONGTE8=$(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 8)
+ifeq "$(GCCVERSIONGTE8)" "1"
+    # if gcc version is greater than or equal to 8 we should also use this flag
+    SECURITY_CFLAGS += -fstack-clash-protection
+endif
+
 override_dh_auto_build:
-	+pg_buildext build build-%v
+	+pg_buildext build build-%v '$(CFLAGS) $(SECURITY_CFLAGS)'
 
 override_dh_auto_clean:
 	# This breaks override_dh_auto_configure, so disable it.
@@ -15,6 +24,7 @@ override_dh_auto_test:
 	# nothing to do here, see debian/tests/* instead
 
 override_dh_auto_configure:
+	debian/check-gcc-version.sh
 	+pg_buildext configure build-%v --with-extra-version="$${CONF_EXTRA_VERSION:-}"
 
 override_dh_auto_install:

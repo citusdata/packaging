@@ -34,8 +34,24 @@ commands.
 %prep
 %setup -q -n %{sname}-%{version}
 
+# Flags taken from: https://liquid.microsoft.com/Web/Object/Read/ms.security/Requirements/Microsoft.Security.SystemsADM.10203#guide
+SECURITY_CFLAGS="-fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security"
+
+currentgccver="$(gcc -dumpversion)"
+requiredgccver="4.8.2"
+if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | tail -n1)" = "$requiredgccver" ]; then
+      echo WARNING: Using slower security flags because of outdated compiler
+      SECURITY_CFLAGS="-fstack-protector-all -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security"
+    fi
+fi
+
+gccgte8=$(expr `gcc -dumpversion | cut -f1 -d.` \>= 8)
+ifeq "$(gccgte8)" "1"
+    SECURITY_CFLAGS += -fstack-clash-protection
+endif
+
 %build
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}"
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" CC=$(command -v gcc) CFLAGS="$SECURITY_CFLAGS"
 make %{?_smp_mflags}
 
 %install
