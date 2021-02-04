@@ -12,7 +12,7 @@ Architecture: any
 Depends: ${shlibs:Depends},${misc:Depends}, openssl
 Provides: pg-auto-failover-cli (= ${binary:Version})
 Conflicts: pg-auto-failover-cli
-Recommends: postgresql-10-auto-failover | postgresql-11-auto-failover | postgresql-12-auto-failover
+Recommends: postgresql-10-auto-failover | postgresql-11-auto-failover | postgresql-12-auto-failover | postgresql-13-auto-failover
 Description: Command line interface and service to manage pg auto failover Clusters
  This CLI is used to manage pg_auto_failover installations to provide High
  Availability to Postgres.
