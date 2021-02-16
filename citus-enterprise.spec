@@ -10,11 +10,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	9.5.2.citus
+Version:	10.0.citus
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-enterprise/archive/v9.5.2.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v10.0.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -352,6 +352,9 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Tue Feb 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.citus-1
+- Official 10.0 release of Citus Enterprise
+
 * Thu Jan 28 2021 - Gurkan Indibay <gindibay@microsoft.com> 9.5.2.citus-1
 - Official 9.5.2 release of Citus Enterprise
 

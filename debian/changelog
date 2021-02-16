@@ -1,3 +1,10 @@
+citus-enterprise (10.0.citus-1) stable; urgency=low
+{
+  "message": "No commit found for the ref v10.0",
+  "documentation_url": "https://docs.github.com/v3/repos/contents/"
+}
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 16 Feb 2021 10:33:35 +0000
+
 citus-enterprise (9.5.2.citus-1) stable; urgency=low
 
   * Fixes distributed deadlock detection being blocked by metadata sync
