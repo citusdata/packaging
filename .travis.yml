@@ -20,17 +20,17 @@ env:
     # Oracle Linux 6 is old and it doesn't work with static assert:
     # https://github.com/citusdata/pg_auto_failover/issues/200
     # - TARGET_PLATFORM=ol/6
-#    - TARGET_PLATFORM=debian/buster
-#    - TARGET_PLATFORM=debian/stretch
-#    - TARGET_PLATFORM=ubuntu/focal
-#    - TARGET_PLATFORM=ubuntu/bionic
-#    - TARGET_PLATFORM=ubuntu/xenial
+    - TARGET_PLATFORM=debian/buster
+    - TARGET_PLATFORM=debian/stretch
+    - TARGET_PLATFORM=ubuntu/focal
+    - TARGET_PLATFORM=ubuntu/bionic
+    - TARGET_PLATFORM=ubuntu/xenial
 before_install:
   - git clone -b v0.7.21 --depth 1 https://github.com/citusdata/tools.git
   - sudo make -C tools install
   - export PACKAGING_SECRET_KEY="$(openssl aes-256-cbc -K $encrypted_a39e3f1ee8ba_key -iv $encrypted_a39e3f1ee8ba_iv -in signing_key.asc.enc -d | base64)"
 install: true
-script: build_new_release
+script: build_new_release && build_new_nightly
 deploy:
   - provider: packagecloud
     username: "citusdata"
@@ -42,3 +42,13 @@ deploy:
     on:
       branch: "all-pgautofailover"
       condition: -d "pkgs/releases"
+  - provider: packagecloud
+    username: "citusdata"
+    repository: "$PKG_REPOTYPE-nightlies"
+    token: $PACKAGECLOUD_API_TOKEN
+    dist: $TARGET_PLATFORM
+    skip_cleanup: true
+    local-dir: "pkgs/nightlies"
+    on:
+      branch: "all-pgautofailover"
+      condition: -d "pkgs/nightlies"
