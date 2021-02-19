@@ -56,7 +56,7 @@ script: |
         if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
         citus_package -p ${TARGET_PLATFORM} 'local' 'release'
         else
-        build_new_release
+        build_new_release && build_new_nightly
         fi
 deploy:
   - provider: packagecloud
@@ -69,3 +69,13 @@ deploy:
     on:
       branch: "all-pgautofailover-enterprise"
       condition: -d "pkgs/releases"
+  - provider: packagecloud
+    username: "citusdata"
+    repository: "$PKG_REPOTYPE-nightlies"
+    token: $PACKAGECLOUD_API_TOKEN
+    dist: $TARGET_PLATFORM
+    skip_cleanup: true
+    local-dir: "pkgs/nightlies"
+    on:
+      branch: "enterprise-paf-nightly-test"
+      condition: -d "pkgs/nightlies"
