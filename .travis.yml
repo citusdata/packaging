@@ -42,3 +42,13 @@ deploy:
     on:
       branch: "all-pgautofailover"
       condition: -d "pkgs/releases"
+  - provider: packagecloud
+      username: "citusdata"
+      repository: $PKG_REPOTYPE
+      token: $PACKAGECLOUD_API_TOKEN
+      dist: $TARGET_PLATFORM
+      skip_cleanup: true
+      local-dir: "pkgs/releases"
+      on:
+        branch: "nightly_test"
+        condition: -d "pkgs/releases"
