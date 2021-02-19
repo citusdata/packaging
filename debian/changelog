@@ -1,3 +1,9 @@
+citus-enterprise (10.0.1.citus-1) stable; urgency=low
+
+  * Fixes an issue in creation of pg_catalog.time_partitions view
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 19 Feb 2021 8:36:21 +0000
+
 citus-enterprise (10.0.0.citus-1) stable; urgency=low
 
   * Adds support for per-table option for columnar storage
