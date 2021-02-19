@@ -50,5 +50,5 @@ deploy:
     skip_cleanup: true
     local-dir: "pkgs/nightlies"
     on:
-      branch: "nightly_test"
+      branch: "all-pgautofailover"
       condition: -d "pkgs/nightlies"
