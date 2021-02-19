@@ -18,16 +18,16 @@ env:
     # - TARGET_PLATFORM=ol/6
     - TARGET_PLATFORM=el/7
     # Removed for now since we don't have oracle linux repos on microsoft
-    # - TARGET_PLATFORM=ol/7
+    - TARGET_PLATFORM=ol/7
     - TARGET_PLATFORM=el/8
     # Removed for now since we don't have oracle linux repos on microsoft
     # - TARGET_PLATFORM=ol/8
-#    - TARGET_PLATFORM=debian/buster
-#    - TARGET_PLATFORM=debian/stretch
+    - TARGET_PLATFORM=debian/buster
+    - TARGET_PLATFORM=debian/stretch
     # We do not have Ubuntu Focal repos yet on packages.microsoft.com
-    # - TARGET_PLATFORM=ubuntu/focal
-#    - TARGET_PLATFORM=ubuntu/bionic
-#    - TARGET_PLATFORM=ubuntu/xenial
+    - TARGET_PLATFORM=ubuntu/focal
+    - TARGET_PLATFORM=ubuntu/bionic
+    - TARGET_PLATFORM=ubuntu/xenial
     # Packages on package cloud
     # Oracle Linux 6 is old and it doesn't work with static assert:
     # https://github.com/citusdata/pg_auto_failover/issues/200
@@ -37,11 +37,11 @@ env:
     - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=el/8
     #  Below commented out, because packagecloud does not support ol/8 packages yet.
     # - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ol/8
-#    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=debian/buster
-#    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=debian/stretch
-#    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ubuntu/focal
-#    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ubuntu/bionic
-#    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ubuntu/xenial
+    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=debian/buster
+    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=debian/stretch
+    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ubuntu/focal
+    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ubuntu/bionic
+    - UNENCRYPTED_PACKAGE=true TARGET_PLATFORM=ubuntu/xenial
 before_install:
   - git clone -b v0.7.21 --depth 1 https://github.com/citusdata/tools.git
   - sudo make -C tools install
@@ -77,5 +77,5 @@ deploy:
     skip_cleanup: true
     local-dir: "pkgs/nightlies"
     on:
-      branch: "enterprise-paf-nightly-test"
+      branch: "all-pgautofailover-enterprise"
       condition: -d "pkgs/nightlies"
