@@ -54,10 +54,17 @@ before_install:
 install: true
 script: |
         if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
-        citus_package -p ${TARGET_PLATFORM} 'local' 'release'
+          citus_package -p ${TARGET_PLATFORM} 'local' 'release'
         else
-        build_new_release && build_new_nightly
+          if [ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ]; then
+            echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
+            build_new_release
+          elif [ ${TRAVIS_EVENT_TYPE} == 'cron' ]; then
+            echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
+            build_new_nightly
+          fi
         fi
+
 deploy:
   - provider: packagecloud
     username: "citusdata"
