@@ -53,18 +53,18 @@ before_install:
     fi
 install: true
 script: |
-        if [ -z "${UNENCRYPTED_PACKAGE:-}" ] && ([ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ]) ; then
-          citus_package -p ${TARGET_PLATFORM} 'local' 'release'
-        elif [ -z "${UNENCRYPTED_PACKAGE:-}" ] && [ ${TRAVIS_EVENT_TYPE} == 'cron' ] ; then
-          citus_package -p ${TARGET_PLATFORM} 'local' 'nightly'
-        else
-          if [ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ]; then
-            build_new_release
-          elif [ ${TRAVIS_EVENT_TYPE} == 'cron' ]; then
-            build_new_nightly
-          fi
-          echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
-
+        if [ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ] ; then
+          if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
+            citus_package -p ${TARGET_PLATFORM} 'local' 'release'
+          else
+             build_new_release
+           fi
+        elif [ ${TRAVIS_EVENT_TYPE} == 'cron' ] ; then
+          if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
+            citus_package -p ${TARGET_PLATFORM} 'local' 'nightly'
+         else
+           build_new_nightly
+         fi
         fi
 
 deploy:
