@@ -53,7 +53,7 @@ before_install:
     fi
 install: true
 script: |
-        if [ -z "${UNENCRYPTED_PACKAGE:-}" ] && [ ${TRAVIS_EVENT_TYPE} != 'cron' ] ; then
+        if [ -z "${UNENCRYPTED_PACKAGE:-}" ] && ([ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ]) ; then
           citus_package -p ${TARGET_PLATFORM} 'local' 'release'
         elif [ -z "${UNENCRYPTED_PACKAGE:-}" ] && [ ${TRAVIS_EVENT_TYPE} == 'cron' ] ; then
           citus_package -p ${TARGET_PLATFORM} 'local' 'nightly'
