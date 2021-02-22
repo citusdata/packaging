@@ -59,12 +59,12 @@ script: |
           citus_package -p ${TARGET_PLATFORM} 'local' 'nightly'
         else
           if [ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ]; then
-            echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
             build_new_release
           elif [ ${TRAVIS_EVENT_TYPE} == 'cron' ]; then
-            echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
             build_new_nightly
           fi
+          echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
+
         fi
 
 deploy:
