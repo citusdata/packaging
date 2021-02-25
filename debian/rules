@@ -1,10 +1,11 @@
 #!/usr/bin/make -f
 
 include /usr/share/postgresql-common/pgxs_debian_control.mk
+CFLAGS := -fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security
 
 override_dh_auto_build:
 	# Flags taken from: https://liquid.microsoft.com/Web/Object/Read/ms.security/Requirements/Microsoft.Security.SystemsADM.10203#guide
-	+pg_buildext build build-%v '$(CFLAGS) -fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security'
+	+pg_buildext build build-%v
 
 override_dh_auto_clean:
 	# This breaks override_dh_auto_configure, so disable it.
