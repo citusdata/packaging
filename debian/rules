@@ -1,10 +1,8 @@
 #!/usr/bin/make -f
 
 include /usr/share/postgresql-common/pgxs_debian_control.mk
-CFLAGS := $(CFLAGS) -fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security
 
 override_dh_auto_build:
-	# Flags taken from: https://liquid.microsoft.com/Web/Object/Read/ms.security/Requirements/Microsoft.Security.SystemsADM.10203#guide
 	+pg_buildext build build-%v
 
 override_dh_auto_clean:
@@ -18,7 +16,9 @@ override_dh_auto_test:
 
 override_dh_auto_configure:
 	debian/check-gcc-version.sh
-	+pg_buildext configure build-%v "--with-extra-version='$${CONF_EXTRA_VERSION:-}' --without-libcurl"
+	# Flags taken from: https://liquid.microsoft.com/Web/Object/Read/ms.security/Requirements/Microsoft.Security.SystemsADM.10203#guide
+	+CFLAGS='$(CFLAGS) -fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security' \
+		pg_buildext configure build-%v "--with-extra-version='$${CONF_EXTRA_VERSION:-}' --without-libcurl"
 
 override_dh_auto_install:
 	+pg_buildext install build-%v postgresql-%v-citus-enterprise
