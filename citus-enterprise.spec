@@ -39,22 +39,14 @@ commands.
 
 %build
 
-# Flags taken from: https://liquid.microsoft.com/Web/Object/Read/ms.security/Requirements/Microsoft.Security.SystemsADM.10203#guide
-SECURITY_CFLAGS="-fstack-protector-strong -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security"
-
 currentgccver="$(gcc -dumpversion)"
 requiredgccver="4.8.2"
 if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" != "$requiredgccver" ]; then
-    if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
-        echo ERROR: At least GCC version "$requiredgccver" is needed to build Microsoft packages
-        exit 1
-    else
-        echo WARNING: Using slower security flags because of outdated compiler
-        SECURITY_CFLAGS="-fstack-protector-all -D_FORTIFY_SOURCE=2 -O2 -z noexecstack -fpic -Wl,-z,relro -Wl,-z,now -Wformat -Wformat-security -Werror=format-security"
-    fi
+    echo ERROR: At least GCC version "$requiredgccver" is needed to build with security flags
+    exit 1
 fi
 
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" CC=$(command -v gcc) CFLAGS="$SECURITY_CFLAGS"
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
 make %{?_smp_mflags}
 
 %install
