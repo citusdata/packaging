@@ -24,7 +24,7 @@ citus-enterprise (10.0.2.citus-1) stable; urgency=low
 
   * Removes limits around long table names
 
- -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 4 Mar 2021 5:4:3 +0000
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 4 Mar 2021 5:40:03 +0000
 
 citus-enterprise (10.0.1.citus-1) stable; urgency=low
 
