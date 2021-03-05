@@ -188,11 +188,11 @@ epel_check()
 
   if [ "${os}" = "centos" ];
   then
-    yum install epel-release
+    yum install -y epel-release
   elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ]; then
     if [ ${dist} = "7" ] || [ ${dist} = "8" ];
     then
-      yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm
+      yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm
     else
       echo "Distro version is not amaong known distros to install epel repository"
     fi
