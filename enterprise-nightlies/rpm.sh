@@ -82,6 +82,8 @@ epel_check()
       echo "To fix this, manually install EPEL repository and then install packages."
       echo "More information: https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F"
       echo
+    else
+      echo 'done.'
     fi
   fi
 }
