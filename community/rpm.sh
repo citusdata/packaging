@@ -54,6 +54,37 @@ pgdg_check ()
   fi
 }
 
+epel_check()
+{
+  echo "Checking for EPEL repositories..."
+
+  epel_release_check=`rpm -qa | grep -qw epel-release`
+  if [ "$?" == "0" ]; then
+    echo "Detected EPEL repoitories"
+  else
+    echo -n "Installing epel-release repo... "
+
+    if [ "${os}" = "centos" ]; then
+      yum install -d0 -e0 -y epel-release &> /dev/null
+    elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ]; then
+      if [ ${dist} = "7" ]; then
+        yum install -d0 -e0 -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm &> /dev/null
+      elif [ ${dist} = "8" ]; then
+        dnf install -d0 -e0 -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm &> /dev/null
+      fi
+    fi
+
+    epel_release_check=`rpm -qa | grep -qw epel-release`
+    if [ "$?" != "0" ]; then
+      echo
+      echo "WARNING: "
+      echo "The EPEL repository could not be installed. This means You may not be able to satisfy package dependencies. "
+      echo "To fix this, manually install EPEL repository and then install packages."
+      echo "More information: https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F"
+      echo
+    fi
+  fi
+}
 
 detect_os ()
 {
@@ -160,8 +191,6 @@ finalize_zypper_repo ()
   zypper --gpg-auto-import-keys refresh citusdata_community
 }
 
-
-
 detect_repo_url ()
 {
   # set common defaults used by all flavors
@@ -181,23 +210,6 @@ detect_repo_url ()
   repo_url="https://download.postgresql.org/pub/repos/yum/reporpms"
   repo_url+="/${family_short}-${pkg_dist}-x86_64"
   repo_url+="/pgdg-${family}-repo-latest.noarch.rpm"
-}
-
-epel_check()
-{
-
-  if [ "${os}" = "centos" ];
-  then
-    yum install -y epel-release
-  elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ]; then
-    if [ ${dist} = "7" ] || [ ${dist} = "8" ];
-    then
-      yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm
-    else
-      echo "Distro version is not amaong known distros to install epel repository"
-    fi
-  fi
-
 }
 
 main ()
