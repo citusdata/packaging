@@ -160,6 +160,8 @@ finalize_zypper_repo ()
   zypper --gpg-auto-import-keys refresh citusdata_community
 }
 
+
+
 detect_repo_url ()
 {
   # set common defaults used by all flavors
@@ -181,6 +183,23 @@ detect_repo_url ()
   repo_url+="/pgdg-${family}-repo-latest.noarch.rpm"
 }
 
+epel_check()
+{
+
+  if [ "${os}" = "centos" ];
+  then
+    yum install epel-release
+  elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ]; then
+    if [ ${dist} = "7" ] || [ ${dist} = "8" ];
+    then
+      yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm
+    else
+      echo "Distro version is not amaong known distros to install epel repository"
+    fi
+  fi
+
+}
+
 main ()
 {
   detect_os
@@ -189,6 +208,7 @@ main ()
   arch_check
   curl_check
   pgdg_check
+  epel_check
 
   yum_repo_config_url="https://repos.citusdata.com/community/config_file.repo?os=${os}&dist=${dist}&source=script"
 
