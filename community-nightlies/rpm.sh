@@ -54,6 +54,37 @@ pgdg_check ()
   fi
 }
 
+epel_check()
+{
+  echo "Checking for EPEL repositories..."
+
+  epel_release_check=`rpm -qa | grep -qw epel-release`
+  if [ "$?" == "0" ]; then
+    echo "Detected EPEL repoitories"
+  else
+    echo -n "Installing epel-release repo... "
+
+    if [ "${os}" = "centos" ]; then
+      yum install -d0 -e0 -y epel-release &> /dev/null
+    elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ]; then
+      if [ ${dist} = "7" ]; then
+        yum install -d0 -e0 -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm &> /dev/null
+      elif [ ${dist} = "8" ]; then
+        dnf install -d0 -e0 -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm &> /dev/null
+      fi
+    fi
+
+    epel_release_check=`rpm -qa | grep -qw epel-release`
+    if [ "$?" != "0" ]; then
+      echo
+      echo "WARNING: "
+      echo "The EPEL repository could not be installed. This means You may not be able to satisfy package dependencies. "
+      echo "To fix this, manually install EPEL repository and then install packages."
+      echo "More information: https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F"
+      echo
+    fi
+  fi
+}
 
 detect_os ()
 {
@@ -189,6 +220,7 @@ main ()
   arch_check
   curl_check
   pgdg_check
+  epel_check
 
   yum_repo_config_url="https://repos.citusdata.com/community-nightlies/config_file.repo?os=${os}&dist=${dist}&source=script"
 
