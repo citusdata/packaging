@@ -11,6 +11,8 @@ env:
     - secure: "zb6AHEUEvpCnWb4zRTsWTWVmMWNHkzz4c+UUgABaXYysJHCfBNiu5X4Da/jusCPY9GH4XFX8GPCiR69ZKw/LDnzHgXoH2pmda02CZM6SHjRGd0MrlBl0hF8YbHiBFi6/nH7kF0ODX+SepfJlFq8LQq6HVONz6QQl0FW0Rg1qnNaDMMi6L9NBBSDyuYCUdY05lgNeIyG8LyIErvlNA8U86VxOHp/KKbNaNx0Cs/tpDWNeW1v1rxa6EXtt8pxyc4u09V9csyFcglizkWEi98aqBTqyCa4hgIK3anog51vAg997cPOUu+ENUpwsio2JMorXalzNszBtpbO9u15+hLRHAoSL56hRdar3fTCuyyXpKapyNZ5Xxa8bYmgLDSJ2lS3zDl6fUfJWVqfzDWx1BuYVGjmJquYMVGKDiBu6iiOx7M/L8Kwof/ioe1LWro92a+S2KKgmXJfxNm4//F2EK+n++GNMZzOsfW+HSVhZ5sXt/tN9eOGmRQ4jWOZK7ycdpB+zMtxYDur/D46oLGAJhY88YqJaBbx0Jk0EMzSfM1eSoGcXEfLfwzGTm3MFnG/IJ3BPW1pkf5s2gMofUssGFitqnDZ7wlexrwA6qPMPIafW+yn5m4wwQwAxk20Y/kOREKHYDP6X6AbQNmfUk93/djYLjd/gGYLS3xvkNOLBWq2CCD8="
     # passphrase for packaging gpg secret key
     - secure: "pZmrxStWj0vXaG/YAyJORvxfaKQHvr+O+66yjFF52gQTVd2zNb83Mn4zDLNqMwU3nkXEKYuFbpXKbDSMX9zNbE7W/w1ARSa8MVXnMVM3jbj+OCaBu7fyVrA0tvT3EZkMh943paTRcSyPSzd61P3CNOkcY1RycDHBbJtNrzSdUbdAy6//TWgNxC66dxSeHASRJIIs49caxQssMMSGRgC5aGH4KLU5eSdP3wnWDEHr+aLqaI2DF2W3lNMI0WJwtGN6cLEYzAsA3BkoPoYRFDd4jjTpolVdrFBXRaT1EIg0FXjsvjyFrQfQLBIqvSx42H5w4rCIYoKYYgRgCKDATLK8XxPbFsgPKLVSHFD6t9ebuYacYxS20oMakkqj5e98qMIWe2vkm+V9YNeADIlhYT+NsF9Kug2B6pLK+U+Hhj6TldFpP18snPXttRKzsg9QrGbnBUVq2wv60U7/3pWs+T3tpr9bIFyaUYbRRAwl/hv2hVkFiSdsiLB6tJphbILB7EDKBCu1iK9PC9tlYoGrqptRxj6bmlawOvcnEKRtoPNJ9eyrvHPDd8FmmW6xWbq89zJ97Ztl7VR8CzNePqvG9vwdtJigXovuXfzu4CHX+jOt3jvllB6rMprsK5r++qBzh1SS24sYqo/APtUfoYdkleWhC+tSuhbucZb2yGUCMo/ZhDo="
+    # passphrase for docker password
+    - secure: "VONsJhVCg5WPWJJmk+36bn25sxvxLi0vvi1j5IxxvWaw7h1eJGerbyiCv+UbnFozD+kvJEhxPOrIlM5Hca6U2kQE2aw0cNIs4laXKbsJE719RMnZZ2ok0BN1IF2oRtA8WGetV52bi5OYvNrT7utbIwm+SQgTFmxsy5Q5MggpoZ08W5MgWpukcpDBFHGKWaDufGykUx6QRFamNZ0EXvjFb9HM6Rfnw5omki1qOv11nNo4Emg+z+A0KdAAhN0edjsuvQ2NggOa97svYaZrUKnTvS8daNUATNReRp6+xYKa3lnU+6rqZfJVrD3QRIaOCihgdDrEVt3vPWv/hEfAHf5PIidmtCPHAc5Hyq12UspaEr1kJK0MWGHwstGh5XnTG6Qbj8/eM9IX9Hs/Jz2kqy+xH1wSW1nj7unU/upb6gV8ft14FHRqsMs0jIqhceIJT1t1f0EwiGMQR/mKIhYmEwSAP/Iu9ea53nwX/9gMUjH5tL32WnSgwUeb9RhwReMEy3yKkIlaNha9nPPrcCNx67O5agBvW31hjpqPUV40777Tra2IJuYjTDmABq4mqRasw3HSqpcz3dzu/6kPvVfzST9j4d4tF6+7/uXpb7DGI7WD7WoR9j1YYjkTrccEQovNJ6PlyIm9TZv1yE4hoeP47bcbUn/jQdT8TzyB15Sqdg5NtvM="
   matrix:
     - TARGET_PLATFORM=el/8
     # Oracle Linux 8 does not exist in PackageCloud
@@ -29,6 +31,7 @@ before_install:
   - git clone -b v0.7.21 --depth 1 https://github.com/citusdata/tools.git
   - sudo make -C tools install
   - export PACKAGING_SECRET_KEY="$(openssl aes-256-cbc -K $encrypted_a39e3f1ee8ba_key -iv $encrypted_a39e3f1ee8ba_iv -in signing_key.asc.enc -d | base64)"
+  - docker login -u citusenginedevops -p ${DOCKER_PASSWORD}
 install: true
 script: |
   if [ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ]; then
@@ -59,3 +62,4 @@ deploy:
     on:
       branch: "all-pgautofailover"
       condition: -d "pkgs/nightlies"
+
