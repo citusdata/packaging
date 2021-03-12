@@ -53,11 +53,20 @@ before_install:
     fi
 install: true
 script: |
-        if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
-        citus_package -p ${TARGET_PLATFORM} 'local' 'release'
-        else
-        build_new_release && build_new_nightly
+        if [ ${TRAVIS_EVENT_TYPE} == 'push' ] || [ ${TRAVIS_EVENT_TYPE} == 'pull_request' ] || [ ${TRAVIS_EVENT_TYPE} == 'api' ] ; then
+          if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
+            citus_package -p ${TARGET_PLATFORM} 'local' 'release'
+          else
+             build_new_release
+           fi
+        elif [ ${TRAVIS_EVENT_TYPE} == 'cron' ] ; then
+          if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
+            citus_package -p ${TARGET_PLATFORM} 'local' 'nightly'
+         else
+           build_new_nightly
+         fi
         fi
+
 deploy:
   - provider: packagecloud
     username: "citusdata"
