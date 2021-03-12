@@ -38,6 +38,7 @@ script: |
   elif [ ${TRAVIS_EVENT_TYPE} == 'cron' ]; then
   echo "Travis Event Type is ${TRAVIS_EVENT_TYPE}"
   build_new_nightly
+  docker logout
   fi
 deploy:
   - provider: packagecloud
