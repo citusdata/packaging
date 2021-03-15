@@ -28,6 +28,25 @@ jobs:
         env:
           GITHUB_TOKEN: $(GITHUB_TOKEN)
           PACKAGECLOUD_API_TOKEN: $(PACKAGECLOUD_API_TOKEN)
+      - task: EsrpCodeSigning@1
+        inputs:
+          ConnectedServiceName: 'Database System ESRP Connector'
+          FolderPath: './pkgs/releases'
+          Pattern: '*.rpm,*.deb'
+          signConfigType: 'inlineSignParams'
+          inlineOperation: |
+            [
+                    {
+                        "KeyCode" : "CP-450779-Pgp",
+                        "OperationCode" : "LinuxSign",
+                        "Parameters" : {},
+                        "ToolName" : "sign",
+                        "ToolVersion" : "1.0"
+                    }
+                ]
+          SessionTimeout: '60'
+          MaxConcurrency: '50'
+          MaxRetryAttempts: '5'
       - script: chmod +x ./tools/travis/add_test_prefix_on_filenames.sh && ./tools/travis/add_test_prefix_on_filenames.sh &&  chmod +x ./tools/travis/configure_microsoft_packages.sh
       - script: python ./tools/travis/upload_to_package_cloud.py $(TARGET_PLATFORM) $(PACKAGECLOUD_API_TOKEN)  $(REPO_NAME)
       - script: ./tools/travis/configure_microsoft_packages.sh -p "$(pwd)/tools/travis" && python tools/travis/publish-packages.py $(TARGET_PLATFORM)
