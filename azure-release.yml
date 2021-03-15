@@ -24,8 +24,12 @@ jobs:
     steps:
       - script: echo ${GITHUB_TOKEN} && sudo apt install software-properties-common && sudo add-apt-repository ppa:deadsnakes/ppa && sudo apt install python3.9 && python3.9 --version && sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
       - script: python --version &&  git clone --single-branch --branch pg_auto_failover_build https://github.com/citusdata/tools.git && sudo make -C tools install
-      - script: chmod +x ./tools/travis/add_test_prefix_on_filenames.sh && ./tools/travis/add_test_prefix_on_filenames.sh && mkdir signed-packages && cp -R ./pkgs/releases/. ./signed-packages && chmod +x ./tools/travis/configure_microsoft_packages.sh
-      - script: pwd && ls -la ./signed-packages && ls -R ./pkgs/releases &&  python ./tools/travis/upload_to_package_cloud.py $(TARGET_PLATFORM) $(PACKAGECLOUD_API_TOKEN)  $(REPO_NAME)
+      - script: build_new_release
+        env:
+          GITHUB_TOKEN: $(GITHUB_TOKEN)
+          PACKAGECLOUD_API_TOKEN: $(PACKAGECLOUD_API_TOKEN)
+      - script: chmod +x ./tools/travis/add_test_prefix_on_filenames.sh && ./tools/travis/add_test_prefix_on_filenames.sh &&  chmod +x ./tools/travis/configure_microsoft_packages.sh
+      - script: python ./tools/travis/upload_to_package_cloud.py $(TARGET_PLATFORM) $(PACKAGECLOUD_API_TOKEN)  $(REPO_NAME)
       - script: ./tools/travis/configure_microsoft_packages.sh -p "$(pwd)/tools/travis" && python tools/travis/publish-packages.py $(TARGET_PLATFORM)
         env:
           REPO_CLIENT_SECRET: $(REPO_CLIENT_SECRET)
