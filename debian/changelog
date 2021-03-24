@@ -1,3 +1,15 @@
+citus-enterprise (8.3.3.citus-1) stable; urgency=low
+
+  * Fixes a bug that leads to various issues when a connection is lost
+
+  * Fixes a bug where one could create a foreign key between non-colocated tables
+
+  * Fixes a deadlock during transaction recovery
+
+  * Fixes a memory leak in adaptive executor when query returns many columns
+
+ -- Gurkan Indibay <gurkan.indibay@microsoft.com>  Wed, 24 Mar 2021 15:56:57 +0000
+
 citus-enterprise (8.3.2.citus-1) stable; urgency=low
 
   * Improves Adaptive Executor performance
