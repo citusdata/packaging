@@ -31,15 +31,5 @@ deploy:
     skip_cleanup: true
     local-dir: "pkgs/releases"
     on:
-      branch: "redhat-citus"
+      branch: "redhat-citus-8.3"
       condition: -d "pkgs/releases"
-  - provider: packagecloud
-    username: "citusdata"
-    repository: "$PKG_REPOTYPE-nightlies"
-    token: $PACKAGECLOUD_API_TOKEN
-    dist: $TARGET_PLATFORM
-    skip_cleanup: true
-    local-dir: "pkgs/nightlies"
-    on:
-      branch: "redhat-citus"
-      condition: -d "pkgs/nightlies"
