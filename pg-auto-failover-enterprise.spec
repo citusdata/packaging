@@ -11,7 +11,7 @@ Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
 Version:	1.5.1
-Release:	2%{dist}
+Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/pg-auto-failover-enterprise/archive/v1.5.1.tar.gz
