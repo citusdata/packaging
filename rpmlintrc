@@ -7,3 +7,4 @@ addFilter("W: non-standard-dir-in-usr .*");
 addFilter("W: shared-lib-calls-exit .*");
 addFilter("W: spelling-error .*(pg-auto-failover)");
 addFilter("\w*-debuginfo[^:]*: W: only-non-binary-in-usr-lib");
+addFilter("W: unstripped-binary-or-object");
