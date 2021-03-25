@@ -1,4 +1,4 @@
-pg-auto-failover (1.5.1) stable; urgency=low
+pg-auto-failover (1.5.1-1) stable; urgency=low
 
   * Official 1.5.1 release of pg_auto_failover
 
