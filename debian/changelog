@@ -1,3 +1,9 @@
+pgcron (1.3.1.citus-1) stable; urgency=low
+
+  * Fixes a memory leak
+
+ -- Marco Slot <marco@citusdata.com>  Mon, 29 Mar 2021 13:15:45 +0000
+
 pgcron (1.3.0.citus-1) stable; urgency=low
 
   * Background worker support
