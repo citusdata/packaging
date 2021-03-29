@@ -56,7 +56,7 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
-* Mon Mar 29 2021 - Marco Slot <marco@citusdata.com> 1.3.1.citus-1
+* Mon Mar 29 2021 - Marco Slot <marco@citusdata.com> 1.3.1-1
 - Fixes a memory leak
 * Mon Oct 26 2020 - Marco Slot <marco@citusdata.com> 1.3.0.citus-1
 - Background worker support
