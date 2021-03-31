@@ -14,7 +14,7 @@ env:
   matrix:
     - TARGET_PLATFORM=el/8
     - TARGET_PLATFORM=el/7
-    - TARGET_PLATFORM=ol/8
+#    - TARGET_PLATFORM=ol/8
     - TARGET_PLATFORM=ol/7
 before_install:
   - git clone -b v0.7.20 --depth 1 https://github.com/citusdata/tools.git
