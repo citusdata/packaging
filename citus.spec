@@ -7,12 +7,12 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	10.0.3.citus
+Version:	10.0.3-1
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v10.0.3.tar.gz
-URL:		https://github.com/citusdata/citus
+Source0:	https://github.com/citusdata//archive/v10.0.3.tar.gz
+URL:		https://github.com/citusdata/
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -79,6 +79,9 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Thu Apr 01 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.3.citus-1
+- Update to Citus 10.0.3
+
 * Thu Mar 18 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.3.citus-1
 - Official 10.0.3 release of Citus
 
