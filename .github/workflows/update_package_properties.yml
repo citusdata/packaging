@@ -5,7 +5,7 @@ name: CI
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PRJ_NAME: ${{ github.event.inputs.project_name }}
-  TAG_NAME: ${{ github.event.inputs.project_name }}
+  TAG_NAME: ${{ github.event.inputs.tag_name }}
   PRJ_VER: ${{ github.event.inputs.project_version }}
   FANCY: ${{ github.event.inputs.fancy }}
   FANCY_VERSION_NO: ${{ github.event.inputs.fancy_version_no }}
