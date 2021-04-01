@@ -4,13 +4,34 @@ name: CI
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  PRJ_NAME: ${{ inputs.project_name }}
+  PRJ_VER: ${{ inputs.project_version }}
+  FANCY: ${{ inputs.fancy }}
+  FANCY_VERSION_NO: ${{ inputs.fancy_version_no }}
+  NAME: ${{ inputs.name }}
 
 # Controls when the action will run.
 on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
+    inputs:
+      project_name:
+        description: 'The github repository name'
+      project_version:
+        description: 'Version number to be released e.g 10.0.3'
+      fancy:
+        description: 'If fancy versioning is required set it "True"'
+        default: 'False'
+      fancy_version_no:
+        description: 'If fancy versioning is True, then it should be set e.g 1'
+        default: '1'
+      microsoft_email:
+        description: 'Email to be written on changelogs'
+        default: 'gindibay@microsoft.com'
+      name:
+        description: 'Name to be written on changelogs'
+        default: 'Gurkan Indibay'
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
