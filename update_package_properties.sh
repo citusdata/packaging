@@ -1,5 +1,13 @@
 #!/bin/bash
 
+PRJ_NAME="citus"
+PRJ_VER="10.0.3"
+TAG_NAME="v${PRJ_VER}"
+FANCY="True"
+FANCY_VERSION_NO=2
+MICROSOFT_EMAIL="gindibay@gmail.com"
+NAME="Gurkan Indibay"
+
 main_branch_name=$(git branch --show-current)
 
 pr_branch_name="${main_branch_name}-$(date +%s)"
