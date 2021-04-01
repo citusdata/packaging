@@ -6,7 +6,15 @@ TAG_NAME="v${PRJ_VER}"
 FANCY="True"
 FANCY_VERSION_NO=2
 MICROSOFT_EMAIL="gindibay@gmail.com"
-NAME="Gurkan Indibay"
+#NAME="Gurkan Indibay"
+
+[ -z "${PRJ_NAME}" ] && echo "PRJ_NAME should be non-empty value" && exit 1
+[ -z "${PRJ_VER}" ] && echo "PRJ_VER should be non-empty value" && exit 1
+[ -z "${TAG_NAME}" ] && echo "TAG_NAME should be non-empty value" && exit 1
+[ -z "${FANCY}" ] && echo "FANCY should be non-empty value" && exit 1
+[ -z "${FANCY_VERSION_NO}" ] && echo "FANCY_VERSION_NO should be non-empty value" && exit 1
+[ -z "${MICROSOFT_EMAIL}" ] && echo "MICROSOFT_EMAIL should be non-empty value" && exit 1
+[ -z "${NAME}" ] && echo "NAME should be non-empty value" && exit 1
 
 main_branch_name=$(git branch --show-current)
 
