@@ -5,6 +5,7 @@ name: CI
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PRJ_NAME: ${{ inputs.project_name }}
+  TAG_NAME: ${{ inputs.project_name }}
   PRJ_VER: ${{ inputs.project_version }}
   FANCY: ${{ inputs.fancy }}
   FANCY_VERSION_NO: ${{ inputs.fancy_version_no }}
@@ -18,6 +19,8 @@ on:
     inputs:
       project_name:
         description: 'The github repository name'
+      tag_name:
+        description: 'The tag name on the project repo to be released'
       project_version:
         description: 'Version number to be released e.g 10.0.3'
       fancy:
