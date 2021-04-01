@@ -4,12 +4,12 @@ name: CI
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-  PRJ_NAME: ${{ inputs.project_name }}
-  TAG_NAME: ${{ inputs.project_name }}
-  PRJ_VER: ${{ inputs.project_version }}
-  FANCY: ${{ inputs.fancy }}
-  FANCY_VERSION_NO: ${{ inputs.fancy_version_no }}
-  NAME: ${{ inputs.name }}
+  PRJ_NAME: ${{ github.event.inputs.project_name }}
+  TAG_NAME: ${{ github.event.inputs.project_name }}
+  PRJ_VER: ${{ github.event.inputs.project_version }}
+  FANCY: ${{ github.event.inputs.fancy }}
+  FANCY_VERSION_NO: ${{ github.event.inputs.fancy_version_no }}
+  NAME: ${{ github.event.inputs.name }}
 
 # Controls when the action will run.
 on:
