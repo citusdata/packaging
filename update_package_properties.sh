@@ -15,4 +15,4 @@ git commit -m commit_message
 
 git push origin ${pr_branch_name}
 
-curl -g -H "Accept: application/vnd.github.v3.full+json" -X POST --user "${GH_TOKEN}:x-oauth-basic" -d '{\"title\":\"${commit_message}\", \"head\":\"${pr_branch_name}\", \"base\":\"${main_branch_name}\"}' https://api.github.com/repos/citusdata/packaging/pulls;
+curl -g -H "Accept: application/vnd.github.v3.full+json" -X POST --user "${GH_TOKEN}:x-oauth-basic" -d '{"title":"${commit_message}", "head":"${pr_branch_name}", "base":"${main_branch_name}"}' https://api.github.com/repos/citusdata/packaging/pulls;
