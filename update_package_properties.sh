@@ -12,6 +12,8 @@ main_branch_name=$(git branch --show-current)
 
 pr_branch_name="${main_branch_name}-$(date +%s)"
 
+commit_message="Bump to ${PRJ_NAME} ${PRJ_VER}"
+
 git checkout -b "${pr_branch_name}"
 
 python tools/python/update_package_properties.py --gh_token ${GH_TOKEN} --prj_name "${PRJ_NAME}" --prj_ver "${PRJ_VER}" --tag_name "${TAG_NAME}" --fancy "${FANCY}" \
