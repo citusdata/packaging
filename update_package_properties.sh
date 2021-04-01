@@ -6,7 +6,7 @@ pr_branch_name="${main_branch_name}-$(date +%s)"
 
 git checkout -b "${pr_branch_name}"
 
-python ../python/update_package_properties.py --gh_token ${GH_TOKEN} --prj_name "${PRJ_NAME}" --prj_ver "${PRJ_VER}" --tag_name "${TAG_NAME}" --fancy "${FANCY}" \
+python tools/python/update_package_properties.py --gh_token ${GH_TOKEN} --prj_name "${PRJ_NAME}" --prj_ver "${PRJ_VER}" --tag_name "${TAG_NAME}" --fancy "${FANCY}" \
   --fancy_ver_no "${FANCY_VERSION_NO}" --email "${MICROSOFT_EMAIL}" --name "${NAME}" --date "$(date '+%Y.%m.%d %H:%M:%S %z')" --exec-path "$(pwd)"
 
 commit_message="Bump to Version ${PRJ_VER}"
