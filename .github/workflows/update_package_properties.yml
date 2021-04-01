@@ -9,6 +9,7 @@ env:
   PRJ_VER: ${{ github.event.inputs.project_version }}
   FANCY: ${{ github.event.inputs.fancy }}
   FANCY_VERSION_NO: ${{ github.event.inputs.fancy_version_no }}
+  MICROSOFT_EMAIL: ${{ github.event.inputs.microsoft_email }}
   NAME: ${{ github.event.inputs.name }}
 
 # Controls when the action will run.
