@@ -55,6 +55,6 @@ jobs:
 
       - name: Execute Package Properties Update
         run: |
-              git config --global user.email "gindibay@microsoft.com"
-              git config --global user.name "Gurkan Indibay"
+              git config --global user.email "${MICROSOFT_EMAIL}"
+              git config --global user.name "${NAME}"
               chmod +x ./tools/bash/update_package_properties.sh && ./tools/bash/update_package_properties.sh
