@@ -42,7 +42,7 @@ jobs:
       - name: Clone Tools branch
         run: git clone --branch tools-transition https://github.com/citusdata/tools.git
 
-      - name: install requirements
+      - name: Install Python requirements
         run: python -m pip install -r tools/python/requirements.txt
 
       - name: Execute Package Properties Update
