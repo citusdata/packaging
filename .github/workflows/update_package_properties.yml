@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       project_name:
-        description: 'The github repository name'
+        description: 'The GitHub repository name'
       tag_name:
         description: 'The tag name on the project repo to be released'
       project_version:
