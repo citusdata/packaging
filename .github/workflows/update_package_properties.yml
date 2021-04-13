@@ -2,7 +2,7 @@ name: Update Package Properties
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-  PRJ_NAME: ${{ github.event.inputs.project_name }}
+  PRJ_NAME: "citus"
   TAG_NAME: ${{ github.event.inputs.tag_name }}
   PRJ_VER: ${{ github.event.inputs.project_version }}
   FANCY: ${{ github.event.inputs.fancy }}
@@ -11,11 +11,8 @@ env:
   NAME: ${{ github.event.inputs.name }}
 
 on:
-
   workflow_dispatch:
     inputs:
-      project_name:
-        description: 'The GitHub repository name'
       tag_name:
         description: 'The tag name on the project repo to be released'
       project_version:
@@ -33,7 +30,7 @@ on:
         description: 'Name to be written on changelogs'
         default: 'Gurkan Indibay'
 jobs:
-  build:
+  update_package_properties:
     runs-on: ubuntu-latest
 
     steps:
