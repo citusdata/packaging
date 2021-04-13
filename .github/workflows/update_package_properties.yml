@@ -36,6 +36,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: sudo apt install libcurl4-openssl-dev libssl-dev
+
       - name: Clone Tools branch
         run: git clone --branch tools-transition https://github.com/citusdata/tools.git
 
