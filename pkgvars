@@ -1,6 +1,6 @@
 pkgname=azure_gdpr
 pkgdesc='Azure_gdpr'
-pkglatest=1.3.citus-1
+pkglatest=1.4.citus-1
 releasepg=11,12,13
 nightlypg=11,12,13
 versioning=fancy
