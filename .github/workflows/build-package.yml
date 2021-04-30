@@ -1,0 +1,43 @@
+name: Build Package
+
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+
+on:
+  push:
+    branches: "**"
+
+  workflow_dispatch:
+
+jobs:
+  build_package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ el/7, el/8, ol/7, debian/stretch, debian/buster, ubuntu/xenial, ubuntu/bionic,ubuntu/focal ]
+    env:
+      PLATFORM: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v2
+#      - name: install dependencies
+#        run: sudo apt install libcurl4-openssl-dev libssl-dev
+#
+#      - name: Define git credentails
+#        run: git config --global user.email "gindibay@microsoft.com"&& git config --global user.name "Gurkan Indibay"
+
+      - name: Clone  tools
+        run: git clone https://github.com/citusdata/tools.git --branch tools-transition-update-docker --single-branch tools
+
+      - name: install requirements
+        run: python -m pip install -r tools/packaging_automation/requirements.txt
+
+      - name: Build Packages
+        run: python -m  tools.packaging_automation.citus_package --gh_token ${{ secrets.GH_TOKEN }} --platform ${{ matrix.platform }} \
+          --build_type 'release' --secret_key ${{ secrets.PACKAGING_SECRET_KEY }} --passphrase ${{ secrets.PACKAGING_PASSPHRASE }} \
+          --output_dir "$(pwd)/packages/" --input_files_dir "$(pwd)" --output_validation "True"
+
+

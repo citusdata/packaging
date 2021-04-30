@@ -1,0 +1,15 @@
+base:
+  - "^/.* warning: ignoring old recipe for target 'check'"
+  - "sh: warning: setlocale: LC_ALL: cannot change locale \\(C.utf8\\): No such file or directory"
+  - "dpkg-buildpackage: warning: using a gain-root-command while being root"
+  - "/sbin/ldconfig: Warning: ignoring configuration file that cannot be opened: /etc/ld.so.conf: No such file or directory"
+  - "warning: line \\d+: multiple %files for package *"
+  - "configure: WARNING: unrecognized options: --disable-dependency-tracking"
+  - "WARNING: If you run into issues during linking or bitcode compilation, you can use --without-security-flags."
+  - "gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run"
+debian:
+  - ".*: W: invalid-license Commercial"
+  - ".*: W: no-documentation"
+rpm:
+  - ".*: W: invalid-license Commercial"
+  - ".*: W: no-documentation"
