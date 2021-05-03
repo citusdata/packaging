@@ -43,6 +43,6 @@ jobs:
         run: |
           python -m  tools.packaging_automation.citus_package --gh_token "${{ secrets.GH_TOKEN }}" --platform "${{ matrix.platform }}" \
           --build_type 'release' --secret_key "${{ secrets.PACKAGING_SECRET_KEY }}" --passphrase "${{ secrets.PACKAGING_PASSPHRASE }}" \
-          --output_dir "$(pwd)/packages/" --input_files_dir "$(pwd)" --output_validation "True"
+          --output_dir "$(pwd)/packages/" --input_files_dir "$(pwd)" --output_validation "False"
 
 
