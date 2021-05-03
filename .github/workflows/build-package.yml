@@ -47,5 +47,5 @@ jobs:
 
       - name: Publish Packages
         run: |
-          python -m  tools.packaging_automation.upload_to_package_cloud --platform "el/8" --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
+          python -m  tools.packaging_automation.upload_to_package_cloud --platform ${{ matrix.platform }} --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
           --repository_name "sample" --output_file_path "$(pwd)/packages"
