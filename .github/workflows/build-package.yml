@@ -32,6 +32,9 @@ jobs:
       - name: Clone  tools
         run: git clone https://github.com/citusdata/tools.git --branch tools-transition-update-docker --single-branch tools
 
+      - name: install dependencies
+        run: sudo apt install libcurl4-openssl-dev libssl-dev
+
       - name: install requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
 
