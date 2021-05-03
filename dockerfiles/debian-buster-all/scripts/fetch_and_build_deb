@@ -55,7 +55,7 @@ declare pkglatest # to make shellcheck happy
 pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
-releasepg="${releasepg:-11,12}"
+releasepg="${releasepg:-11,12,13}"
 nightlypg="${nightlypg:-${releasepg}}"
 versioning="${versioning:-simple}"
 

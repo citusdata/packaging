@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM centos:7
+FROM oraclelinux:8
 
 # FIXME: Hack around docker/docker#10180
 RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
@@ -7,7 +7,7 @@ RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /v
 
 # Enable some other repos for some dependencies in OL/7 
 # see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
-RUN [[ centos != oraclelinux ]] || [[ 7 != 7 ]] || ( \
+RUN [[ oraclelinux != oraclelinux ]] || [[ 8 != 7 ]] || ( \
         pushd /etc/yum.repos.d/ \
         && rm -f * \
         && curl -O http://yum.oracle.com/public-yum-ol7.repo \
@@ -23,10 +23,10 @@ RUN [[ centos != oraclelinux ]] || [[ 7 != 7 ]] || ( \
 # in oracle 7 repos. So package from centos repo was used
 # There is no package in oracle repos for lz4. Also it is not preloaded. So both lz4 and lz4-devel packages
 # were downloaded from centos el/6 repos
-RUN if [[ centos   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
+RUN if [[ oraclelinux   == oraclelinux ]] && [[ 8 == 7 ]]; then yum install -y wget \
         && wget http://mirror.centos.org/centos/7/os/x86_64/Packages/lz4-devel-1.8.3-1.el7.x86_64.rpm \
         && rpm -ivh lz4-devel-1.8.3-1.el7.x86_64.rpm ; \
-        elif [[ centos   == oraclelinux ]] && [[ 7 == 6 ]]; then yum install -y wget \
+        elif [[ oraclelinux   == oraclelinux ]] && [[ 8 == 6 ]]; then yum install -y wget \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-r131-1.el6.x86_64.rpm \
         && rpm -ivh lz4-r131-1.el6.x86_64.rpm \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-devel-r131-1.el6.x86_64.rpm \
@@ -35,7 +35,7 @@ RUN if [[ centos   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
 
 
 # install build tools and PostgreSQL development files
-RUN ( [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
+RUN ( [[ -z "oracle-epel-release-el8" ]] || yum install -y oracle-epel-release-el8) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         curl \
@@ -56,10 +56,10 @@ RUN ( [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-relea
         tar \
         libzstd \
         libzstd-devel \
-        llvm-toolset-7-clang llvm5.0 \
-    && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-    && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
-    && yum install -y postgresql11-server postgresql11-devel \
+        llvm-toolset ccache \
+    && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+    && ( [[ 8 < 8 ]] || dnf -qy module disable postgresql ) \
+    && yum install -y postgresql13-server postgresql13-devel \
     && yum clean all
 
 # install jq to process JSON API responses
@@ -90,7 +90,7 @@ RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
 # set PostgreSQL version, place scripts on path, and declare output volume
-ENV PGVERSION=11 \
+ENV PGVERSION=13 \
     PATH=/scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages

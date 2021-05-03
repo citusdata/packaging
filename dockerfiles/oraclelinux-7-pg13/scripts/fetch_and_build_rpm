@@ -52,9 +52,10 @@ source /buildfiles/pkgvars
 
 # set default values for certain packaging variables
 declare pkglatest # to make shellcheck happy
+pkgname="${rpm_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
-releasepg="${releasepg:-9.6,10,11}"
+releasepg="${releasepg:-11,12,13}"
 nightlypg="${nightlypg:-${releasepg}}"
 versioning="${versioning:-simple}"
 
@@ -155,7 +156,7 @@ sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
 osname=$(awk '{print $1}' /etc/system-release)
 if [ "${osname}" == 'Oracle' ]; then
     locale='C'
-elif [ "${osname}" == 'Fedora' ]; then
+elif [ "${osname}" == 'Fedora' ] || [ "${osname}" == 'CentOS' ]; then
     locale='C.utf8'
 else
     locale='en_US.utf8'
@@ -182,6 +183,14 @@ case "${1}" in
         sed -i -E 's/0.1.pre/0.0.pre/' "${builddir}/${pkgname}.spec"
         ;;
 esac
+
+# Enable gcc8 on distros that have it
+if [ -f /opt/rh/devtoolset-8/enable ]; then
+    set +u
+    # shellcheck source=/dev/null
+    source /opt/rh/devtoolset-8/enable
+    set -u
+fi
 
 rpmbuild --define "_sourcedir ${rpmbuilddir}" \
 --define "_specdir ${rpmbuilddir}" \

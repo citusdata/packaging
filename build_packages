@@ -45,13 +45,19 @@ while read -r line; do
     mkdir -p "${outputdir}"
 
     if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
+        if [[ "${os}" = 'debian' ]] && [[ "${release}" = 'jessie' ]]; then
+            # Debian Jessie doesn't have pg13 packages yet
+            # so we dont't have package builder docker image yet.
+            # So skip building distro package for it.
+            continue
+        fi
         args+="run --rm -v ${outputdir}:/packages -v ${buildfilesdir}/deb:/buildfiles:ro "
         args+="-e GITHUB_TOKEN=${GITHUB_TOKEN} -e DEBFULLNAME='${name}' -e DEBEMAIL='${email}' "
         args+="citusdata/packaging:${os}-${release}-all $buildtype\n"
     elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
         # shellcheck source=/dev/null
         source "${buildfilesdir}/rpm/pkgvars"
-        releasepg="${releasepg:-11,12}"
+        releasepg="${releasepg:-11,12,13}"
         nightlypg="${nightlypg:-${releasepg}}"
 
         if [ "${buildtype}" == 'release' ]; then
@@ -63,6 +69,13 @@ while read -r line; do
         # redhat variants need to build each PostgreSQL version separately
         IFS=','
         for pgversion in ${pgversions}; do
+            if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
+                 [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
+                # CentOS and OracleLinux 6 doesn't have pg13 packages yet
+                # so we dont't have package builder docker images yet.
+                # So skip building distro packages for them.
+                continue
+            fi
             pgshort=${pgversion//./}
             args+="run --rm -v ${outputdir}:/packages -v ${buildfilesdir}/rpm:/buildfiles:ro "
             args+="-e GITHUB_TOKEN=${GITHUB_TOKEN} -e RPM_PACKAGER='${packager}' "
