@@ -1,0 +1,29 @@
+name: Update Version on PGXN Config Files
+
+env:
+  PROJECT_VERSION: ${{ github.event.inputs.project_version }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_version:
+        description: 'Version number to be released e.g 10.0.3'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo apt install libcurl4-openssl-dev libssl-dev
+
+      - name: Clone Tools branch
+        run: git clone --branch tools-transition-update-docker https://github.com/citusdata/tools.git
+
+      - name: Install Python requirements
+        run: export PYTHONPATH="$(pwd)/tools" && python -m pip install -r tools/packaging_automation/requirements.txt
+
+      - name: Update Docker Files
+        run: python -m packaging_automation.update_pgxn --prj_ver ${PROJECT_VERSION} --exec_path "$(pwd)" --gh_token ${GH_TOKEN}
