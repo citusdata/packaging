@@ -10,11 +10,11 @@ Summary:	Auto-HA support for Citus
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.5.1
+Version:	1.5.2
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pg-auto-failover-enterprise/archive/v1.5.1.tar.gz
+Source0:	https://github.com/citusdata/pg-auto-failover-enterprise/archive/v1.5.2.tar.gz
 URL:		https://github.com/citusdata/citus-ha
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -371,6 +371,9 @@ rm -f %{pginstdir}/bin/pg_autoctl
 
 
 %changelog
+* Fri May 21 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.5.2-1
+- Official 1.5.2 release of pg_auto_failover enterprise
+
 * Thu Mar 25 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.5.1-1
 - Official 1.5.1 release of pg_auto_failover enterprise
 
