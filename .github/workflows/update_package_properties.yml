@@ -4,7 +4,6 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PRJ_NAME: "citus"
   TAG_NAME: ${{ github.event.inputs.tag_name }}
-  PRJ_VER: ${{ github.event.inputs.project_version }}
   FANCY: ${{ github.event.inputs.fancy }}
   FANCY_VERSION_NO: ${{ github.event.inputs.fancy_version_no }}
   MICROSOFT_EMAIL: ${{ github.event.inputs.microsoft_email }}
@@ -15,8 +14,6 @@ on:
     inputs:
       tag_name:
         description: 'The tag name on the project repo to be released'
-      project_version:
-        description: 'Version number to be released e.g 10.0.3'
       fancy:
         description: 'If fancy versioning is required set it "True"'
         default: 'False'
@@ -34,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
       - uses: actions/checkout@v2
 
       - name: Install dependencies
