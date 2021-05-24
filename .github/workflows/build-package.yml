@@ -4,6 +4,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+  MAIN_BRANCH: "all-citus"
 
 on:
   push:
