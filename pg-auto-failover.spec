@@ -1,87 +1,87 @@
 %global pgmajorversion 11
 %global pgpackageversion 11
 %global pginstdir /usr/pgsql-%{pgpackageversion}
-%global sname pg-auto-failover
-%global extname pgautofailover
-%global debug_package %{nil}
+%global sname citus
 
-Summary:	Postgres extension for automated failover and high-availability
+Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.5.2
+Version:	1.6.1.pg_auto_failover
 Release:	1%{dist}
-License:	PostgreSQL
+License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pg-auto-failover/archive/v1.5.2.tar.gz
+Source0:	https://github.com/citusdata/pg_auto_failover/archive/v10.0.3.tar.gz
 URL:		https://github.com/citusdata/pg_auto_failover
-BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
-BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
-Requires:	postgresql%{pgmajorversion}-server postgresql%{pgmajorversion}-contrib openssl
+BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
+Requires:	postgresql%{pgmajorversion}-server
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-This extension implements a set of functions to provide High Availability to
-Postgres.
+Citus horizontally scales PostgreSQL across commodity servers
+using sharding and replication. Its query engine parallelizes
+incoming SQL queries across these servers to enable real-time
+responses on large datasets.
+
+Citus extends the underlying database rather than forking it,
+which gives developers and enterprises the power and familiarity
+of a traditional relational database. As an extension, Citus
+supports new PostgreSQL releases, allowing users to benefit from
+new features while maintaining compatibility with existing
+PostgreSQL tools. Note that Citus supports many (but not all) SQL
+commands.
 
 %prep
 %setup -q -n %{sname}-%{version}
 
 %build
-PATH=%{pginstdir}/bin:$PATH
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags
 make %{?_smp_mflags}
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%else
-  export PYTHONPATH=$(echo /usr/local/lib64/python3.*/site-packages):$(echo /usr/local/lib/python3.*/site-packages)
-  make man
-%endif
 
 %install
-PATH=%{pginstdir}/bin:$PATH
 %make_install
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
-%{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{extname}.md
-
-# install man pages
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%else
-  %{__mkdir} -p %{buildroot}/usr/share/man/man1
-  %{__cp} docs/_build/man/pg_auto_failover.1 %{buildroot}/usr/share/man/man1/
-  %{__cp} docs/_build/man/pg_autoctl.1 %{buildroot}/usr/share/man/man1/
-  %{__mkdir} -p %{buildroot}/usr/share/man/man5
-  %{__cp} docs/_build/man/pg_autoctl.5 %{buildroot}/usr/share/man/man5/
+%{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
+# Set paths to be packaged other than LICENSE, README & CHANGELOG.md
+echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
+echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
+echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
+echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
+echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
+%ifarch ppc64 ppc64le
+  %else
+  %if 0%{?rhel} && 0%{?rhel} <= 6
+  %else
+    echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
+    echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
+    echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
+    
+    # Columnar does not exist in Citus versions < 10.0
+    # At this point, we don't have %{pginstdir},
+    # so first check build directory for columnar.
+    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+  %endif
 %endif
 
 %clean
 %{__rm} -rf %{buildroot}
 
+%files -f installation_files.list
 %files
 %defattr(-,root,root,-)
-%doc %{pginstdir}/doc/extension/README-%{extname}.md
+%doc CHANGELOG.md
 %if 0%{?rhel} && 0%{?rhel} <= 6
+%doc LICENSE
 %else
-  %doc /usr/share/man/man1/pg_auto_failover.1.gz
-  %doc /usr/share/man/man1/pg_autoctl.1.gz
-  %doc /usr/share/man/man5/pg_autoctl.5.gz
+%license LICENSE
 %endif
-%{pginstdir}/lib/%{extname}.so
-%{pginstdir}/share/extension/%{extname}-*.sql
-%{pginstdir}/share/extension/%{extname}.control
-%{pginstdir}/bin/pg_autoctl
-%ifarch ppc64 ppc64le
-  %else
-  %if %{pgmajorversion} >= 11 && %{pgmajorversion} < 90
-    %if 0%{?rhel} && 0%{?rhel} <= 6
-    %else
-      %{pginstdir}/lib/bitcode/%{extname}*.bc
-      %{pginstdir}/lib/bitcode/%{extname}/*.bc
-    %endif
-  %endif
-%endif
-
+%doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Thu Jul 08 2021 - Gurkan <gindibay@microsoft.com> 1.6.1.-1
+- Official 1.6.1 release of Pg_auto_failover
+
 * Fri May 21 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.5.2-1
 - Official 1.5.2 release of pg_auto_failover
 
