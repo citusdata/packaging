@@ -1,3 +1,17 @@
+citus-enterprise (9.4.5.citus-1) stable; urgency=low
+  
+  * Adds a configure flag to enforce security
+  
+  * Avoids re-using connections for intermediate results
+  
+  * Fixes a bug that causes pruning incorrect shard of a range distributed table
+  
+  * Fixes a bug that might cause self-deadlocks when COPY used in TX block
+  
+  * Fixes an issue that could cause citus_finish_pg_upgrade to fail
+  
+ -- Gurkan <gindibay@microsoft.com>  Fri, 09 Jul 2021 08:12:11 +0000  
+ 
 citus-enterprise (10.0.3.citus-1) stable; urgency=low
 
   * Prevents infinite recursion for queries that involve UNION ALL
