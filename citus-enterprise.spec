@@ -10,11 +10,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	10.0.3.citus
+Version:	9.4.5.citus
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-enterprise/archive/v10.0.3.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v9.4.5.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -87,7 +87,7 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
       echo %{pginstdir}/lib/bitcode/%{pname}*.bc.gpg >> installation_files.list
       echo %{pginstdir}/lib/bitcode/%{pname}/*.bc.gpg >> installation_files.list
       echo %{pginstdir}/lib/bitcode/%{pname}/*/*.bc.gpg >> installation_files.list
-      
+
       # Columnar does not exist in Citus versions < 10.0
       # At this point, we don't have %{pginstdir},
       # so first check build directory for columnar.
@@ -344,6 +344,9 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Fri Jul 09 2021 - Gurkan <gindibay@microsoft.com> 9.4.5.citus-1
+- Official 9.4.5 release of Citus-enterprise
+
 * Thu Mar 18 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.3.citus-1
 - Official 10.0.3 release of Citus Enterprise
 
