@@ -7,7 +7,7 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	9.4.5.citus
+Version:	9.5.6.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
@@ -79,6 +79,9 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Fri Jul 09 2021 - Gurkan <gindibay@microsoft.com> 9.5.6.citus-1
+- Official 9.5.6 release of Citus
+
 * Thu Jul 08 2021 - Gurkan <gindibay@microsoft.com> 9.4.5.citus-1
 - Official 9.4.5 release of Citus
 
