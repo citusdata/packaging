@@ -45,7 +45,7 @@ script: |
         if [ -z "${UNENCRYPTED_PACKAGE:-}" ]; then
         citus_package -p ${TARGET_PLATFORM} 'local' 'release'
         else
-        build_new_release && build_new_nightly
+        build_new_release ##&& build_new_nightly
         fi
 deploy:
   - provider: packagecloud
