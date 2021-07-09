@@ -11,7 +11,7 @@ Version:	9.5.6.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v10.0.3.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v9.5.6.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
