@@ -1,3 +1,20 @@
+pg-auto-failover (1.6.1-1) stable; urgency=low
+  
+  This release contains monitor schema changes, so the monitor extension gets
+  a version bump from 1.5 to 1.6, and this is the first release in the 1.6
+  series.
+  
+  In this release we introduce a new state in the FSM: "dropped". This state
+  allows a node to realise it's been dropped from the monitor, and act
+  accordingly (mostly, stops cleanly and register it's been dropped).
+  
+  This means that the command `pg_autoctl drop node` now only completes when
+  the node that is being dropped is still reachable. To drop a node that is
+  unreachable (e.g. machine died), you should now use the command `pg_autoctl
+  drop node --force`.
+  
+ -- Gurkan <gindibay@microsoft.com>  Mon, 12 Jul 2021 19:05:48 +0000  
+ 
 pg-auto-failover (1.5.2-1) stable; urgency=low
 
   * Official 1.5.2 release of pg_auto_failover
