@@ -1,10 +1,8 @@
 name: Build Package
 
 env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
-  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
-  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   MAIN_BRANCH: "all-citus"
+  PACKAGE_CLOUD_REPO_NAME: "sample"
 
 on:
   push:
@@ -19,21 +17,13 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ el/7, el/8, ol/7, debian/stretch, debian/buster, ubuntu/xenial, ubuntu/bionic,ubuntu/focal ]
-#        platform: [ debian/stretch ]
-    env:
-      PLATFORM: ${{ matrix.platform }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      #      - name: install dependencies
-      #        run: sudo apt install libcurl4-openssl-dev libssl-dev
-      #
-      #      - name: Define git credentails
-      #        run: git config --global user.email "gindibay@microsoft.com"&& git config --global user.name "Gurkan Indibay"
 
       - name: Clone tools branch
-        run: git clone --depth=1 --branch tools-transition-update-docker https://github.com/citusdata/tools.git tools
+        run: git clone --depth=1 --branch update_properties_fixes https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt install libcurl4-openssl-dev libssl-dev
@@ -43,11 +33,14 @@ jobs:
 
       - name: Build Packages
         run: |
-          python -m  tools.packaging_automation.citus_package --gh_token "${{ secrets.GH_TOKEN }}" --platform "${{ matrix.platform }}" \
-          --build_type 'release' --secret_key "${{ secrets.PACKAGING_SECRET_KEY }}" --passphrase "${{ secrets.PACKAGING_PASSPHRASE }}" \
-          --output_dir "$(pwd)/packages/" --input_files_dir "$(pwd)" --output_validation "False"
+          python -m  tools.packaging_automation.citus_package --gh_token "${{ secrets.GH_TOKEN }}" \
+          --platform "${{ matrix.platform }}" --build_type 'release' \
+          --secret_key "${{ secrets.PACKAGING_SECRET_KEY }}" --passphrase "${{ secrets.PACKAGING_PASSPHRASE }}" \
+          --output_dir "$(pwd)/packages/" --input_files_dir "$(pwd)"
 
       - name: Publish Packages
         run: |
-          python -m  tools.packaging_automation.upload_to_package_cloud --platform ${{ matrix.platform }} --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
-          --repository_name "sample" --output_file_path "$(pwd)/packages"
+          python -m  tools.packaging_automation.upload_to_package_cloud --platform ${{ matrix.platform }} \
+          --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
+          --repository_name "${PACKAGE_CLOUD_REPO_NAME}" --output_file_path "$(pwd)/packages" \
+          --exec_folder_path $(pwd) --main_branch ${MAIN_BRANCH}
