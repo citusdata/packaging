@@ -26,7 +26,7 @@ citus-enterprise (10.0.4.citus-1) stable; urgency=low
   
   * Fixes two race conditions in the get_rebalance_progress
   
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Jul 2021 11:33:38   
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Jul 2021 11:33:38 +0000
  
 citus-enterprise (9.5.6.citus-1) stable; urgency=low
   
