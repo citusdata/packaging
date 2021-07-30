@@ -56,5 +56,5 @@ jobs:
           --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
-          --current_branch ${GITHUB_REF##*/} \
+          --exec_folder_path ${pwd} \
           --main_branch ${MAIN_BRANCH}
