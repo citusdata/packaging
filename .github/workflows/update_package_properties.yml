@@ -35,7 +35,10 @@ jobs:
 
       - name: Update package Properties
         run: |
-              python -m packaging_automation.update_package_properties --gh_token=${{ secrets.GH_TOKEN }} \
-              --prj_name "${PRJ_NAME}" --tag_name ${{ github.event.inputs.tag_name }} \
-              --email ${{ github.event.inputs.microsoft_email }} --name ${{ github.event.inputs.name }} --pipeline \
+              python -m packaging_automation.update_package_properties \
+              --gh_token=${{ secrets.GH_TOKEN }} \
+              --prj_name "${PRJ_NAME}" \
+              --tag_name ${{ github.event.inputs.tag_name }} \
+              --email ${{ github.event.inputs.microsoft_email }} \
+              --name ${{ github.event.inputs.name }} --pipeline \
               --exec_path "$(pwd)"
