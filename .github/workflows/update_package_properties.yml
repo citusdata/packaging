@@ -33,7 +33,7 @@ jobs:
       - name: Install python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
 
-      - name: Update package Properties
+      - name: Update package properties
         run: |
           python -m packaging_automation.update_package_properties \
           --gh_token=${{ secrets.GH_TOKEN }} \
