@@ -31,7 +31,7 @@ RUN set -ex; \
     export GNUPGHOME="$(mktemp -d)"; \
 # Fix ipv6 issue on travis: https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-466594168
     echo "disable-ipv6" >> $GNUPGHOME/dirmngr.conf; \
-    gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+    gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
     gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/postgres.gpg; \
     command -v gpgconf > /dev/null && gpgconf --kill all; \
     rm -rf "$GNUPGHOME"; \
