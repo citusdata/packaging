@@ -6,16 +6,16 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'The tag name on the project repo to be released'
+        description: "The tag name on the project repo to be released"
       fancy_version_no:
-        description: 'If fancy versioning is needed, set value greater than 1 e.g 2'
-        default: '1'
+        description: "If fancy versioning is needed, set value greater than 1 e.g 2"
+        default: "1"
       microsoft_email:
-        description: 'Email to be written on changelogs'
-        default: 'gindibay@microsoft.com'
+        description: "Email to be written on changelogs"
+        default: "gindibay@microsoft.com"
       name:
-        description: 'Name to be written on changelogs'
-        default: 'Gurkan Indibay'
+        description: "Name to be written on changelogs"
+        default: "Gurkan Indibay"
 jobs:
   update_package_properties:
     runs-on: ubuntu-latest
@@ -35,10 +35,10 @@ jobs:
 
       - name: Update package Properties
         run: |
-              python -m packaging_automation.update_package_properties \
-              --gh_token=${{ secrets.GH_TOKEN }} \
-              --prj_name "${PRJ_NAME}" \
-              --tag_name ${{ github.event.inputs.tag_name }} \
-              --email ${{ github.event.inputs.microsoft_email }} \
-              --name ${{ github.event.inputs.name }} --pipeline \
-              --exec_path "$(pwd)"
+          python -m packaging_automation.update_package_properties \
+          --gh_token=${{ secrets.GH_TOKEN }} \
+          --prj_name "${PRJ_NAME}" \
+          --tag_name ${{ github.event.inputs.tag_name }} \
+          --email ${{ github.event.inputs.microsoft_email }} \
+          --name ${{ github.event.inputs.name }} --pipeline \
+          --exec_path "$(pwd)"
