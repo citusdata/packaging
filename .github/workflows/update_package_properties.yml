@@ -2,6 +2,7 @@ name: Update Package Properties
 
 env:
   PRJ_NAME: "citus"
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
 on:
   workflow_dispatch:
     inputs:
@@ -36,7 +37,7 @@ jobs:
       - name: Update package properties
         run: |
           python -m packaging_automation.update_package_properties \
-          --gh_token=${{ secrets.GH_TOKEN }} \
+          --gh_token="${GH_TOKEN}" \
           --prj_name "${PRJ_NAME}" \
           --tag_name ${{ github.event.inputs.tag_name }} \
           --email ${{ github.event.inputs.microsoft_email }} \
