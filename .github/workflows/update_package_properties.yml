@@ -19,6 +19,7 @@ on:
         default: "Gurkan Indibay"
 jobs:
   update_package_properties:
+    name: Update package properties
     runs-on: ubuntu-latest
 
     steps:
