@@ -38,7 +38,7 @@ jobs:
       - name: Update package properties
         run: |
           python -m packaging_automation.update_package_properties \
-          --gh_token="${GH_TOKEN}" \
+          --gh_token "${GH_TOKEN}" \
           --prj_name "${PRJ_NAME}" \
           --tag_name ${{ github.event.inputs.tag_name }} \
           --email ${{ github.event.inputs.microsoft_email }} \
