@@ -42,5 +42,6 @@ jobs:
           --prj_name "${PRJ_NAME}" \
           --tag_name ${{ github.event.inputs.tag_name }} \
           --email ${{ github.event.inputs.microsoft_email }} \
-          --name ${{ github.event.inputs.name }} --pipeline \
+          --name "${{ github.event.inputs.name }}" \
+          --pipeline \
           --exec_path "$(pwd)"
