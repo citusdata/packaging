@@ -11,7 +11,8 @@ on:
         description: "Version number to be released e.g 10.0.3"
 
 jobs:
-  build:
+  update_pgxn:
+    name: Update pgxn configuration
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
