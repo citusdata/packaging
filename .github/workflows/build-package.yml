@@ -3,7 +3,7 @@ name: Build Package
 env:
   MAIN_BRANCH: "all-enterprise"
   PACKAGE_CLOUD_REPO_NAME: "sample"
-  PACKAGE_ENCRYPTION_KEY: ${{ secrets.PACKAGING_ENCRYPTION_KEY }}
+  PACKAGE_ENCRYPTION_KEY: ${{ secrets.PACKAGE_ENCRYPTION_KEY }}
 on:
   push:
     branches: "**"
