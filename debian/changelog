@@ -1,3 +1,18 @@
+pg-auto-failover (1.5.2-1) stable; urgency=low
+  
+  This is a bugfix release for the v1.5 series.
+  
+  In addition to bug fixes, this release also contains a lift of the
+  restriction to always have at least two nodes with a non-zero candidate
+  priority in a group. It is now possible to use pg_auto_failover and only
+  have manual failover.
+  
+  If you're using the output from the command `pg_autoctl show settings
+  --json` please notice that we changed the JSON format we use in the output.
+  See #697 for details.
+  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 10 Aug 2021 10:38:33 +0000  
+ 
 pg-auto-failover (1.6.1-1) stable; urgency=low
   
   This release contains monitor schema changes, so the monitor extension gets
