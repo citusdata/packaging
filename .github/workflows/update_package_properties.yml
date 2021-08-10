@@ -1,0 +1,52 @@
+name: Update Package Properties
+
+env:
+  PRJ_NAME: "citus_enterprise"
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "The tag name on the project repo to be released"
+      fancy_version_no:
+        description: "If fancy versioning is needed, set value greater than 1 e.g 2"
+        default: "1"
+      microsoft_email:
+        description: "Email to be written on changelogs"
+        default: "gindibay@microsoft.com"
+      name:
+        description: "Name to be written on changelogs"
+        default: "Gurkan Indibay"
+jobs:
+  update_package_properties:
+    name: Update package properties
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo apt install libcurl4-openssl-dev libssl-dev
+
+      - name: Clone tools branch
+        run: git clone -b issue-149 --depth=1  https://github.com/citusdata/tools.git tools
+
+      - name: Set git name and email
+        run: |
+          git config --global user.email "${{ github.event.inputs.microsoft_email }}" && \
+          git config --global user.name "${{ github.event.inputs.name }}"
+
+      - name: Install python requirements
+        run: python -m pip install -r tools/packaging_automation/requirements.txt
+
+      - name: Update package properties
+        run: |
+          python -m tools.packaging_automation.update_package_properties \
+          --gh_token="${GH_TOKEN}" \
+          --prj_name "${PRJ_NAME}" \
+          --tag_name ${{ github.event.inputs.tag_name }} \
+          --email ${{ github.event.inputs.microsoft_email }} \
+          --name "${{ github.event.inputs.name }}" \
+          --pipeline \
+          --exec_path "$(pwd)"
