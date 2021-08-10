@@ -27,8 +27,8 @@ jobs:
 
       - name: Update pgxn files
         run: |
-        python -m packaging_automation.update_pgxn \
-        --prj_ver ${PROJECT_VERSION} \
-        --gh_token ${GH_TOKEN} \
-        --pipeline \
-        --exec_path "$(pwd)" \
+          python -m packaging_automation.update_pgxn \
+          --prj_ver ${PROJECT_VERSION} \
+          --gh_token ${GH_TOKEN} \
+          --pipeline \
+          --exec_path "$(pwd)"
