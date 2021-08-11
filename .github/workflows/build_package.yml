@@ -1,0 +1,21 @@
+name: Release
+on:
+  push:
+    branches: "**"
+jobs:
+  release:
+    name: Release on GitHub and PGXN
+    runs-on: ubuntu-latest
+    container: pgxn/pgxn-tools
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Bundle the Release
+        id: bundle
+        run: pgxn-bundle
+      - name: Release on PGXN
+        env:
+          # Required to release on PGXN.
+          PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
+          PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
+        run: pgxn-release
