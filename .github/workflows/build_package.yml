@@ -15,8 +15,9 @@ jobs:
         run: pgxn-bundle
       - name: Release on PGXN
         env:
-          # Required to release on PGXN.
-          MAIN_BRANCH: "pgxn-citus"
+          #Will bechanged after testing this pipeline on the next release
+          #          MAIN_BRANCH: "pgxn-citus"
+          MAIN_BRANCH: "issue_714"
           PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
           PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
         run: |
