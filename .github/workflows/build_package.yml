@@ -26,5 +26,5 @@ jobs:
             pgxn-release
           else
             echo "Distro will not be released since current branch '${CURRENT_BRANCH}' is different from main branch \
-            "${MAIN_BRANCH}"
+            '${MAIN_BRANCH}'"
           fi
