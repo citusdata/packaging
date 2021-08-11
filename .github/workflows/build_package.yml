@@ -17,7 +17,7 @@ jobs:
         env:
           #Will bechanged after testing this pipeline on the next release
           #          MAIN_BRANCH: "pgxn-citus"
-          MAIN_BRANCH: "issue_714"
+          MAIN_BRANCH: issue_714
           PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
           PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
         run: |
@@ -26,6 +26,6 @@ jobs:
           then
             pgxn-release
           else
-            echo "Distro will not be released since current branch '${CURRENT_BRANCH}' is different from main branch \
-            '${MAIN_BRANCH}'"
+            echo "Distro will not be released since current branch ${CURRENT_BRANCH} is different from main branch \
+            ${MAIN_BRANCH}"
           fi
