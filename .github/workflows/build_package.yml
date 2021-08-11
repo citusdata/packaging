@@ -16,6 +16,15 @@ jobs:
       - name: Release on PGXN
         env:
           # Required to release on PGXN.
+          MAIN_BRANCH: "pgxn-citus"
           PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
           PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
-        run: pgxn-release
+        run: |
+          CURRENT_BRANCH="${GITHUB_REF##*/}"
+          if [["${CURRENT_BRANCH}"=="${MAIN_BRANCH}"]]
+          then
+            pgxn-release
+          else
+            echo "Distro will not be released since current branch '${CURRENT_BRANCH}' is different from main branch \
+            "${MAIN_BRANCH}"
+          fi
