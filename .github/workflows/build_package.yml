@@ -22,7 +22,7 @@ jobs:
           PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
         run: |
           CURRENT_BRANCH="${GITHUB_REF##*/}"
-          if [[ "${CURRENT_BRANCH}" == "${MAIN_BRANCH}" ]]
+          if [ "${CURRENT_BRANCH}" == "${MAIN_BRANCH}" ]
           then
             pgxn-release
           else
