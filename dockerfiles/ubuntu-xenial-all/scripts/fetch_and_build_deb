@@ -178,7 +178,14 @@ DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild --prepend-path /usr/local/bin --pr
 ## Rename all *.ddeb files into *.deb since we upload debug packages as deb
 for file in ../*.ddeb
 do
-  mv "$file" "${file%.ddeb}.deb"
+  # If check below is to prevent error, when there is not ddeb file exists
+  # In this case file nane becomes '../*.ddeb'
+  if [ ${file} != "../*.ddeb" ]; then
+    echo "Renaming ${file} into ${file%.ddeb}.deb"
+    mv "$file" "${file%.ddeb}.deb";
+  else
+    echo "There are no ddeb files to rename."
+  fi
 done
 #----------
 ## Copy all deb packages out of docker image
