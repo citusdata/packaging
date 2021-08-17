@@ -1,3 +1,15 @@
+citus-enterprise (9.5.7.citus-1) stable; urgency=low
+  
+  * Allows more graceful failovers when replication factor > 1
+  
+  * Fixes a bug that causes partitions to have wrong distribution key after
+    `DROP COLUMN`
+  
+  * Improves master_update_table_statistics and provides distributed deadlock
+    detection
+  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 13:25:29 +0000  
+ 
 citus-enterprise (9.4.6.citus-1) stable; urgency=low
   
   * Allows more graceful failovers when replication factor > 1
