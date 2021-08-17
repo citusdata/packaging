@@ -1,3 +1,12 @@
+citus-enterprise (9.4.6.citus-1) stable; urgency=low
+  
+  * Allows more graceful failovers when replication factor > 1
+  
+  * Improves master_update_table_statistics and provides distributed deadlock
+    detection
+  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 05:56:18 +0000  
+ 
 citus-enterprise (10.1.1.citus-1) stable; urgency=low
   
   * Drops support for PostgreSQL 11
