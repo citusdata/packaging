@@ -175,18 +175,20 @@ mjobs="$(expr $procs + 1)"
 
 DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild --prepend-path /usr/local/bin --preserve-envvar CONF_EXTRA_VERSION --preserve-envvar UNENCRYPTED_PACKAGE --preserve-envvar PACKAGE_ENCRYPTION_KEY -uc -us -B --lintian-opts --profile debian --allow-root
 
-## Rename all *.ddeb files into *.deb since we upload debug packages as deb
-for file in ../*.ddeb
+## Rename all *.ddeb files to *.deb since we upload debug packages with .deb suffix
+for filename in ../*.ddeb
 do
-  # If check below is to prevent error, when there is not ddeb file exists
-  # In this case file nane becomes '../*.ddeb'
-  if [ ${file} != "../*.ddeb" ]; then
-    echo "Renaming ${file} into ${file%.ddeb}.deb"
-    mv "$file" "${file%.ddeb}.deb";
+  # .ddeb suffix is automatically chosen when naming debug packages for Ubuntu
+  # releases. For this reason, we rename all *.ddeb files to *.deb since we upload
+  # debug packages with .deb suffix.
+  if [ ${filename} != "../*.ddeb" ]; then
+    echo "Renaming ${file} to ${file%.ddeb}.deb"
+    mv "$filename" "${filename%.ddeb}.deb";
   else
-    echo "There are no ddeb files to rename."
+    # If there is no files with .ddeb suffix, then "filename" here will exactly be
+    # equal to our search pattern, i.e. '../*.ddeb'.
+    echo "There are no *ddeb files to rename."
   fi
 done
-#----------
 ## Copy all deb packages out of docker image
 cp ../*.deb /packages
