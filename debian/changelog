@@ -1,4 +1,4 @@
-citus (10.1.2.citus-1) stable; urgency=low
+citus-enterprise (10.1.2.citus-1) stable; urgency=low
   
   * Allows more graceful failovers when replication factor > 1
   
