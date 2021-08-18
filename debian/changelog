@@ -1,3 +1,12 @@
+citus-enterprise (10.1.2.citus-1) stable; urgency=low
+  
+  * Allows more graceful failovers when replication factor > 1
+  
+  * Fixes a bug that causes partitions to have wrong distribution key after
+    `DROP COLUMN`
+  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 18 Aug 2021 07:49:56 +0000  
+ 
 citus-enterprise (10.0.5.citus-1) stable; urgency=low
   
   * Allows more graceful failovers when replication factor > 1
