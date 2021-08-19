@@ -7,11 +7,11 @@ Summary:	GDPR compliant logging for Azure
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.4.citus
+Version:	1.5.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/azure_gdpr/archive/v1.4.tar.gz
+Source0:	https://github.com/citusdata/azure_gdpr/archive/v1.5.tar.gz
 URL:		https://github.com/citusdata/azure_gdpr
 BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -49,6 +49,9 @@ PostgreSQL extension for GDPR compliant logging for Azure
 %endif
 
 %changelog
+* Thu Aug 19 2021 - Philip Dubé <phdub@microsoft.com> 1.5.citus-1
+- Don't stop sending logs to mdsd after log hook raises error (like from OOM)
+
 * Tue Apr 20 2021 - Gurkan Indibay  <gindibay@microsoft.com> 1.4.citus-1
 - Official 1.4 release of Azure_gdpr
 
