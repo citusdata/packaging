@@ -2,7 +2,7 @@
 
 name: Update Package Properties
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
 
@@ -23,7 +23,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Clone Tools branch
-        run: git clone --branch tools-transition https://github.com/citusdata/tools.git
+        run: git clone --branch v0.8.1 https://github.com/citusdata/tools.git
 
       # Runs a set of commands using the runners shell
       - name: Execute Package Properties Update
