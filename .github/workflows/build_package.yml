@@ -11,7 +11,6 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Bundle the Release
-        id: bundle
         run: pgxn-bundle
       - name: Release on PGXN
         env:
