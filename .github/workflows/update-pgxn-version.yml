@@ -21,7 +21,7 @@ jobs:
         run: sudo apt install libcurl4-openssl-dev libssl-dev
 
       - name: Clone Tools branch
-        run: git clone --branch issue_154 https://github.com/citusdata/tools.git
+        run: git clone --branch v0.8.1 https://github.com/citusdata/tools.git
 
       - name: Install Python requirements
         run: export PYTHONPATH="$(pwd)/tools" && python -m pip install -r tools/packaging_automation/requirements.txt
