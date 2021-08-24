@@ -9,6 +9,7 @@ on:
     inputs:
       project_version:
         description: "Version number to be released e.g 10.0.3"
+        required: true
 
 jobs:
   update_pgxn:
@@ -21,7 +22,7 @@ jobs:
         run: sudo apt install libcurl4-openssl-dev libssl-dev
 
       - name: Clone Tools branch
-        run: git clone --branch v0.8.1 https://github.com/citusdata/tools.git
+        run: git clone --depth 1 --branch v0.8.1 https://github.com/citusdata/tools.git
 
       - name: Install Python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
