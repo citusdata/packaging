@@ -9,6 +9,7 @@ on:
     inputs:
       project_version:
         description: "Version number to be released e.g 10.0.3"
+        required: true
 
 jobs:
   update_pgxn:
