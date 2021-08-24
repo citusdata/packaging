@@ -1,10 +1,11 @@
-name: Release
+name: Release on PGXN
 on:
   push:
-    branches: "**"
+    branches:
+      - "**"
 jobs:
   release:
-    name: Release on GitHub and PGXN
+    name: Release on PGXN
     runs-on: ubuntu-latest
     container: pgxn/pgxn-tools
     steps:
