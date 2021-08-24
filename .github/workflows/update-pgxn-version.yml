@@ -24,11 +24,11 @@ jobs:
         run: git clone --branch v0.8.1 https://github.com/citusdata/tools.git
 
       - name: Install Python requirements
-        run: export PYTHONPATH="$(pwd)/tools" && python -m pip install -r tools/packaging_automation/requirements.txt
+        run: python -m pip install -r tools/packaging_automation/requirements.txt
 
       - name: Update pgxn files
         run: |
-          python -m packaging_automation.update_pgxn \
+          python -m tools.packaging_automation.update_pgxn \
           --prj_ver ${PROJECT_VERSION} \
           --gh_token ${GH_TOKEN} \
           --pipeline \
