@@ -1,0 +1,16 @@
+name: Postgres Version Matrix
+project_name: citus # alternatives: citus, citus-enterprise, pg-auto-failover, pg-auto-failover-enterprise
+# There will be one configuration like this for each project in packaging repo
+# i.e. in all-citus, all-enterprise,all-pgautofailover,all-pgautofailover-enterprise, pgxn-citus etc.
+version_matrix:
+  - 8.0:
+      postgres_versions: [10, 11]
+  - 9.0:
+      postgres_versions: [11, 12]
+  - 9.5:
+      postgres_versions: [11, 12, 13]
+  # If 10.0 is released, since it is between 10.1 and 9.5, 9.5 support will be effective for 10.0.x releases
+  - 10.1:
+      postgres_versions: [12, 13]
+  - 10.2:
+      postgres_versions: [12, 13, 14]
