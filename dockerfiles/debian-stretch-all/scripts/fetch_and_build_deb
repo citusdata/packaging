@@ -55,9 +55,10 @@ declare pkglatest # to make shellcheck happy
 pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
-releasepg="${releasepg:-11,12,13}"
-nightlypg="${nightlypg:-${releasepg}}"
+
 versioning="${versioning:-simple}"
+supported_postgres_versions="${postgres_versions:-11,12,13}"
+nightlypg="${supported_postgres_versions}"
 
 if [ -z "${pkglatest}" ]; then
     echo "$0: pkgvars file must specify a value for pkglatest" >&2
@@ -96,7 +97,7 @@ case "${1}" in
             exit $failure
         fi
 
-        echo "${releasepg}" | tr ',' '\n' > "${builddir}/debian/pgversions"
+        echo "${supported_postgres_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
         ;;
     *)
         if [ "${1}" == 'nightly' ]; then
