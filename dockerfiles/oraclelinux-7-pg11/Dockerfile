@@ -1,7 +1,7 @@
 # vim:set ft=dockerfile:
 FROM oraclelinux:7
 
-RUN ( sudo dnf clean all && sudo rm -r /var/cache/dnf && sudo dnf upgrade -v )
+RUN ( dnf clean all && rm -r /var/cache/dnf && dnf upgrade -v )
 
 # FIXME: Hack around docker/docker#10180
 RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
