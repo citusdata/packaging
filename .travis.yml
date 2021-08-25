@@ -1,5 +1,5 @@
 sudo: required
-services: [ docker ]
+services: [docker]
 language: perl
 perl: "5.18"
 env:
@@ -19,6 +19,9 @@ before_install:
   - echo $TARGET_PLATFORM > os-list.csv
 install: true
 script:
-  - ./update_dockerfiles && git add --intent-to-add dockerfiles && git diff --exit-code dockerfiles
-  - git checkout -- dockerfiles && ./update_images
+  - ./update_dockerfiles
+  - git add --intent-to-add dockerfiles
+  - git diff --exit-code dockerfiles
+  - git checkout -- dockerfiles
+  - ./update_images
   - ./ci/push_images
