@@ -4,6 +4,10 @@ env:
   MAIN_BRANCH: "all-pgautofailover-enterprise"
   PACKAGE_CLOUD_REPO_NAME: "sample"
   PACKAGE_ENCRYPTION_KEY: ${{ secrets.PACKAGE_ENCRYPTION_KEY }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
+  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
 on:
   push:
     branches: "**"
@@ -43,11 +47,11 @@ jobs:
       - name: Build packages
         run: |
           python -m  tools.packaging_automation.citus_package \
-          --gh_token "${{ secrets.GH_TOKEN }}" \
-          --platform "${{ matrix.platform }}" \
+          --gh_token "${GH_TOKEN}" \
+          --platform ${{ matrix.platform }} \
           --build_type 'release' \
-          --secret_key "${{ secrets.PACKAGING_SECRET_KEY }}" \
-          --passphrase "${{ secrets.PACKAGING_PASSPHRASE }}" \
+          --secret_key "${PACKAGING_SECRET_KEY}" \
+          --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
           --input_files_dir "$(pwd)"
 
@@ -55,7 +59,7 @@ jobs:
         run: |
           python -m  tools.packaging_automation.upload_to_package_cloud \
           --platform ${{ matrix.platform }} \
-          --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
+          --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
