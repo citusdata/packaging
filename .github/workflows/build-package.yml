@@ -6,7 +6,8 @@ env:
   PACKAGE_ENCRYPTION_KEY: ${{ secrets.PACKAGE_ENCRYPTION_KEY }}
 on:
   push:
-    branches: "**"
+    branches:
+    - "**"
 
   workflow_dispatch:
 
@@ -31,7 +32,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Clone tools branch
-        run: git clone -b v0.8.1 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.1 --depth=1 https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt install libcurl4-openssl-dev libssl-dev
@@ -41,7 +42,7 @@ jobs:
 
       - name: Build packages
         run: |
-          python -m  tools.packaging_automation.citus_package \
+          python -m tools.packaging_automation.citus_package \
           --gh_token "${{ secrets.GH_TOKEN }}" \
           --platform "${{ matrix.platform }}" \
           --build_type 'release' \
@@ -52,7 +53,7 @@ jobs:
 
       - name: Publish packages
         run: |
-          python -m  tools.packaging_automation.upload_to_package_cloud \
+          python -m tools.packaging_automation.upload_to_package_cloud \
           --platform ${{ matrix.platform }} \
           --package_cloud_api_token ${{ secrets.PACKAGE_CLOUD_API_TOKEN }} \
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
