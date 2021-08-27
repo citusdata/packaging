@@ -5,7 +5,9 @@ env:
   PACKAGE_CLOUD_REPO_NAME: "citusdata/community"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
+  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+  CURRENT_BRANCH: "${GITHUB_REF##*/}"
 on:
   push:
     branches:
@@ -49,8 +51,8 @@ jobs:
           --gh_token "${GH_TOKEN}" \
           --platform "${{ matrix.platform }}" \
           --build_type "release" \
-          --secret_key "${{ secrets.PACKAGING_SECRET_KEY }}" \
-          --passphrase "${{ secrets.PACKAGING_PASSPHRASE }}" \
+          --secret_key "${PACKAGING_SECRET_KEY}" \
+          --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
           --input_files_dir "$(pwd)"
 
