@@ -10,7 +10,8 @@ on:
   push:
     branches:
       - "**"
-  #TODO Add schedule
+  schedule:
+    - cron: "30 1 * * *"
   workflow_dispatch:
 
 jobs:
