@@ -2,7 +2,7 @@ name: Build Package
 
 env:
   MAIN_BRANCH: "all-citus"
-  PACKAGE_CLOUD_REPO_NAME: "community"
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/community"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
