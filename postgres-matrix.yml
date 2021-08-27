@@ -1,7 +1,6 @@
 name: Postgres Version Matrix
-project_name: citus # alternatives: citus, citus-enterprise, pg-auto-failover, pg-auto-failover-enterprise
-# There will be one configuration like this for each project in packaging repo
-# i.e. in all-citus, all-enterprise,all-pgautofailover,all-pgautofailover-enterprise, pgxn-citus etc.
+project_name: citus
+
 version_matrix:
   - 8.0:
       postgres_versions: [10, 11]
