@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo apt install libcurl4-openssl-dev libssl-dev
+        run: sudo apt-get update && apt install libcurl4-openssl-dev libssl-dev
 
       - name: Clone tools branch
         run: git clone -b v0.8.1 --depth=1 https://github.com/citusdata/tools.git tools
@@ -45,8 +45,8 @@ jobs:
           python -m tools.packaging_automation.update_package_properties \
           --gh_token="${GH_TOKEN}" \
           --prj_name "${PRJ_NAME}" \
-          --tag_name ${{ github.event.inputs.tag_name }} \
-          --email ${{ github.event.inputs.microsoft_email }} \
-          --name ${{ github.event.inputs.name }} \
+          --tag_name "${{ github.event.inputs.tag_name }}" \
+          --email "${{ github.event.inputs.microsoft_email }}" \
+          --name "${{ github.event.inputs.name }}" \
           --pipeline \
           --exec_path "$(pwd)"
