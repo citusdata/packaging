@@ -57,7 +57,7 @@ jobs:
         run: |
           python -m  tools.packaging_automation.upload_to_package_cloud \
           --platform "${{ matrix.platform }}" \
-          --package_cloud_api_token "${{PACKAGE_CLOUD_API_TOKEN}}" \
+          --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
