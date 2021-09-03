@@ -12,12 +12,12 @@ badusage=64
 
 nprocs="${1:-1}"
 
-if [[ $TRAVIS_PULL_REQUEST != "false" ]] || [[ $TRAVIS_BRANCH != "develop" ]] ; then
+if [[ ${CURRENT_BRANCH} != "develop" ]] ; then
     echo "PR is not merged to develop, not pushing to DockerHub"
     exit 0;
 fi
 
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
 declare args
 
