@@ -45,9 +45,6 @@ jobs:
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt install libcurl4-openssl-dev libssl-dev
 
-      - name: Pwd
-        run: echo $(pwd)
-
       - name: Update and check dockerfiles
         run: |
           ./update_dockerfiles
@@ -61,9 +58,6 @@ jobs:
 
       - name: Clone tools repo for test
         run: git clone -b develop_tests --depth=1  https://github.com/citusdata/tools.git tools
-
-      - name: Pwd 2
-        run: echo $(pwd)
 
       - name: Execute packaging tests
         run: |
