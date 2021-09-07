@@ -7,7 +7,6 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
-  CURRENT_BRANCH: "${GITHUB_REF##*/}"
 on:
   push:
     branches:
@@ -64,5 +63,5 @@ jobs:
           --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
-          --current_branch "${CURRENT_BRANCH}" \
+          --current_branch "${GITHUB_REF##*/}" \
           --main_branch "${MAIN_BRANCH}"
