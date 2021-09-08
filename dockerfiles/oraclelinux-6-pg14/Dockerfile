@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM oraclelinux:7
+FROM oraclelinux:6
 
 RUN yum -y update
 
@@ -9,7 +9,7 @@ RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /v
 
 # Enable some other repos for some dependencies in OL/7 
 # see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
-RUN [[ oraclelinux != oraclelinux ]] || [[ 7 != 7 ]] || ( \
+RUN [[ oraclelinux != oraclelinux ]] || [[ 6 != 7 ]] || ( \
         pushd /etc/yum.repos.d/ \
         && rm -f * \
         && curl -O http://yum.oracle.com/public-yum-ol7.repo \
@@ -25,10 +25,10 @@ RUN [[ oraclelinux != oraclelinux ]] || [[ 7 != 7 ]] || ( \
 # in oracle 7 repos. So package from centos repo was used
 # There is no package in oracle repos for lz4. Also it is not preloaded. So both lz4 and lz4-devel packages
 # were downloaded from centos el/6 repos
-RUN if [[ oraclelinux   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
+RUN if [[ oraclelinux   == oraclelinux ]] && [[ 6 == 7 ]]; then yum install -y wget \
         && wget http://mirror.centos.org/centos/7/os/x86_64/Packages/lz4-devel-1.8.3-1.el7.x86_64.rpm \
         && rpm -ivh lz4-devel-1.8.3-1.el7.x86_64.rpm ; \
-        elif [[ oraclelinux   == oraclelinux ]] && [[ 7 == 6 ]]; then yum install -y wget \
+        elif [[ oraclelinux   == oraclelinux ]] && [[ 6 == 6 ]]; then yum install -y wget \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-r131-1.el6.x86_64.rpm \
         && rpm -ivh lz4-r131-1.el6.x86_64.rpm \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-devel-r131-1.el6.x86_64.rpm \
@@ -36,8 +36,8 @@ RUN if [[ oraclelinux   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y w
         else yum install -y lz4 lz4-devel; fi
 
 # Enable testing repo if postgres version is 14
-RUN yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-     && ( [[ 10 != 14 ]] || sed -i '/\[pgdg14-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo )
+RUN yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+     && ( [[ 14 != 14 ]] || sed -i '/\[pgdg14-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo )
 
 # install build tools and PostgreSQL development files
 RUN ( [[ -z "" ]] || yum install -y ) \
@@ -62,8 +62,8 @@ RUN ( [[ -z "" ]] || yum install -y ) \
         libzstd \
         libzstd-devel \
         llvm-toolset-7-clang llvm5.0 \
-    && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
-    && yum install -y postgresql10-server postgresql10-devel \
+    && ( [[ 6 < 8 ]] || dnf -qy module disable postgresql ) \
+    && yum install -y postgresql14-server postgresql14-devel \
     && yum clean all
 
 # install jq to process JSON API responses
@@ -94,7 +94,7 @@ RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
 # set PostgreSQL version, place scripts on path, and declare output volume
-ENV PGVERSION=10 \
+ENV PGVERSION=14 \
     PATH=/scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages

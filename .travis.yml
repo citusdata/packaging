@@ -10,7 +10,6 @@ env:
     - TARGET_PLATFORM=debian,stretch
     - TARGET_PLATFORM=oraclelinux,8
     - TARGET_PLATFORM=oraclelinux,7
-    - TARGET_PLATFORM=oraclelinux,6
     - TARGET_PLATFORM=ubuntu,focal
     - TARGET_PLATFORM=ubuntu,bionic
     - TARGET_PLATFORM=ubuntu,xenial

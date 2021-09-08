@@ -37,7 +37,7 @@ RUN if [[ oraclelinux   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y w
 
 # Enable testing repo if postgres version is 14
 RUN yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
-     && ( [[ 10 != 14 ]] || sed -i '/\[pgdg14-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo )
+     && ( [[ 14 != 14 ]] || sed -i '/\[pgdg14-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo )
 
 # install build tools and PostgreSQL development files
 RUN ( [[ -z "" ]] || yum install -y ) \
@@ -63,7 +63,7 @@ RUN ( [[ -z "" ]] || yum install -y ) \
         libzstd-devel \
         llvm-toolset-7-clang llvm5.0 \
     && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
-    && yum install -y postgresql10-server postgresql10-devel \
+    && yum install -y postgresql14-server postgresql14-devel \
     && yum clean all
 
 # install jq to process JSON API responses
@@ -94,7 +94,7 @@ RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
 # set PostgreSQL version, place scripts on path, and declare output volume
-ENV PGVERSION=10 \
+ENV PGVERSION=14 \
     PATH=/scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages

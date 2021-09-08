@@ -35,6 +35,9 @@ RUN if [[ oraclelinux   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y w
         && rpm -ivh lz4-devel-r131-1.el6.x86_64.rpm;  \
         else yum install -y lz4 lz4-devel; fi
 
+# Enable testing repo if postgres version is 14
+RUN yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+     && ( [[ 11 != 14 ]] || sed -i '/\[pgdg14-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo )
 
 # install build tools and PostgreSQL development files
 RUN ( [[ -z "" ]] || yum install -y ) \
@@ -59,7 +62,6 @@ RUN ( [[ -z "" ]] || yum install -y ) \
         libzstd \
         libzstd-devel \
         llvm-toolset-7-clang llvm5.0 \
-    && yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql11-server postgresql11-devel \
     && yum clean all
