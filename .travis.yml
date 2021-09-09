@@ -1,5 +1,5 @@
 sudo: required
-services: [ docker ]
+services: [docker]
 language: perl
 perl: "5.18"
 env:
@@ -29,7 +29,8 @@ env:
     - TARGET_PLATFORM=debian/stretch
     - TARGET_PLATFORM=ubuntu/focal
     - TARGET_PLATFORM=ubuntu/bionic
-    - TARGET_PLATFORM=ubuntu/xenial
+    # commented out since build fails for ubuntu xenial
+    #- TARGET_PLATFORM=ubuntu/xenial
 before_install:
   - git clone -b v0.7.21 --depth 1 https://github.com/citusdata/tools.git
   - sudo make -C tools install
@@ -66,4 +67,3 @@ deploy:
     on:
       branch: "all-pgautofailover"
       condition: -d "pkgs/nightlies"
-
