@@ -1,3 +1,9 @@
+pg-auto-failover (1.6.2-1) stable; urgency=low
+  
+  This is a bug fix release for the 1.6 series.
+  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 09 Sep 2021 10:54:34 +0000  
+ 
 pg-auto-failover (1.6.1-1) stable; urgency=low
   
   This release contains monitor schema changes, so the monitor extension gets
