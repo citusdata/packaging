@@ -9,6 +9,7 @@ base:
   - "gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run"
   - ".* warning: overriding recipe for target 'check'"
   - "WARNING: Not compiling with -Wl,pie flag, this is less secure"
+  - "# create a temporary directory for gpg to use so it doesn't output warnings"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
