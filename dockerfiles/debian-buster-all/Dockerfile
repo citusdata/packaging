@@ -38,7 +38,11 @@ RUN set -ex; \
     apt-key list
 
 # install build tools and PostgreSQL development files
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+# Since pg 14 is not released yet, pg 14 repo is needed to add  to install pg 14 related libraries.
+# Since postgresql-server-dev-all library does not include pg14 libraries, postgresql-server-dev-14
+# library is needed to add.
+# TODO After Pg14 official release the changes should be rolled back.
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main 14' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -62,6 +66,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
         libxslt-dev \
         lintian \
         postgresql-server-dev-all \
+        postgresql-server-dev-14 \
         wget \
         zlib1g-dev \
         python3-pip \
