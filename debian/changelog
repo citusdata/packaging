@@ -1,8 +1,15 @@
+pg-auto-failover-enterprise (1.6.2-1) stable; urgency=low
+  
+  * Official 1.6.2 release of pg_auto_failover enterprise
+  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Mon, 13 Sep 2021 08:48:32 +0000  
+ 
 pg-auto-failover-enterprise (1.6.1-1) stable; urgency=low
   
   This release is a bugfix release on-top of the community version.
   
   * Apply changes from community version
+
   * Clean-up coordinator's pg_dist_node after node removal. (#309)
   
  -- Gurkan <gindibay@microsoft.com>  Mon, 12 Jul 2021 20:17:43 +0000  
