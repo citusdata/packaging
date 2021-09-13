@@ -14,3 +14,4 @@ debian:
 rpm:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
+  - ".*: W: no-manual-page-for-binary pg-auto-failover-enterprise-pg-*-setup"
