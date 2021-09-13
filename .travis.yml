@@ -12,7 +12,6 @@ env:
     - TARGET_PLATFORM=oraclelinux,7
     - TARGET_PLATFORM=ubuntu,focal
     - TARGET_PLATFORM=ubuntu,bionic
-    - TARGET_PLATFORM=ubuntu,xenial
     - TARGET_PLATFORM=pgxn
 before_install:
   - echo $TARGET_PLATFORM > os-list.csv
