@@ -2,7 +2,7 @@ name: Build Package
 
 env:
   MAIN_BRANCH: "all-pgautofailover-enterprise"
-  PACKAGE_CLOUD_REPO_NAME: "sample"
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise"
   PACKAGE_ENCRYPTION_KEY: ${{ secrets.PACKAGE_ENCRYPTION_KEY }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
