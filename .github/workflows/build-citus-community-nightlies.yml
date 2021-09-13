@@ -1,4 +1,4 @@
-name: Build and publish citus nightly package
+name: Buildand publish citus nightly package
 
 env:
   MAIN_BRANCH: "all-citus"
