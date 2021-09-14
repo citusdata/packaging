@@ -27,7 +27,6 @@ jobs:
           - ol/7
           - debian/stretch
           - debian/buster
-          - ubuntu/xenial
           - ubuntu/bionic
           - ubuntu/focal
 
