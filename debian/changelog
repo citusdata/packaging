@@ -1,3 +1,9 @@
+citus-enterprise (10.2.0.citus-2) stable; urgency=low
+
+  * Removes encryption from packages
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 16 Sep 2021 12:44:41 +0000
+
 citus-enterprise (10.2.0.citus-1) stable; urgency=low
   
   * Adds PostgreSQL 14 support
