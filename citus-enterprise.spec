@@ -11,7 +11,7 @@ Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
 Version:	10.2.0.citus
-Release:	1%{dist}
+Release:	2%{dist}
 License:	Commercial
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/citus-enterprise/archive/v10.2.0.tar.gz
@@ -344,6 +344,9 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Wed Sep 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-2
+- Removes encryption from packages
+
 * Wed Sep 15 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-1
 - Official 10.2.0 release of Citus Enterprise
 
