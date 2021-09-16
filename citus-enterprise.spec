@@ -344,7 +344,7 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
-* Wed Sep 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-1
+* Wed Sep 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-2
 - Removes encryption from packages
 
 * Wed Sep 15 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-1
