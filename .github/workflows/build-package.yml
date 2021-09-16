@@ -46,7 +46,7 @@ jobs:
         run: sudo apt-get update && sudo apt install libcurl4-openssl-dev libssl-dev
 
       - name: Install wheel for el/8
-        if: matrix.TARGET_PLATFORM  == "centos,8"
+        if: matrix.TARGET_PLATFORM  == 'centos,8'
         run: python -m pip install wheel
 
       - name: Update and check dockerfiles
