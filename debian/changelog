@@ -1,5 +1,10 @@
-* Fri Sep 17 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-2
-- Official 1.6.2 release of Pg Auto Failover Enterprisepg-auto-failover-enterprise (1.6.2-1) stable; urgency=low
+pg-auto-failover-enterprise (1.6.2-2) stable; urgency=low
+
+  * Removes encryption from packages
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 17 Sep 2021 11:48:32 +0000
+
+pg-auto-failover-enterprise (1.6.2-1) stable; urgency=low
   
   * Official 1.6.2 release of pg_auto_failover enterprise
   
