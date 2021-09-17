@@ -11,7 +11,7 @@ Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
 Version:	1.6.2
-Release:	1%{dist}
+Release:	2%{dist}
 License:	Commercial
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/citus-ha/archive/v1.6.2.tar.gz
@@ -371,6 +371,9 @@ rm -f %{pginstdir}/bin/pg_autoctl
 
 
 %changelog
+* Fri Sep 17 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-2
+- Removes encryption from packages
+
 * Mon Sep 13 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-1
 - Official 1.6.2 release of Pg Auto Failover Enterprise
 
