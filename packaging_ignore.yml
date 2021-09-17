@@ -10,6 +10,7 @@ base:
   - ".* warning: overriding recipe for target 'check'"
   - "# create a temporary directory for gpg to use so it doesn't output warnings"
   - "configure: WARNING: If you run into issues during linking or bitcode compilation, you can use --without-security-flags."
+  - "dpkg-genchanges: warning: the current version .* is earlier than the previous one .*"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
