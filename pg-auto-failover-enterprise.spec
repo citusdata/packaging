@@ -372,7 +372,7 @@ rm -f %{pginstdir}/bin/pg_autoctl
 
 %changelog
 * Fri Sep 17 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-2
-- Official 1.6.2 release of Pg Auto Failover Enterprise
+- Removes encryption from packages
 
 * Mon Sep 13 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-1
 - Official 1.6.2 release of Pg Auto Failover Enterprise
