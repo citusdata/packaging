@@ -1,7 +1,6 @@
 name: Update Version on PGXN Config Files
 
 env:
-  PROJECT_VERSION: ${{ github.event.inputs.project_version }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
 on:
@@ -19,18 +18,18 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: sudo apt install libcurl4-openssl-dev libssl-dev
+        run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
 
       - name: Clone Tools branch
-        run: git clone --depth 1 --branch v0.8.1 https://github.com/citusdata/tools.git
+        run: git clone --depth 1 --branch v0.8.2 https://github.com/citusdata/tools.git
 
       - name: Install Python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
 
       - name: Update pgxn files
         run: |
-          python -m packaging_automation.update_pgxn \
-          --prj_ver ${PROJECT_VERSION} \
+          python -m tools.packaging_automation.update_pgxn \
+          --prj_ver ${{ github.event.inputs.project_version }} \
           --gh_token ${GH_TOKEN} \
           --pipeline \
           --exec_path "$(pwd)"
