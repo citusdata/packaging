@@ -43,6 +43,10 @@ jobs:
       - name: Install python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
 
+      # This step is to fetch the images unanonymously to have higher bandwidth
+      - name: DockerHub Login
+        run: docker login -u "${DOCKERHUB_USER_NAME}" -p "${DOCKERHUB_PASSWORD}"
+
       - name: Build packages
         run: |
           python -m  tools.packaging_automation.citus_package \
