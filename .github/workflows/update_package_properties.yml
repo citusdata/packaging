@@ -20,6 +20,7 @@ on:
       name:
         description: "Name to be written on changelogs"
         default: "Gurkan Indibay"
+        required: false
       changelog_entry:
         description: "If filled, changelog other than default entry will be written"
         default: ""
