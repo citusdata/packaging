@@ -9,6 +9,14 @@ on:
       project_version:
         description: "Version number to be released e.g 10.0.3"
         required: true
+      microsoft_email:
+        description: "Email to be written on changelogs"
+        default: "gindibay@microsoft.com"
+        required: false
+      name:
+        description: "Name to be written on changelogs"
+        default: "Gurkan Indibay"
+        required: false
 
 jobs:
   update_pgxn:
