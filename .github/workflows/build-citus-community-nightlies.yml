@@ -34,6 +34,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # This step is to fetch the images unanonymously to have higher bandwidth
+      - name: DockerHub Login
+        run: docker login -u "${DOCKERHUB_USER_NAME}" -p "${DOCKERHUB_PASSWORD}"
 
       - name: Clone tools branch
         run: git clone -b v0.8.2 --depth=1  https://github.com/citusdata/tools.git tools
