@@ -1,3 +1,9 @@
+topn (2.4.0) stable; urgency=low
+
+  * Adds support for PostgreSQL 14
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Tue, 21 Sep 2021 10:45:00 +0300
+
 topn (2.3.1) stable; urgency=low
 
   * Adds support for PostgreSQL 13
