@@ -1,3 +1,9 @@
+hll (2.16.citus-1) stable; urgency=low
+
+  * Support for PostgreSQL 14
+
+ -- Hanefi Onaldi <Hanefi.Onaldi@microsoft.com>  Mon, 13 Sep 2021 11:20:00 +0300
+
 hll (2.15.citus-1) stable; urgency=low
 
   * Support for PostgreSQL 13
