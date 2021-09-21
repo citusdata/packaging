@@ -23,7 +23,7 @@ jobs:
     name: Update pgxn configuration
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Install dependencies
