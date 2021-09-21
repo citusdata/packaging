@@ -7,6 +7,8 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+  DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 on:
   push:
     branches:
