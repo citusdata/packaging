@@ -1,4 +1,4 @@
-name: Buildand publish citus nightly package
+name: Build and publish citus entertprise nightly packages
 
 env:
   MAIN_BRANCH: "all-citus-enterprise"
@@ -7,6 +7,7 @@ env:
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  UNENCRYPTED_PACKAGE: true
 on:
   push:
     branches:
@@ -38,7 +39,7 @@ jobs:
       - name: Clone tools branch
         run: git clone -b v0.8.2 --depth=1  https://github.com/citusdata/tools.git tools
 
-      - name: Clone all-citus branch
+      - name: Clone build branch
         run: git clone -b "${MAIN_BRANCH}" --depth=1  https://github.com/citusdata/packaging.git packaging
 
       - name: Install package dependencies

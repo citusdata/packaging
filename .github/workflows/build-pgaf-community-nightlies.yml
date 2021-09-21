@@ -1,4 +1,4 @@
-name: Buildand publish citus nightly package
+name: Build and publish pgaf nightly packages
 
 env:
   MAIN_BRANCH: "all-pgautofailover"
@@ -38,7 +38,7 @@ jobs:
       - name: Clone tools branch
         run: git clone -b v0.8.2 --depth=1  https://github.com/citusdata/tools.git tools
 
-      - name: Clone all-citus branch
+      - name: Clone build branch
         run: git clone -b "${MAIN_BRANCH}" --depth=1  https://github.com/citusdata/packaging.git packaging
 
       - name: Install package dependencies
