@@ -8,18 +8,22 @@ on:
     inputs:
       tag_name:
         description: "The tag name on the project repo to be released"
+        required: true
       fancy_version_no:
         description: "If fancy versioning is needed, set value greater than 1 e.g 2"
         default: "1"
+        required: false
       microsoft_email:
         description: "Email to be written on changelogs"
         default: "gindibay@microsoft.com"
+        required: false
       name:
         description: "Name to be written on changelogs"
         default: "Gurkan Indibay"
       changelog_entry:
         description: "If filled, changelog other than default entry will be written"
         default: ""
+        required: false
 jobs:
   update_package_properties:
     name: Update package properties
