@@ -8,6 +8,8 @@ env:
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   UNENCRYPTED_PACKAGE: true
+  DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 on:
   push:
     branches:
