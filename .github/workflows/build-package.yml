@@ -68,7 +68,7 @@ jobs:
           python -m pip install -r tools/packaging_automation/requirements.txt
           python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
         env:
-          PLATFORM: "${{matrix.TARGET_PLATFORM}}"
+          PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
 
       - name: Push images
         run: ./ci/push_images
