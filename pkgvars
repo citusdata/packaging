@@ -1,6 +1,6 @@
 pkgname=citus
 pkgdesc='Citus (Open-Source)'
 pkglatest=10.2.1.citus-1
-releasepg=11,12,13
-nightlypg=12,13
+releasepg=12,13,14
+nightlypg=12,13,14
 versioning=fancy
