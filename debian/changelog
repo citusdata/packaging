@@ -10,7 +10,8 @@ citus-enterprise (10.2.1.citus-1) stable; urgency=low
   * Fixes a bug that prevents pushing down boolean expressions when using
     columnar custom scan
   
-  * Fixes a clog lookup failure that could occur when writing to a columnar table
+  * Fixes a clog lookup failure that could occur when writing to a columnar
+    table
   
   * Fixes an issue that could cause unexpected errors when there is an
     in-progress write to a columnar table
