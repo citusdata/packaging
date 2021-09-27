@@ -6,6 +6,7 @@ env:
   matrix:
     - TARGET_PLATFORM=centos,8
     - TARGET_PLATFORM=centos,7
+    - TARGET_PLATFORM=debian,bullseye
     - TARGET_PLATFORM=debian,buster
     - TARGET_PLATFORM=debian,stretch
     - TARGET_PLATFORM=oraclelinux,8
