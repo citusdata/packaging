@@ -171,6 +171,9 @@ detect_codename ()
       10)
         codename='buster'
         ;;
+      11)
+        codename='bullseye'
+        ;;
       wheezy)
         codename="${dist}"
         ;;
@@ -181,6 +184,9 @@ detect_codename ()
         codename="${dist}"
         ;;
       buster)
+        codename="${dist}"
+        ;;
+      bullseye)
         codename="${dist}"
         ;;
       *)
