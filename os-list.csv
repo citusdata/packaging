@@ -2,6 +2,7 @@ centos,8
 centos,7
 debian,buster
 debian,stretch
+debian,bullseye
 oraclelinux,8
 oraclelinux,7
 oraclelinux,6
