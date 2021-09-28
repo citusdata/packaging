@@ -30,7 +30,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
 
       - name: Clone Tools branch
-        run: git clone --depth 1 --branch update_properties_fixes https://github.com/citusdata/tools.git
+        run: git clone --depth 1 --branch v0.8.6 https://github.com/citusdata/tools.git
 
       - name: Install Python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
