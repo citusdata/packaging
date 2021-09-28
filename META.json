@@ -2,7 +2,7 @@
    "name": "citus",
    "abstract": "Scalable PostgreSQL for real-time workloads",
    "description": "Citus horizontally scales PostgreSQL across commodity servers using sharding and replication. Its query engine parallelizes incoming SQL queries across these servers to enable real-time responses on large datasets.",
-   "version": "10.2.0",
+   "version": "10.1.1",
    "maintainer": "\"Citus Data\" <packaging@citusdata.com>",
    "license": "agpl_3",
    "provides": {
@@ -10,13 +10,13 @@
          "abstract": "Citus Distributed Database",
          "file": "citus.so",
          "docfile": "README.md",
-         "version": "10.2.0"
+         "version": "10.1.1"
       }
    },
    "prereqs": {
       "runtime": {
          "requires": {
-            "PostgreSQL": "12.0.0"
+            "PostgreSQL": "11.0.0"
          }
       },
       "test": {
