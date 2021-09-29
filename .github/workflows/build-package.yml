@@ -1,12 +1,13 @@
 name: Build Package
 
 env:
-  CURRENT_BRANCH: ${GITHUB_REF##*/}
   GH_TOKEN: "${{ secrets.GH_TOKEN }}"
   PACKAGING_SECRET_KEY: "${{ secrets.PACKAGING_SECRET_KEY }}"
   PACKAGE_CLOUD_REPO_NAME: "sample"
   PACKAGE_ENCRYPTION_KEY: "${{ secrets.PACKAGE_ENCRYPTION_KEY }}"
   PACKAGING_PASSPHRASE: "${{ secrets.PACKAGING_PASSPHRASE }}"
+  DOCKERHUB_PASSWORD: "${{ secrets.DOCKERHUB_PASSWORD }}"
+  DOCKERHUB_USER_NAME: "${{ secrets.DOCKERHUB_USER_NAME }}"
 on:
   push:
     branches: "**"
@@ -23,6 +24,7 @@ jobs:
         TARGET_PLATFORM:
           - centos,8
           - centos,7
+          - debian,bullseye
           - debian,buster
           - debian,stretch
           - oraclelinux,8

@@ -17,7 +17,7 @@ if [[ ${CURRENT_BRANCH} != "develop" ]] ; then
     exit 0;
 fi
 
-echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USER_NAME}" --password-stdin
 
 declare args
 
