@@ -38,9 +38,6 @@ jobs:
       - name: Export target platform
         run: echo $TARGET_PLATFORM > os-list.csv
 
-      - name: Pwd0
-        run: echo $(pwd)
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
