@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Clone tools branch
-        run: git clone -b v0.8.2 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.6 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Clone all-citus branch
         run: git clone -b all-citus --depth=1  https://github.com/citusdata/packaging.git packaging
