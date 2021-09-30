@@ -49,15 +49,19 @@ fi
 # populate variables from packaging metadata file
 # shellcheck source=/dev/null
 source /buildfiles/pkgvars
-
+source /buildfiles/supported-postgres.txt
 # set default values for certain packaging variables
 declare pkglatest # to make shellcheck happy
 pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
-releasepg="${releasepg:-11,12,13}"
-nightlypg="${nightlypg:-${releasepg}}"
+releasepg="${release_versions:-${releasepg}}"
+nightlypg="${nightly_versions:-${nightlypg}}"
 versioning="${versioning:-simple}"
+
+echo "Postgres versions:"
+echo "Release Versions:${releasepg}"
+echo "Nightly Versions:${nightlypg}"
 
 if [ -z "${pkglatest}" ]; then
     echo "$0: pkgvars file must specify a value for pkglatest" >&2
