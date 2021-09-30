@@ -1,4 +1,5 @@
 addFilter("E: binary-or-shlib-defines-rpath .*");
+addFilter("E: useless-provides .*");
 addFilter("W: devel-file-in-non-devel-package .*");
 addFilter("W: incoherent-version-in-changelog .*el7");
 addFilter("W: invalid-url .*404: Not Found");
