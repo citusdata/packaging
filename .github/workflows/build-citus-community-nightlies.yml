@@ -1,4 +1,4 @@
-name: Build and publish citus nightly packages
+name: Build and publish citus community nightly packages
 
 env:
   MAIN_BRANCH: "all-citus"
@@ -30,6 +30,7 @@ jobs:
           - ol/7
           - debian/stretch
           - debian/buster
+          - debian/bullseye
           - debian/bullseye
           - ubuntu/bionic
           - ubuntu/focal

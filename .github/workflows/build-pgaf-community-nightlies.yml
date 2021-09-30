@@ -1,4 +1,4 @@
-name: Build and publish pgaf nightly packages
+name: Build and publish pgaf community nightly packages
 
 env:
   MAIN_BRANCH: "all-pgautofailover"
