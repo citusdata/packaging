@@ -31,7 +31,6 @@ jobs:
           - debian/stretch
           - debian/buster
           - debian/bullseye
-          - debian/bullseye
           - ubuntu/bionic
           - ubuntu/focal
 
