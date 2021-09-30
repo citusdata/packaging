@@ -60,8 +60,8 @@ nightlypg="${nightly_versions:-${nightlypg}}"
 versioning="${versioning:-simple}"
 
 echo "Postgres versions:"
-echo "Release Versions:${releasepg}"
-echo "Nightly Versions:${nightlypg}"
+echo "Release Versions :${releasepg}"
+echo "Nightly Versions :${nightlypg}"
 
 if [ -z "${pkglatest}" ]; then
     echo "$0: pkgvars file must specify a value for pkglatest" >&2
