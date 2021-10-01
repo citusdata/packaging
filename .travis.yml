@@ -2,6 +2,9 @@ sudo: required
 services: [docker]
 language: perl
 perl: "5.18"
+arch: amd64
+os: linux
+dist: focal
 env:
   matrix:
     - TARGET_PLATFORM=centos,8
