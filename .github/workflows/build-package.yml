@@ -56,6 +56,6 @@ jobs:
           git checkout -- dockerfiles
           ./update_images
         env:
-          - TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
+          TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
       - name: Push images
         run: ./ci/push_images
