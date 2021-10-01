@@ -14,33 +14,33 @@ nprocs="${1:-1}"
 
 declare args
 
-while read -r line; do
-    IFS=',' read -r os release <<< "$line"
 
-    if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
-        tag="${os}-${release}-all"
+IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
+
+if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
+    tag="${os}-${release}-all"
+    args+="build -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
+elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
+    # redhat variants need an image for each PostgreSQL version
+    IFS=' '
+    for pgversion in ${pgversions}; do
+        if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
+             [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
+            # CentOS and OracleLinux 6 doesn't have pg13 packages yet.
+            # So skip building docker images for them.
+            continue
+        fi
+        pgshort=${pgversion//./}
+        tag="${os}-${release}-pg${pgshort}"
         args+="build -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
-    elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
-        # redhat variants need an image for each PostgreSQL version
-        IFS=' '
-        for pgversion in ${pgversions}; do
-            if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
-                 [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
-                # CentOS and OracleLinux 6 doesn't have pg13 packages yet.
-                # So skip building docker images for them.
-                continue
-            fi
-            pgshort=${pgversion//./}
-            tag="${os}-${release}-pg${pgshort}"
-            args+="build -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
-        done
-    elif [[ "${os}" = 'pgxn' ]]; then
-        tag="${os}-all"
-        args+="build -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
-    else
-        echo "$0: unrecognized OS -- ${os}" >&2
-        exit $badusage
-    fi
-done <"${topdir}/os-list.csv"
+    done
+elif [[ "${os}" = 'pgxn' ]]; then
+    tag="${os}-all"
+    args+="build -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
+else
+    echo "$0: unrecognized OS -- ${os}" >&2
+    exit $badusage
+fi
+
 
 echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker

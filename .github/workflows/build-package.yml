@@ -35,9 +35,6 @@ jobs:
           - pgxn
 
     steps:
-      - name: Export target platform
-        run: echo $TARGET_PLATFORM > os-list.csv
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -58,6 +55,7 @@ jobs:
         run: |
           git checkout -- dockerfiles
           ./update_images
-
+        env:
+          - TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
       - name: Push images
         run: ./ci/push_images
