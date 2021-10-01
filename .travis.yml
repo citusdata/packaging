@@ -1,12 +1,12 @@
-sudo: required
 services: [docker]
 language: perl
-perl: "5.18"
+perl:
+  - "5.18"
 arch: amd64
 os: linux
 dist: focal
 env:
-  matrix:
+  jobs:
     - TARGET_PLATFORM=centos,8
     - TARGET_PLATFORM=centos,7
     - TARGET_PLATFORM=debian,bullseye
