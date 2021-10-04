@@ -3,6 +3,7 @@ name: Update Package Properties
 env:
   PRJ_NAME: "citus"
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 on:
   workflow_dispatch:
     inputs:
