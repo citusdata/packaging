@@ -51,7 +51,8 @@ fi
 source /buildfiles/pkgvars
 # populate pg versions to be used for packaging.
 # supported-potgres file is derived file from postgres-matrix.yml file
-source /buildfiles/supported-postgres 2>/dev/null
+# If file does not exist, skip populating file
+[[ -f "/buildfiles/supported-postgres" ]] && source /buildfiles/supported-postgres
 
 # Fetch pkgname, hubproj, nightlyref, versioning from pkgvars file
 declare pkglatest # to make shellcheck happy
