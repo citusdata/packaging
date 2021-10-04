@@ -10,11 +10,11 @@ Summary:	Auto-HA support for Citus
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.6.2
-Release:	2%{dist}
+Version:	10.0.3
+Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-ha/archive/v1.6.2.tar.gz
+Source0:	https://github.com/citusdata/citus-ha/archive/v10.0.3.tar.gz
 URL:		https://github.com/citusdata/citus-ha
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -371,6 +371,9 @@ rm -f %{pginstdir}/bin/pg_autoctl
 
 
 %changelog
+* Mon Oct 04 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.3-1
+- Official 10.0.3 release of Pg Auto Failover Enterprise
+
 * Fri Sep 17 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-2
 - Removes encryption from packages
 
