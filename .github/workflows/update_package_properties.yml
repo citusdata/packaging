@@ -1,5 +1,9 @@
 name: Update Package Properties
 
+permissions:
+  contents: write
+  pull-requests: write
+
 env:
   PRJ_NAME: "citus"
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -61,5 +65,3 @@ jobs:
           --fancy_ver_no "${{ github.event.inputs.fancy_version_no }}" \
           --changelog_entry "${{ github.event.inputs.changelog_entry }}" \
           --exec_path "$(pwd)"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
