@@ -1,3 +1,9 @@
+pg-auto-failover (10.0.3-1) stable; urgency=low
+
+  * Official 10.0.3 release of Pg Auto Failover
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Mon, 04 Oct 2021 11:56:54 +0000
+
 pg-auto-failover (1.6.2-1) stable; urgency=low
   
   This is a bug fix release for the 1.6 series.
