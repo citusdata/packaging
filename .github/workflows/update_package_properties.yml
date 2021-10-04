@@ -1,17 +1,5 @@
 name: Update Package Properties
 
-permissions:
-  actions: write
-  checks: write
-  contents: write
-  deployments: write
-  issues: write
-  packages: write
-  pull-requests: write
-  repository-projects: write
-  security-events: write
-  statuses: write
-
 env:
   PRJ_NAME: "citus"
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -45,30 +33,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+  - name: Install dependencies
+    run: sudo apt-get update && sudo apt install libcurl4-openssl-dev libssl-dev python3-testresources
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt install libcurl4-openssl-dev libssl-dev python3-testresources
+  - name: Clone tools branch
+    run: git clone -b v0.8.6 --depth=1  https://github.com/citusdata/tools.git tools
 
-      - name: Clone tools branch
-        run: git clone -b v0.8.6 --depth=1  https://github.com/citusdata/tools.git tools
+  - name: Set git name and email
+    run: |
+      git config --global user.email "${{ github.event.inputs.microsoft_email }}" && \
+      git config --global user.name "${{ github.event.inputs.name }}"
 
-      - name: Set git name and email
-        run: |
-          git config --global user.email "${{ github.event.inputs.microsoft_email }}" && \
-          git config --global user.name "${{ github.event.inputs.name }}"
+  - name: Install python requirements
+    run: python -m pip install -r tools/packaging_automation/requirements.txt
 
-      - name: Install python requirements
-        run: python -m pip install -r tools/packaging_automation/requirements.txt
-
-      - name: Update package properties
-        run: |
-          python -m tools.packaging_automation.update_package_properties \
-          --gh_token="${GH_TOKEN}" \
-          --prj_name "${PRJ_NAME}" \
-          --tag_name ${{ github.event.inputs.tag_name }} \
-          --email ${{ github.event.inputs.microsoft_email }} \
-          --name "${{ github.event.inputs.name }}" \
-          --pipeline \
-          --fancy_ver_no "${{ github.event.inputs.fancy_version_no }}" \
-          --changelog_entry "${{ github.event.inputs.changelog_entry }}" \
-          --exec_path "$(pwd)"
+  - name: Update package properties
+    run: |
+      python -m tools.packaging_automation.update_package_properties \
+      --gh_token="${GH_TOKEN}" \
+      --prj_name "${PRJ_NAME}" \
+      --tag_name ${{ github.event.inputs.tag_name }} \
+      --email ${{ github.event.inputs.microsoft_email }} \
+      --name "${{ github.event.inputs.name }}" \
+      --pipeline \
+      --fancy_ver_no "${{ github.event.inputs.fancy_version_no }}" \
+      --changelog_entry "${{ github.event.inputs.changelog_entry }}" \
+      --exec_path "$(pwd)"
