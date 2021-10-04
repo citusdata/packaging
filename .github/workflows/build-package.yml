@@ -3,7 +3,6 @@ name: Build Package
 env:
   GH_TOKEN: "${{ secrets.GH_TOKEN }}"
   PACKAGING_SECRET_KEY: "${{ secrets.PACKAGING_SECRET_KEY }}"
-  PACKAGE_CLOUD_REPO_NAME: "sample"
   PACKAGE_ENCRYPTION_KEY: "${{ secrets.PACKAGE_ENCRYPTION_KEY }}"
   PACKAGING_PASSPHRASE: "${{ secrets.PACKAGING_PASSPHRASE }}"
   DOCKERHUB_PASSWORD: "${{ secrets.DOCKERHUB_PASSWORD }}"
@@ -16,6 +15,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  check_docker_files_integrity:
+    name: Check if docker files are compliant with templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Update and check dockerfiles
+        run: |
+          ./update_dockerfiles
+          git add --intent-to-add dockerfiles
+          git diff --exit-code dockerfiles
+
   build_package:
     name: Build package
     runs-on: ubuntu-latest
@@ -45,12 +56,6 @@ jobs:
       - name: Install wheel for el/8
         if: matrix.TARGET_PLATFORM  == 'centos,8'
         run: python -m pip install wheel
-
-      - name: Update and check dockerfiles
-        run: |
-          ./update_dockerfiles
-          git add --intent-to-add dockerfiles
-          git diff --exit-code dockerfiles
 
       - name: Build images
         run: |
