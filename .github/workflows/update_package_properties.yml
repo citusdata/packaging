@@ -1,11 +1,11 @@
 name: Update Package Properties
 
 permissions:
-  contents: read/write
-  pull-requests: read/write
-  actions: read/write
-  repository projects: read/write
-  statuses: read/write
+  contents: write
+  pull-requests: write
+  actions: write
+  repository projects: write
+  statuses: write
 
 env:
   PRJ_NAME: "citus"
