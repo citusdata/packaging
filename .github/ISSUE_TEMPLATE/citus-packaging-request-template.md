@@ -27,7 +27,7 @@ These instructions assume you have `$VERSION`, `$PROJECT`, and `$REPO` environme
       - [ ] `Source0:` field
       - [ ] A new entry (`$VERSION.citus-1`) in the `%changelog` section
 - [ ] Get changes reviewed; merge the PR
-- [ ] Ensure Github Actions builds completed successfully and package count for each os is as below table and packages in postgres versions is compliant with postgres-matrix.yml in the all-citus branch
+- [ ] Ensure Github Actions builds completed successfully and package count for each os is as below table and packages in postgres versions is compliant with `postgres-matrix.yml` in the `all-project` branch
 
 # Update Docker
 Note that we create docker images for only the latest version of Citus. So, you don’t need to update it if you are releasing a point version of an older major version.
