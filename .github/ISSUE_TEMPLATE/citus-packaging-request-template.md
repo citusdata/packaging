@@ -1,6 +1,6 @@
 ---
-name: Citus Packaging Request Template
-about: Citus Packaging Request
+name: Citus release checklist template
+about: Please make sure to follow the checklist below along the release process.
 title: Bump to Citus X.Y.Z
 labels: release_checklist
 assignees: gurkanindibay
