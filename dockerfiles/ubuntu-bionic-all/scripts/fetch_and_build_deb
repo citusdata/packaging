@@ -49,19 +49,26 @@ fi
 # populate variables from packaging metadata file
 # shellcheck source=/dev/null
 source /buildfiles/pkgvars
-source /buildfiles/supported-postgres.txt
-# set default values for certain packaging variables
+# Read PostgreSQL versions from file.
+# supported-postgres file is derived file from postgres-matrix.yml file by citus_package.
+# If file does not exist, skip populating file
+[[ -f "/buildfiles/supported-postgres" ]] && source /buildfiles/supported-postgres
+
+# Fetch pkgname, hubproj, nightlyref, versioning from pkgvars file
 declare pkglatest # to make shellcheck happy
 pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
-releasepg="${release_versions:-${releasepg}}"
-nightlypg="${nightly_versions:-${nightlypg}}"
 versioning="${versioning:-simple}"
+# Fetch pg release and nightly versions from supported-postgres file which is originated from postgres-matrix.yml file
+# If this file is not found, releasepg and nightlypg parameters from pkgvars are used for defining pg versions
+pg_release_versions="${release_versions:-${releasepg}}"
+pg_nightly_versions="${nightly_versions:-${nightlypg}}"
+
 
 echo "Postgres versions:"
-echo "Release Versions:${releasepg}"
-echo "Nightly Versions:${nightlypg}"
+echo "Release Versions: ${pg_release_versions}"
+echo "Nightly Versions: ${pg_nightly_versions}"
 
 if [ -z "${pkglatest}" ]; then
     echo "$0: pkgvars file must specify a value for pkglatest" >&2
@@ -100,7 +107,7 @@ case "${1}" in
             exit $failure
         fi
 
-        echo "${releasepg}" | tr ',' '\n' > "${builddir}/debian/pgversions"
+        echo "${pg_release_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
         ;;
     *)
         if [ "${1}" == 'nightly' ]; then
@@ -128,7 +135,7 @@ case "${1}" in
         packageversion="${nextversion}.citus~${packagesuffix}"
         export CONF_EXTRA_VERSION="+${packagesuffix}"
 
-        echo "${nightlypg}" | tr ',' '\n' > "${builddir}/debian/pgversions"
+        echo "${pg_nightly_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
         ;;
 esac
 
