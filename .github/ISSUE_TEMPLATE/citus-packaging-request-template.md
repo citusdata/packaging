@@ -2,7 +2,7 @@
 name: Citus release checklist template
 about: Please make sure to follow the checklist below along the release process.
 title: Citus release checklist - [vX.Y.Z]
-labels: release_checklist
+labels: release checklist
 assignees: gurkanindibay
 
 ---
