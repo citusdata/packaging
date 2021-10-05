@@ -11,7 +11,7 @@ assignees: gurkanindibay
 
 These instructions assume you have `$VERSION`, `$PROJECT`, and `$REPO` environment variables set in your shell (e.g. `10.0.2`, `citus`, and `citus`). With those set, code from most steps can be copy-pasted.
 
-**After this checklist, you're still not done: open a release checklist in Enterprise and release there, too!**
+**After this checklist, you're still not done: open a release checklist for Enterprise too!**
 
 # Update OS Packages
 ## Debian and RedHat
