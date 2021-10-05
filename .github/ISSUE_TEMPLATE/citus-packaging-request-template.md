@@ -13,38 +13,6 @@ These instructions assume you have `$VERSION`, `$PROJECT`, and `$REPO` environme
 
 **After this checklist, you're still not done: open a release checklist in Enterprise and release there, too!**
 
-# Prepare CHANGELOG
-- [ ] Run `prepare_changelog.pl $PROJECT $VERSION <earliest_date>` on `$REPO` directory, and check the following:
-  - [ ] All items are listed in `CHANGELOG`
-  - [ ] There are no missing entries
-  - [ ] The lengths of items do not exceed 78 characters
-  - [ ] The items are in ordered in terms of their importance
-  - [ ] All the items are present simple tense
-  - [ ] The new entries are in both `master` and `release-x.y`
-
-
-# Prepare Release Branch
-- [ ] Run `python -m tools.packaging_automation.prepare_release --gh_token <gh_token> --prj_name [citus|citus_enterprise] --prj_ver <prj_ver> --schema_version <schema_version> [--cherry_pick_enabled --earliest_pr_date <Y.m.d>]` on `$REPO` directory, and check the following:
-  - [ ] `configure.in` `configure` and `multi_extension.out` files are updated with the latest version
-  - [ ] Ensure all needed changes are in the relevant `release-x.y` branch. `git log --cherry-pick --no-merges release-x.y...master` can be helpful.
-- [ ] Get _complete_ approval for the commit you're tagging before creating or pushing any tags. Tags should be immutable, so do **not** proceed to the next step until you're sure you have _everything_ you want in your release branch
-- [ ] Use `git checkout release-$VERSION && git pull && git tag -a -s v$VERSION` to create an annotated, signed tag for the release. Summarize the release in the one-line tag annotation (beneath 52 characters).
-- [ ]  Ensure that tag points to the release branch by using the following
-```bash
-$ git rev-parse tags/vX.Y.Z
-<commitId>
-$ git branch --contains <commitId>
-release-X.Y
-```
-
-You might also want to use `git log --oneline --decorate --graph --all`.
-
-- [ ] Push the tag with `git push origin v$VERSION`
-
-- [ ] Visit the project's releases page (e.g. `open https://github.com/citusdata/$REPO/releases`)
-  - [ ] Create a new release object for your git tag (i.e. `v$VERSION`). Leave the description blank (it will auto-fill with the tag description)
-
-
 # Update OS Packages
 ## Debian and RedHat
 - Change your directory to `packaging` repository directory & checkout `all-$PROJECT` branch.
