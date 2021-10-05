@@ -53,7 +53,7 @@ Note that we create docker images for only the latest version of Citus. So, you 
 
 
 # Update PGXN
-- [ ] Run https://github.com/citusdata/packaging/actions/workflows/update-pgxn-version.yml` on packaging repo, and check the following:
+- [ ] Run https://github.com/citusdata/packaging/actions/workflows/update-pgxn-version.yml on packaging repo, and check the following:
   - [ ] Check out the `pgxn-$PROJECT` branch of the [packaging repository](https://github.com/citusdata/packaging)
   - [ ] All version occurrences are bumped in `META.json`
   - [ ] All version occurrences are bumped in `pkgvars`
