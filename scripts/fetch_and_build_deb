@@ -49,8 +49,8 @@ fi
 # populate variables from packaging metadata file
 # shellcheck source=/dev/null
 source /buildfiles/pkgvars
-# populate pg versions to be used for packaging.
-# supported-potgres file is derived file from postgres-matrix.yml file
+# Read PostgreSQL versions from file.
+# supported-postgres file is derived file from postgres-matrix.yml file by citus_package.
 # If file does not exist, skip populating file
 [[ -f "/buildfiles/supported-postgres" ]] && source /buildfiles/supported-postgres
 
