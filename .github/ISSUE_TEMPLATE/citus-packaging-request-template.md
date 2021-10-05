@@ -18,12 +18,12 @@ These instructions assume you have `$VERSION`, `$PROJECT`, and `$REPO` environme
 - Change your directory to `packaging` repository directory & checkout `all-$PROJECT` branch.
 - [x] Run the pipeline using branch name as all-citus https://github.com/citusdata/packaging/actions/workflows/update_package_properties.yml. Input tag name and if version is fancy, input the fancy version_no. Other parameters could be kept as is if you want
   - Then check the following (needed for both debian & redhat):
-    - [x] Updated `pkglatest` variable in the `pkgvars` file to `$VERSION.citus-1`
+    - [ ] Updated `pkglatest` variable in the `pkgvars` file to `$VERSION.citus-1`
   - Then check the following (needed for debian):
-    - [x] A new entry (`$VERSION.citus-1`, `stable`) is added to the `debian/changelog` file
+    - [ ] A new entry (`$VERSION.citus-1`, `stable`) is added to the `debian/changelog` file
   - Then check the following (needed for redhat):
-    - [x] `$PROJECT.spec` file is updated:
-      - [x] `Version:` field
+    - [ ] `$PROJECT.spec` file is updated:
+      - [ ] `Version:` field
       - [ ] `Source0:` field
       - [ ] A new entry (`$VERSION.citus-1`) in the `%changelog` section
 - [ ] <s>Check the CI outputs for the PR on packaging repo thoroughly.</s>
