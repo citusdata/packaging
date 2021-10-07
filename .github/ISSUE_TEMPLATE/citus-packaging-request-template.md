@@ -2,7 +2,7 @@
 name: Citus release checklist template
 about: Please make sure to follow the checklist below along the release process.
 title: Citus release checklist - [vX.Y.Z]
-labels: release checklist
+labels: ''
 assignees: gurkanindibay
 
 ---
@@ -28,6 +28,7 @@ These instructions assume you have `$VERSION`, `$PROJECT`, and `$REPO` environme
       - [ ] A new entry (`$VERSION.citus-1`) in the `%changelog` section
 - [ ] Get changes reviewed; merge the PR
 - [ ] Ensure Github Actions builds completed successfully and package count for each os is as below table and packages in postgres versions is compliant with `postgres-matrix.yml` in the `all-project` branch
+https://github.com/citusdata/tools/blob/be12af3b8f435d17a52e607c666f6b15379f5970/packaging_automation/tests/test_citus_package.py#L21-L33
 
 # Update Docker
 Note that we create docker images for only the latest version of Citus. So, you don’t need to update it if you are releasing a point version of an older major version.
