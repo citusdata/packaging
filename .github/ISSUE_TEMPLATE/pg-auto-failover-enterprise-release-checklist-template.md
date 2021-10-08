@@ -1,7 +1,7 @@
 ---
 name: pg-auto-failover-enterprise release checklist template
 about: Please make sure to follow the checklist below along the release process.
-title: Pg Auto Failover Enterprise release checklist - [vX.Y.Z]
+title: pg-auto-failover Enterprise release checklist - [vX.Y.Z]
 labels: release_checklist
 assignees: gurkanindibay
 
@@ -16,7 +16,7 @@ These instructions assume you have `$VERSION`, `$PROJECT`, and `$REPO` environme
 # Update OS Packages
 ## Debian and RedHat
 - Change your directory to `packaging` repository directory & checkout `all-$PROJECT` branch.
-- [ ] Run the pipeline using branch name as all-$PROJECT https://github.com/citusdata/packaging/actions/workflows/update_package_properties.yml. Input tag name and if version is fancy, input the fancy version_no. Other parameters could be kept as is if you want
+- [ ] Run the pipeline using branch name as all-$PROJECT [update_package_properties workflow](https://github.com/citusdata/packaging/actions/workflows/update_package_properties.yml). Input tag name and if version is fancy, input the fancy version_no. Other parameters could be kept as is if you want
   - Then check the following (needed for both debian & redhat):
     - [ ] Updated `pkglatest` variable in the `pkgvars` file to `$VERSION.citus-1`
   - Then check the following (needed for debian):
