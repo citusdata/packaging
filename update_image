@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#This script create/update image by getting the the parameter of os release pair splitted with comma
+# This script builds a docker image that is used for packaging.
+#
+# This script requires $TARGET_PLATFORM env to contain a supported platform name.
 # Sample platform names 'debian,buster', 'centos,7' etc.
 
 # make bash behave
