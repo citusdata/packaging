@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#This script create/update image by getting the the parameter of os release pair splitted with comma
+# Sample platform names 'debian,buster', 'centos,7' etc.
+
 # make bash behave
 set -euo pipefail
 IFS=$'\n\t'
@@ -9,6 +12,7 @@ topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dockerfiles_dir="${topdir}/dockerfiles"
 
 badusage=64
+
 
 nprocs="${1:-1}"
 

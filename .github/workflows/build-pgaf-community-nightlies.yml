@@ -65,8 +65,7 @@ jobs:
           --secret_key "${PACKAGING_SECRET_KEY}" \
           --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
-          --input_files_dir "$(pwd)/packaging" \
-          --output_validation
+          --input_files_dir "$(pwd)/packaging"
 
       - name: Publish packages
         run: |

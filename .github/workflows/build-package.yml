@@ -57,10 +57,10 @@ jobs:
         if: matrix.TARGET_PLATFORM  == 'centos,8'
         run: python -m pip install wheel
 
-      - name: Build images
+      - name: Build image for the target platform
         run: |
           git checkout -- dockerfiles
-          ./update_images
+          ./update_image
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
 
