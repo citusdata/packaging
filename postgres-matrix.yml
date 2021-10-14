@@ -1,0 +1,14 @@
+name: Postgres Version Matrix
+project_name: citus
+
+version_matrix:
+  - 8.0:
+      postgres_versions: [10, 11]
+  - 9.0:
+      postgres_versions: [11, 12]
+  - 9.5:
+      postgres_versions: [11, 12, 13]
+  - 10.1:
+      postgres_versions: [12, 13]
+  - 10.2:
+      postgres_versions: [12, 13, 14]
