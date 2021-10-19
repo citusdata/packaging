@@ -1,7 +1,7 @@
 name: Build and publish citus entertprise nightly packages
 
 env:
-  MAIN_BRANCH: "develop"
+  MAIN_BRANCH: "all-enterprise"
   PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise-nightlies"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
@@ -77,4 +77,4 @@ jobs:
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
-          --main_branch "${MAIN_BRANCH}"
+          --main_branch "develop"
