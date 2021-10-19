@@ -66,7 +66,7 @@ epel_check()
 
     if [ "${os}" = "centos" ]; then
       yum install -d0 -e0 -y epel-release &> /dev/null
-    elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ]; then
+    elif [ ${os} = "rhel" ] || [ ${os} = "redhatenterpriseserver" ] || [ "${os}" = "ol" ]; then
       if [ ${dist} = "7" ]; then
         yum install -d0 -e0 -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${dist}.noarch.rpm &> /dev/null
       elif [ ${dist} = "8" ]; then
