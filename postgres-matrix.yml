@@ -1,0 +1,12 @@
+name: Postgres Version Matrix
+project_name: pg-auto-failover
+
+version_matrix:
+  - 1.0.0:
+      postgres_versions: [10, 11]
+  - 1.0.6:
+      postgres_versions: [10, 11, 12]
+  - 1.4.1:
+      postgres_versions: [10, 11, 12, 13]
+  - 1.6.2:
+      postgres_versions: [10, 11, 12, 13, 14]
