@@ -64,8 +64,6 @@ epel_check()
   else
     echo -n "Installing epel-release repo... "
 
-    echo "OS:${os} dist:${dist}"
-
     if [ "${os}" = "centos" ]; then
       yum install -d0 -e0 -y epel-release &> /dev/null
     elif [ "${os}" = "rhel" ] || [ "${os}" = "redhatenterpriseserver" ] || [ "${os}" = "ol" ]; then
