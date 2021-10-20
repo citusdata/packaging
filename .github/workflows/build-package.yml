@@ -86,4 +86,4 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           repository: gurkanindibay/tools
           event-type: package_test
-          client-payload: '{"ref": "${{ github.ref }}", "version": "${{ steps.set_version.outputs.version }}"}'
+          client-payload: '{"version": "${{ steps.set_version.outputs.version }}"}'
