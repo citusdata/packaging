@@ -15,27 +15,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  myEvent:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Read Parameter
-        id: set_version
-        run: |
-          source pkgvars
-          version=${pkglatest%.citus-1}
-          echo ::set-output name=version::${version}
-      - name: Print Parameter
-        run: echo ${{ steps.set_version.outputs.version }}
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          repository: gurkanindibay/tools
-          event-type: package_test
-          client-payload: '{"ref": "${{ github.ref }}", "version": "${{ steps.set_version.outputs.version }}"}'
-
   build_package:
     name: Build package
     runs-on: ubuntu-latest
@@ -86,3 +65,24 @@ jobs:
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
           --main_branch "${MAIN_BRANCH}"
+  trigger_package_tests:
+    name: Trigger package tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Read Parameter
+        id: set_version
+        run: |
+          source pkgvars
+          version=${pkglatest%.citus-1}
+          echo ::set-output name=version::${version}
+      - name: Print Parameter
+        run: echo ${{ steps.set_version.outputs.version }}
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: gurkanindibay/tools
+          event-type: package_test
+          client-payload: '{"ref": "${{ github.ref }}", "version": "${{ steps.set_version.outputs.version }}"}'
