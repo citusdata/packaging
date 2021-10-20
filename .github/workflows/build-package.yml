@@ -44,7 +44,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           repository: gurkanindibay/tools
           event-type: package_test
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"} , "version":  "${pkglatest}"'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", , "version":  "${pkglatest}"}'
 
       - name: Clone tools branch
         run: git clone -b v0.8.9 --depth=1  https://github.com/citusdata/tools.git tools
