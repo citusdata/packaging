@@ -24,7 +24,8 @@ jobs:
         id: set_version
         run: |
           source pkgvars
-          echo ::set-output name=version::${pkglatest}
+          version=${pkglatest%.citus-1}
+          echo ::set-output name=version::${version}
       - name: Print Parameter
         run: echo ${{ steps.set_version.outputs.version }}
       - name: Repository Dispatch
