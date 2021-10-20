@@ -15,6 +15,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  myEvent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Read Parameter
+        run: source pkgvars
+      - name: Print Parameter
+        run: echo ${pkglatest}
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: gurkanindibay/tools
+          event-type: package_test
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+
   build_package:
     name: Build package
     runs-on: ubuntu-latest
@@ -34,19 +51,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Get package version
-        run: |
-          source pkgvars
-          echo ${pkglatest}
-
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          repository: gurkanindibay/tools
-          event-type: package_test
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "version":  "${pkglatest}"}'
 
       - name: Clone tools branch
         run: git clone -b v0.8.9 --depth=1  https://github.com/citusdata/tools.git tools
