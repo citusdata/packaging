@@ -80,10 +80,10 @@ jobs:
           echo ::set-output name=version::${version}
       - name: Print Parameter
         run: echo ${{ steps.set_version.outputs.version }}
-      - name: Repository Dispatch
+      - name: Trigger package tests
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.GH_TOKEN }}
-          repository: gurkanindibay/tools
+          repository: citusdata/tools
           event-type: package_test
           client-payload: '{"version": "${{ steps.set_version.outputs.version }}"}'
