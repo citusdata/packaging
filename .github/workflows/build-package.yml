@@ -21,7 +21,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Read Parameter
-        run: source pkgvars
+        run: |
+          source pkgvars
+          echo ${pkglatest}
       - name: Print Parameter
         run: echo ${pkglatest}
       - name: Repository Dispatch
