@@ -23,9 +23,9 @@ jobs:
       - name: Read Parameter
         run: |
           source pkgvars
-          echo ${pkglatest}
+          echo ::set-output name=version::${pkglatest}
       - name: Print Parameter
-        run: echo ${pkglatest}
+        run: echo ${{ steps.vars.outputs.version }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
