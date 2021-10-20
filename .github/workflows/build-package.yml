@@ -15,11 +15,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  myEvent:
-    runs-on: ubuntu-latest
-    steps:
-      -
-
   build_package:
     name: Build package
     runs-on: ubuntu-latest
