@@ -21,7 +21,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           repository: gurkanindibay/tools
           event-type: package_test
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
