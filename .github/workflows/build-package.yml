@@ -67,6 +67,7 @@ jobs:
           --main_branch "${MAIN_BRANCH}"
   trigger_package_tests:
     name: Trigger package tests
+    needs: build_package
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
