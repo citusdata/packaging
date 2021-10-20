@@ -21,11 +21,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Read Parameter
+        id: set_version
         run: |
           source pkgvars
           echo ::set-output name=version::${pkglatest}
       - name: Print Parameter
-        run: echo ${{ steps.vars.outputs.version }}
+        run: echo ${{ steps.set_version.outputs.version }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
