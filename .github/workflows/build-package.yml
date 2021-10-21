@@ -5,6 +5,7 @@ env:
   PACKAGE_CLOUD_REPO_NAME: "citusdata/community"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
 on:
@@ -79,9 +80,6 @@ jobs:
           version=${pkglatest%.citus-1}
           echo ::set-output name=version::${version}
       - name: Trigger package tests
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          repository: citusdata/tools
-          event-type: package_test
-          client-payload: '{"version": "${{ steps.set_version.outputs.version }}"}'
+        run: gh workflow run "Citus package tests" --repo gurkanindibay/tools -f prj_ver=10.2.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
