@@ -5,6 +5,7 @@ env:
   PACKAGE_CLOUD_REPO_NAME: "citusdata/community"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
 on:
@@ -65,3 +66,20 @@ jobs:
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
           --main_branch "${MAIN_BRANCH}"
+  trigger_package_tests:
+    name: Trigger package tests
+    needs: build_package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set citus version
+        id: set_version
+        run: |
+          source pkgvars
+          version=${pkglatest%.citus-1}
+          echo ::set-output name=version::${version}
+      - name: Trigger package tests
+        run: gh workflow run "citus-package-tests" --repo citusdata/tools -f prj_ver="${{ steps.set_version.outputs.version }}"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
