@@ -43,7 +43,6 @@ jobs:
           - oraclelinux,7
           - ubuntu,focal
           - ubuntu,bionic
-          - ubuntu,xenial
           - pgxn
 
     steps:
