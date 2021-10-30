@@ -19,7 +19,7 @@ RUN [[ %%os%% != oraclelinux ]] || [[ %%release%% != 7 ]] || ( \
             ol7_optional_archive \
             ol7_u9_base \
             ol7_security_validation \
-            ol7_addons
+            ol7_addons \
          )
 
 # lz4 1.8 is preloaded in oracle 7 however, lz4-devel is not loaded and only 1.7.5 version exists
