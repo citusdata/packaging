@@ -8,18 +8,19 @@ RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /v
     && yum clean all
 
 # Enable some other repos for some dependencies in OL/7 
-# see https://oracle-base.com/articles/linux/download-the-latest-oracle-linux-repo-file#oracle-linux-7-updated
+# see https://yum.oracle.com/getting-started.html#installing-from-oracle-linux-yum-server
 RUN [[ centos != oraclelinux ]] || [[ 8 != 7 ]] || ( \
-        pushd /etc/yum.repos.d/ \
-        && rm -f * \
-        && curl -O http://yum.oracle.com/public-yum-ol7.repo \
-        && popd \
-        && yum-config-manager --enable \
+       yum install -y oraclelinux-release-el7 oracle-softwarecollection-release-el7 oracle-epel-release-el7  oraclelinux-developer-release-el7 \
+       && yum-config-manager --enable \
             ol7_software_collections \
             ol7_developer \
             ol7_developer_EPEL \
+            ol7_optional_latest \
             ol7_optional_archive \
-        && yum clean all )
+            ol7_u9_base \
+            ol7_security_validation \
+            ol7_addons
+         )
 
 # lz4 1.8 is preloaded in oracle 7 however, lz4-devel is not loaded and only 1.7.5 version exists
 # in oracle 7 repos. So package from centos repo was used
