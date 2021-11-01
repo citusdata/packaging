@@ -15,3 +15,4 @@ debian:
 rpm:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
+  - "E: zero-length /usr/pgsql-11/share/extension/topn.*"
