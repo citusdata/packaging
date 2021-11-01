@@ -1,0 +1,6 @@
+name: Postgres Version Matrix
+project_name: topn
+
+version_matrix:
+  - 2.4.0:
+      postgres_versions: [11, 12, 13, 14]
