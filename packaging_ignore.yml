@@ -11,6 +11,7 @@ base:
   - "# create a temporary directory for gpg to use so it doesn't output warnings"
   - "configure: WARNING: If you run into issues during linking or bitcode compilation, you can use --without-security-flags."
   - "dpkg-genchanges: warning: the current version .* is earlier than the previous one .*"
+  - ".*: warning: '__s' may be used uninitialized in this function \\[-Wmaybe-uninitialized\\].*"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
@@ -19,3 +20,4 @@ rpm:
   - ".*: W: no-documentation"
   - ".*: W: no-manual-page-for-binary citus-enterprise-pg-.*-setup"
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus.so"
+  - ".*: E: zero-length /usr/pgsql-.*/share/extension/citus.*"
