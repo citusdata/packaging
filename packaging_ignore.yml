@@ -15,6 +15,7 @@ base:
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
+  - "configure: WARNING: unrecognized options: --with-security-flags"
 rpm:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
