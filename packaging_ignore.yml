@@ -12,10 +12,11 @@ base:
   - "configure: WARNING: If you run into issues during linking or bitcode compilation, you can use --without-security-flags."
   - "dpkg-genchanges: warning: the current version .* is earlier than the previous one .*"
   - ".*: warning: '__s' may be used uninitialized in this function \\[-Wmaybe-uninitialized\\].*"
+  - "configure: WARNING: unrecognized options: --with-security-flags"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
-  - "configure: WARNING: unrecognized options: --with-security-flags"
+
 rpm:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
