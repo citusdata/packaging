@@ -25,13 +25,14 @@ jobs:
           - el/7
           - el/8
           - ol/7
+          - ol/8
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Clone tools branch
-        run: git clone -b v0.8.2 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.10 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
