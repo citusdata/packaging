@@ -354,7 +354,7 @@ done < "$secret_files_list"
 - Official 10.2.1 release of Citus Enterprise
 
 * Fri Sep 17 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.1.3.citus-1
--Official 10.1.3 release of Citus Enterprise
+- Official 10.1.3 release of Citus Enterprise
 
 * Wed Sep 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-2
 - Removes encryption from packages
