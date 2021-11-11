@@ -16,7 +16,7 @@ Group:		Applications/Databases
 Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.6.3.tar.gz
 URL:		https://github.com/citusdata/pg_auto_failover
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
-BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel ncurses-devel
+BuildRequires:	libxslt-devel ncurses-devel openssl-devel pam-devel readline-devel
 Requires:	postgresql%{pgmajorversion}-server postgresql%{pgmajorversion}-contrib openssl
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 

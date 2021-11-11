@@ -3,7 +3,7 @@ Section: database
 Priority: optional
 Maintainer: Citus Data <packaging@citusdata.com>
 Uploaders: Nils Dijk <nils@citusdata.com>
-Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~), libedit-dev, libpam0g-dev, libreadline-dev, libselinux1-dev, libxslt1-dev,libncurses-dev
+Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~), libedit-dev, libncurses-dev, libpam0g-dev, libreadline-dev, libselinux1-dev, libxslt1-dev
 Standards-Version: 3.9.7
 Homepage: https://github.com/citusdata/pg_auto_failover
 
