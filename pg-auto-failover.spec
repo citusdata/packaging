@@ -9,14 +9,14 @@ Summary:	Postgres extension for automated failover and high-availability
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.6.2
+Version:	1.6.3
 Release:	1%{dist}
 License:	PostgreSQL
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.6.2.tar.gz
+Source0:	https://github.com/citusdata/pg_auto_failover/archive/v1.6.3.tar.gz
 URL:		https://github.com/citusdata/pg_auto_failover
 BuildRequires:	postgresql%{pgmajorversion}-devel postgresql%{pgmajorversion}-server libxml2-devel
-BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
+BuildRequires:	libxslt-devel ncurses-devel openssl-devel pam-devel readline-devel
 Requires:	postgresql%{pgmajorversion}-server postgresql%{pgmajorversion}-contrib openssl
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -82,6 +82,9 @@ PATH=%{pginstdir}/bin:$PATH
 
 
 %changelog
+* Thu Nov 11 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.3-1
+- Official 1.6.3 release of Pg Auto Failover
+
 * Thu Sep 09 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.6.2-1
 - Official 1.6.2 release of Pg Auto Failover
 
