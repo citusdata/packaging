@@ -2,3 +2,4 @@ pkgname=citus
 pkgdesc='Citus (Open-Source)'
 pkglatest=10.0.6.citus-1
 versioning=fancy
+nightlyref=notice_test

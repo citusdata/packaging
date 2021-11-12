@@ -43,6 +43,7 @@ make %{?_smp_mflags}
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
+%{__cp} NOTICE %{buildroot}/usr/NOTICE
 # Set paths to be packaged other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
@@ -71,12 +72,14 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
+
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %doc LICENSE
 %else
 %license LICENSE
 %endif
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
+%doc /usr/NOTICE
 
 %changelog
 * Fri Nov 12 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.6.citus-1
