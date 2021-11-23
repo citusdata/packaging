@@ -81,6 +81,8 @@ jobs:
           version=${pkglatest%.citus-1}
           echo ::set-output name=version::${version}
       - name: Trigger package tests
-        run: gh workflow run "citus-package-tests" --repo citusdata/tools -f project_version="${{ steps.set_version.outputs.version }}"
+        run: gh workflow run "citus-package-tests" \
+          --repo citusdata/tools \
+          -f project_version="${{ steps.set_version.outputs.version }}"
         env:
           GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
