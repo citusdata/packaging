@@ -280,7 +280,7 @@ main ()
 
 
   apt_source_path="/etc/apt/sources.list.d/citusdata_enterprise.list"
-  gpg_keyring_path="/usr/share/keyrings/citusdata_community-archive-keyring.gpg"
+  gpg_keyring_path="/usr/share/keyrings/citusdata_enterprise-archive-keyring.gpg"
 
   echo -n "Installing $apt_source_path... "
 
@@ -324,8 +324,10 @@ main ()
     echo "done."
   fi
 
-  echo -n "Importing Citus Data gpg key... "
+  echo -n "Importing Citus Data Enterprise gpg key... "
   # import the gpg key
+  # below command decodes the ASCII armored gpg file (instead of binary file)
+  # and adds the unarmored gpg key as keyring
   curl -fsSL "${gpg_key_url}" | gpg --dearmor > ${gpg_keyring_path}
   echo "done."
 
