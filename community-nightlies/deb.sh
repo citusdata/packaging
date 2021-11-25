@@ -273,6 +273,8 @@ main ()
 
   echo -n "Importing Citus Data gpg key... "
   # import the gpg key
+  # below command decodes the ASCII armored gpg file (instead of binary file)
+  # and adds the unarmored gpg key as keyring
   curl -L "${gpg_key_url}" 2> /dev/null | apt-key add - &>/dev/null
   echo "done."
 
