@@ -271,7 +271,7 @@ main ()
     echo "done."
   fi
 
-  echo -n "Importing Citus Data gpg key... "
+  echo -n "Importing Citus Data Community nightlies gpg key... "
   # import the gpg key
   # below command decodes the ASCII armored gpg file (instead of binary file)
   # and adds the unarmored gpg key as keyring
