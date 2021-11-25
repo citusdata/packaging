@@ -278,6 +278,11 @@ main ()
   curl -fsSL "${gpg_key_url}" | gpg --dearmor > ${gpg_keyring_path}
   echo "done."
 
+  echo -n "Running apt-get update... "
+  # update apt on this system
+  apt-get update &> /dev/null
+  echo "done."
+
   echo
   echo "The repository is set up! You can now install packages."
 }
