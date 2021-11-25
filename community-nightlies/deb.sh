@@ -227,6 +227,7 @@ main ()
   apt_config_url="https://repos.citusdata.com/community-nightlies/config_file.list?os=${os}&dist=${dist}&source=script"
 
   apt_source_path="/etc/apt/sources.list.d/citusdata_community-nightlies.list"
+    gpg_keyring_path="/usr/share/keyrings/citusdata_community-archive-keyring.gpg"
 
   echo -n "Installing $apt_source_path... "
 
@@ -272,7 +273,7 @@ main ()
 
   echo -n "Importing Citus Data gpg key... "
   # import the gpg key
-  curl -L "${gpg_key_url}" 2> /dev/null | apt-key add - &>/dev/null
+  curl -fsSL "${gpg_key_url}" | gpg --dearmor > ${gpg_keyring_path}
   echo "done."
 
   echo -n "Running apt-get update... "
