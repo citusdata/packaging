@@ -40,6 +40,7 @@ RUN if [[ oraclelinux   == oraclelinux ]] && [[ 8 == 7 ]]; then yum install -y w
 # install build tools and PostgreSQL development files
 RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && [[ -z "oracle-epel-release-el8" ]] || yum install -y oracle-epel-release-el8) \
+    && yum update -y \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         curl \
