@@ -7,11 +7,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	10.0.6.citus
+Version:	10.2.3.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v10.0.6.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v10.2.3.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -43,8 +43,6 @@ make %{?_smp_mflags}
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
-%{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
-
 # Set paths to be packaged other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
@@ -73,16 +71,17 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
-
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %doc LICENSE
 %else
 %license LICENSE
 %endif
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
-%doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
+* Mon Nov 29 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.3.citus-1
+- Official 10.2.3 release of Citus
+
 * Fri Nov 12 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.0.6.citus-1
 - Official 10.0.6 release of Citus
 
