@@ -1,5 +1,5 @@
 pkgname=citus-enterprise
 pkgdesc='Citus Enterprise'
-pkglatest=10.0.6.citus-1
+pkglatest=10.2.3.citus-1
 nightlyref=enterprise-master
 versioning=fancy
