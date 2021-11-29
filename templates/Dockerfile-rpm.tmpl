@@ -40,7 +40,6 @@ RUN if [[ %%os%%   == oraclelinux ]] && [[ %%release%% == 7 ]]; then yum install
 # install build tools and PostgreSQL development files
 RUN ( yum install -y https://%%rpm_url%% \
     && [[ -z "%%extra-repositories%%" ]] || yum install -y %%extra-repositories%%) \
-    && yum update -y \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         curl \
