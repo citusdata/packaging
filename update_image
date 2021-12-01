@@ -10,18 +10,16 @@ set -euo pipefail
 IFS=$'\n\t'
 
 pgversions='10 11 12 13 14'
-topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+topdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 dockerfiles_dir="${topdir}/dockerfiles"
 
 badusage=64
-
 
 nprocs="${1:-1}"
 
 declare args
 
-
-IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
+IFS=',' read -r os release <<<"${TARGET_PLATFORM}"
 
 if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
     tag="${os}-${release}-all"
@@ -30,8 +28,8 @@ elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
     # redhat variants need an image for each PostgreSQL version
     IFS=' '
     for pgversion in ${pgversions}; do
-        if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
-             [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
+        if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } &&
+            [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
             # CentOS and OracleLinux 6 doesn't have pg13 packages yet.
             # So skip building docker images for them.
             continue
@@ -47,6 +45,5 @@ else
     echo "$0: unrecognized OS -- ${os}" >&2
     exit $badusage
 fi
-
 
 echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker

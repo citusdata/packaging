@@ -4,7 +4,7 @@ A set of scripts that generate a set of Dockerfiles that generate a set of Docke
 
 ## Prerequisites
 
-Building on all these platforms brings some complexity, so be sure you’ve got the prerequisites set up. Packages build using `docker`, so you’ll need that. In addition, you’ll need to generate a GitHub personal access token to allow scripts to call  GitHub APIs on your behalf.
+Building on all these platforms brings some complexity, so be sure you’ve got the prerequisites set up. Packages build using `docker` , so you’ll need that. In addition, you’ll need to generate a GitHub personal access token to allow scripts to call  GitHub APIs on your behalf.
 
 ### Docker
 
@@ -18,7 +18,7 @@ If you’re on OS X, this dependency presently means you also need `docker-machi
   2. Install VirtualBox from [here](https://www.virtualbox.org/wiki/Downloads)
   3. `docker-machine create --driver virtualbox default`
 
-After this, `docker` commands will work so long as you’ve run `eval "$(docker-machine env default)"` in the window you’re using. The [Docker Mac beta](https://blog.docker.com/2016/03/docker-for-mac-windows-beta/) will simplify this _greatly_ (no explicit need for `docker-machine`, no need for VirtualBox).
+After this, `docker` commands will work so long as you’ve run `eval "$(docker-machine env default)"` in the window you’re using. The [Docker Mac beta](https://blog.docker.com/2016/03/docker-for-mac-windows-beta/) will simplify this _greatly_ (no explicit need for `docker-machine` , no need for VirtualBox).
 
 ### GitHub Authentication
 
@@ -36,19 +36,19 @@ Unless you have a reason to change the Dockerfiles, just use the images hosted o
 
 To build all packages, run the `build_packages` script from the project root. Output will be put in OS/release-specific subdirectories of a `packages` directory in the project root. `build_packages` expects two arguments: a project name and build type.
 
-The project name must be one of: `citus`, `enterprise`, or `rebalancer`
+The project name must be one of: `citus` , `enterprise` , or `rebalancer`
 
-The build type can be `release`, `nightly`, or any valid git reference. `release` builds the latest release tag (which must be signed by a key known to GitHub). `nightly` builds the latest commit from the “main” branch for the specified project. Any other value is interpreted by what it means to git… tags, branches, and commit identifiers are all accepted.
+The build type can be `release` , `nightly` , or any valid git reference. `release` builds the latest release tag (which must be signed by a key known to GitHub). `nightly` builds the latest commit from the “main” branch for the specified project. Any other value is interpreted by what it means to git… tags, branches, and commit identifiers are all accepted.
 
 By default, `build_packages` builds on _all_ supported operating systems. Edit `os-list.csv` if you wish to build for fewer.
 
 ### Updating Dockerfiles
 
-`update_dockerfiles` generates a new set of Dockerfiles. This repository has automated builds configured, so if you need to change the Docker images, run `update_dockerfiles`, commit the resulting Dockerfile changes, and push.
+`update_dockerfiles` generates a new set of Dockerfiles. This repository has automated builds configured, so if you need to change the Docker images, run `update_dockerfiles` , commit the resulting Dockerfile changes, and push.
 
 ### Updating Docker Images
 
-Before building the packages yourself you should run `./pull_images`, so that you
+Before building the packages yourself you should run `./pull_images` , so that you
 get the current upstream layers. This can save some time when building the
 packages.
 `update_images` will build Docker images for all operating systems specified in `os-list.csv` using the files in the `dockerfiles` directory. This is handy for testing changes to our Docker images.

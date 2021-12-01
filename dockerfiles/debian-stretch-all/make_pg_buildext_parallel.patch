@@ -6,12 +6,12 @@
      package=`echo $opt | sed -e "s:%v:$1:g"`
 +    procs="$(nproc)"
 +    mjobs="$(expr $procs + 1)"
- 
+
      mkdir -p $vtarget
      # if a Makefile was created by configure, use it, else the top level Makefile
      [ -f $vtarget/Makefile ] || makefile="-f $srcdir/Makefile"
 -    make -C $vtarget ${makefile:-} install DESTDIR="$PWD/debian/$package" PG_CONFIG="$pgc" VPATH="$srcdir" USE_PGXS=1 $MAKEVARS || return $?
 +    make -j${mjobs} -C $vtarget ${makefile:-} install DESTDIR="$PWD/debian/$package" PG_CONFIG="$pgc" VPATH="$srcdir" USE_PGXS=1 $MAKEVARS || return $?
  }
- 
+
  clean() {

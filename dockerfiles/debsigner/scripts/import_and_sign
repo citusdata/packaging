@@ -18,7 +18,6 @@ fi
 gpg --batch --no-tty --trust-model always \
     --import <(echo "${PACKAGING_SECRET_KEY}" | base64 -d)
 
-for deb in /packages/*/*.deb
-do
+for deb in /packages/*/*.deb; do
     sign_deb "${deb}"
 done

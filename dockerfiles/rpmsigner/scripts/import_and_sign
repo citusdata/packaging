@@ -16,6 +16,6 @@ elif [ -z "${PACKAGING_SECRET_KEY+x}" ]; then
 fi
 
 gpg2 --batch --no-tty --trust-model always \
-     --import <(echo "${PACKAGING_SECRET_KEY}" | base64 -d)
+    --import <(echo "${PACKAGING_SECRET_KEY}" | base64 -d)
 
 sign_rpm /packages/*/*.rpm

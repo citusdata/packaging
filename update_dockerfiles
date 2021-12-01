@@ -5,7 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 pgversions='10 11 12 13 14'
-topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+topdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 dockerfiles_dir="${topdir}/dockerfiles"
 templates_dir="${topdir}"/templates
 
@@ -19,22 +19,22 @@ function update_extra_repositories_and_packages {
     extra_packages=''
 
     case ${os}+${release} in
-        centos+6|centos+7)
-            extra_repositories='epel-release centos-release-scl-rh'
-            extra_packages='llvm-toolset-7-clang llvm5.0'
-            ;;
-        centos+8)
-            extra_repositories='epel-release'
-            extra_packages='llvm-toolset ccache'
-            ;;
-        oraclelinux+6|oraclelinux+7)
-            extra_repositories=''
-            extra_packages='llvm-toolset-7-clang llvm5.0'
-            ;;
-        oraclelinux+8)
-            extra_repositories='oracle-epel-release-el8'
-            extra_packages='llvm-toolset ccache'
-            ;;
+    centos+6 | centos+7)
+        extra_repositories='epel-release centos-release-scl-rh'
+        extra_packages='llvm-toolset-7-clang llvm5.0'
+        ;;
+    centos+8)
+        extra_repositories='epel-release'
+        extra_packages='llvm-toolset ccache'
+        ;;
+    oraclelinux+6 | oraclelinux+7)
+        extra_repositories=''
+        extra_packages='llvm-toolset-7-clang llvm5.0'
+        ;;
+    oraclelinux+8)
+        extra_repositories='oracle-epel-release-el8'
+        extra_packages='llvm-toolset ccache'
+        ;;
     esac
 }
 
@@ -57,15 +57,15 @@ function update_rpm_dockerfile {
 
     template="${templates_dir}"/Dockerfile-rpm.tmpl
     sed "$sed_cmd; s#%%rpm_url%%#${rpm_url}#g; s/%%pgshort%%/${pgshort}/g; s/%%pgversion%%/${pgversion}/g" \
-        "${template}" > "${target_subdir}/Dockerfile"
+        "${template}" >"${target_subdir}/Dockerfile"
 
     cp -R scripts "${target_subdir}"
     rm "${target_subdir}/scripts/fetch_and_build_deb" \
-       "${target_subdir}/scripts/fetch_and_build_pgxn"
+        "${target_subdir}/scripts/fetch_and_build_pgxn"
 }
 
 while read -r line; do
-    IFS=',' read -r os release <<< "$line"
+    IFS=',' read -r os release <<<"$line"
 
     update_extra_repositories_and_packages "${os}" "${release}"
 
@@ -81,17 +81,17 @@ while read -r line; do
 
         template="${templates_dir}"/Dockerfile-deb.tmpl
         sed 's/%%os%%/'"${os}"'/g; s/%%release%%/'"${release}"'/g' \
-            "${template}" > "${target_subdir}/Dockerfile"
+            "${template}" >"${target_subdir}/Dockerfile"
 
         cp -R make_pg_buildext_parallel.patch scripts "${target_subdir}"
         rm "${target_subdir}/scripts/fetch_and_build_rpm" \
-           "${target_subdir}/scripts/fetch_and_build_pgxn"
+            "${target_subdir}/scripts/fetch_and_build_pgxn"
     elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
         # redhat variants need a Dockerfile for each PostgreSQL version
         IFS=' '
         for pgversion in ${pgversions}; do
-            if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
-                 [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
+            if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } &&
+                [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
                 # CentOS and OracleLinux 6 doesn't have pg13 packages yet.
                 # So skip building docker images for them.
                 continue
@@ -105,13 +105,13 @@ while read -r line; do
 
         template="${templates_dir}"/Dockerfile-pgxn.tmpl
         sed 's/%%os%%/'"${os}"'/g; s/%%release%%/'"${release}"'/g' \
-            "${template}" > "${target_subdir}/Dockerfile"
+            "${template}" >"${target_subdir}/Dockerfile"
 
         cp -R scripts "${target_subdir}"
         rm "${target_subdir}/scripts/fetch_and_build_deb" \
-           "${target_subdir}/scripts/fetch_and_build_rpm" \
-           "${target_subdir}/scripts/determine_name" \
-           "${target_subdir}/scripts/determine_email"
+            "${target_subdir}/scripts/fetch_and_build_rpm" \
+            "${target_subdir}/scripts/determine_name" \
+            "${target_subdir}/scripts/determine_email"
 
     else
         echo "$0: unrecognized OS -- ${os}" >&2

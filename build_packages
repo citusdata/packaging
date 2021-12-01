@@ -4,7 +4,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+topdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 packagesdir=${topdir}/packages
 buildfilesdir=${topdir}/buildfiles
 badusage=64
@@ -34,7 +34,7 @@ nprocs="${3:-1}"
 declare args
 
 while read -r line; do
-    IFS=',' read -r os release <<< "$line"
+    IFS=',' read -r os release <<<"$line"
 
     if [ -z "${release}" ]; then
         outputdir="${packagesdir}/${os}"
@@ -69,8 +69,8 @@ while read -r line; do
         # redhat variants need to build each PostgreSQL version separately
         IFS=','
         for pgversion in ${pgversions}; do
-            if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
-                 [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
+            if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } &&
+                [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
                 # CentOS and OracleLinux 6 doesn't have pg13 packages yet
                 # so we dont't have package builder docker images yet.
                 # So skip building distro packages for them.

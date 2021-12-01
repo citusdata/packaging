@@ -7,7 +7,7 @@ RUN yum -y update
 RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
     && yum clean all
 
-# Enable some other repos for some dependencies in OL/7 
+# Enable some other repos for some dependencies in OL/7
 # see https://yum.oracle.com/getting-started.html#installing-from-oracle-linux-yum-server
 RUN [[ oraclelinux != oraclelinux ]] || [[ 7 != 7 ]] || ( \
        yum install -y oraclelinux-release-el7 oracle-softwarecollection-release-el7 oracle-epel-release-el7  oraclelinux-developer-release-el7 \

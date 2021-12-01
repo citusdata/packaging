@@ -17,7 +17,7 @@ download=$(mktemp)
 
 # outputs usage message on specified device before exiting with provided status
 usage() {
-    cat << 'E_O_USAGE' >&"$1"
+    cat <<'E_O_USAGE' >&"$1"
 usage: fetch_build_files project format target_directory
 
     project : 'citus', 'enterprise', 'hll', or 'rebalancer'
@@ -27,7 +27,7 @@ fetch_build_files fetches files needed to package a specified Citus project for
 a specified software packaging system.
 E_O_USAGE
 
-    exit "${2}";
+    exit "${2}"
 }
 
 if [ "$#" -eq 1 ] && [ "${1}" = '-h' ]; then
@@ -39,29 +39,29 @@ if [ "$#" -ne 3 ]; then
 fi
 
 case "${1}" in
-    citus|enterprise|hll|rebalancer)
-        project=${1}
-        ;;
-    *)
-        echo "$0: unknown project -- ${1}" >&2
-        usage $stderr $badusage
-        ;;
+citus | enterprise | hll | rebalancer)
+    project=${1}
+    ;;
+*)
+    echo "$0: unknown project -- ${1}" >&2
+    usage $stderr $badusage
+    ;;
 esac
 
 case "${2}" in
-    deb)
-        format='debian'
-        ;;
-    rpm)
-        format='redhat'
-        ;;
-    pgxn)
-        format='pgxn'
-        ;;
-    *)
-        echo "$0: unknown format -- ${2}" >&2
-        usage $stderr $badusage
-        ;;
+deb)
+    format='debian'
+    ;;
+rpm)
+    format='redhat'
+    ;;
+pgxn)
+    format='pgxn'
+    ;;
+*)
+    echo "$0: unknown format -- ${2}" >&2
+    usage $stderr $badusage
+    ;;
 esac
 
 targetdir=$3
