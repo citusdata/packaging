@@ -17,7 +17,7 @@ builddir=$(pwd)
 
 # outputs usage message on specified device before exiting with provided status
 usage() {
-    cat << 'E_O_USAGE' >&"$1"
+    cat <<'E_O_USAGE' >&"$1"
 usage: fetch_and_build_deb build_type
 
     build_type: 'release', 'nightly', or a valid git reference
@@ -28,7 +28,7 @@ the latest 'master' commit, and any other type is interpreted as a git ref to
 facilitate building one-off packages for customers.
 E_O_USAGE
 
-    exit "${2}";
+    exit "${2}"
 }
 
 # sets the next version variable used during non-release builds
@@ -65,7 +65,6 @@ versioning="${versioning:-simple}"
 pg_release_versions="${release_versions:-${releasepg}}"
 pg_nightly_versions="${nightly_versions:-${nightlypg}}"
 
-
 echo "Postgres versions:"
 echo "Release Versions: ${pg_release_versions}"
 echo "Nightly Versions: ${pg_nightly_versions}"
@@ -75,7 +74,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
+echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" >~/.curlrc
 
 export NAME
 NAME=$(determine_name)
@@ -87,63 +86,63 @@ cp -R /buildfiles/debian "${builddir}"
 repopath="citusdata/${hubproj}"
 
 case "${1}" in
-    release)
-        packageversion=${pkglatest%-*}
-        releasetag="v${packageversion/'~'/-}"
-        releasetag="${releasetag%.citus}"
+release)
+    packageversion=${pkglatest%-*}
+    releasetag="v${packageversion/'~'/-}"
+    releasetag="${releasetag%.citus}"
 
-        gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
-                 jq -r '.object.sha')
-        if [ "${gitsha}" == 'null' ]; then
-            echo "$0: could not determine commit for git tag ${releasetag}" >&2
-            exit $failure
-        fi
+    gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" |
+        jq -r '.object.sha')
+    if [ "${gitsha}" == 'null' ]; then
+        echo "$0: could not determine commit for git tag ${releasetag}" >&2
+        exit $failure
+    fi
 
-        verified=$(curl -sH 'Accept:application/vnd.github.cryptographer-preview+sha' \
-                   "https://api.github.com/repos/${repopath}/git/tags/${gitsha}" | \
-                   jq -r '.verification.verified')
-        if [ "${verified}" != 'true' ]; then
-            echo "$0: could not verify signature for git tag ${releasetag}" >&2
-            exit $failure
-        fi
+    verified=$(curl -sH 'Accept:application/vnd.github.cryptographer-preview+sha' \
+        "https://api.github.com/repos/${repopath}/git/tags/${gitsha}" |
+        jq -r '.verification.verified')
+    if [ "${verified}" != 'true' ]; then
+        echo "$0: could not verify signature for git tag ${releasetag}" >&2
+        exit $failure
+    fi
 
-        echo "${pg_release_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
-        ;;
-    *)
-        if [ "${1}" == 'nightly' ]; then
-            ref=${nightlyref}
-            infix='git'
-        else
-            ref=${1}
-            infix='pre'
-        fi
+    echo "${pg_release_versions}" | tr ',' '\n' >"${builddir}/debian/pgversions"
+    ;;
+*)
+    if [ "${1}" == 'nightly' ]; then
+        ref=${nightlyref}
+        infix='git'
+    else
+        ref=${1}
+        infix='pre'
+    fi
 
-        setnextversion "${pkglatest}"
+    setnextversion "${pkglatest}"
 
-        set +e
-        gitsha=$(curl -sfH 'Accept:application/vnd.github.v3.sha' \
-                 "https://api.github.com/repos/${repopath}/commits/${ref}")
-        if [ "${?}" -ne 0 ]; then
-            echo "$0: could not determine commit for git ref ${ref}" >&2
-            exit $failure
-        fi
-        set -e
+    set +e
+    gitsha=$(curl -sfH 'Accept:application/vnd.github.v3.sha' \
+        "https://api.github.com/repos/${repopath}/commits/${ref}")
+    if [ "${?}" -ne 0 ]; then
+        echo "$0: could not determine commit for git ref ${ref}" >&2
+        exit $failure
+    fi
+    set -e
 
-        timestamp=$(date +'%Y%m%d')
+    timestamp=$(date +'%Y%m%d')
 
-        packagesuffix="${infix}.${timestamp}.${gitsha:0:7}"
-        packageversion="${nextversion}.citus~${packagesuffix}"
-        export CONF_EXTRA_VERSION="+${packagesuffix}"
+    packagesuffix="${infix}.${timestamp}.${gitsha:0:7}"
+    packageversion="${nextversion}.citus~${packagesuffix}"
+    export CONF_EXTRA_VERSION="+${packagesuffix}"
 
-        echo "${pg_nightly_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
-        ;;
+    echo "${pg_nightly_versions}" | tr ',' '\n' >"${builddir}/debian/pgversions"
+    ;;
 esac
 
 tarballpath="${builddir}/${pkgname}_${packageversion}.orig.tar.gz"
 packagepath="${builddir}/${packageversion}"
 
 curl -sL "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
-     -o "${tarballpath}"
+    -o "${tarballpath}"
 
 mkdir -p "${packagepath}"
 tar xf "${tarballpath}" -C "${packagepath}" --strip-components 1
@@ -158,26 +157,25 @@ cp -R "${builddir}/debian" "${packagepath}/debian"
 cd "${packagepath}"
 
 case "${1}" in
-    release)
-        # add minor/major version to package name if using fancy versioning
-        if [ "${versioning}" == 'fancy' ]; then
-            suffix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+')
-            sed -i "/^Package:/ s/$/-${suffix}/" debian/control.in
-            sed -i "/postgresql-%v-${pkgname}/ s/$/-${suffix}/" debian/rules
-        fi
-        ;;
-    nightly)
-        msg="Nightly package. Built from ${nightlyref} "
-        msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
-        dch -v "${packageversion}-1" -D experimental -u low "${msg}"
-        ;;
-    *)
-        msg="Custom package. Built from ${gitsha:0:7} "
-        msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
-        dch -v "${packageversion}-1" -D UNRELEASED -u low "${msg}"
-        ;;
+release)
+    # add minor/major version to package name if using fancy versioning
+    if [ "${versioning}" == 'fancy' ]; then
+        suffix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+')
+        sed -i "/^Package:/ s/$/-${suffix}/" debian/control.in
+        sed -i "/postgresql-%v-${pkgname}/ s/$/-${suffix}/" debian/rules
+    fi
+    ;;
+nightly)
+    msg="Nightly package. Built from ${nightlyref} "
+    msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
+    dch -v "${packageversion}-1" -D experimental -u low "${msg}"
+    ;;
+*)
+    msg="Custom package. Built from ${gitsha:0:7} "
+    msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
+    dch -v "${packageversion}-1" -D UNRELEASED -u low "${msg}"
+    ;;
 esac
-
 
 pg_buildext updatecontrol
 
@@ -191,12 +189,12 @@ DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild --prepend-path /usr/local/bin --pr
 # releases. For this reason, we rename all *.ddeb files to *.deb since we upload
 # debug packages with .deb suffix.
 for file in ../*.ddeb; do
-  if [ -e "${file}" ]; then
-    echo "Renaming ${file} to ${file%.ddeb}.deb"
-    mv "${file}" "${file%.ddeb}.deb";
-  else
-    echo "There are no files with ddeb extension to rename."
-  fi
+    if [ -e "${file}" ]; then
+        echo "Renaming ${file} to ${file%.ddeb}.deb"
+        mv "${file}" "${file%.ddeb}.deb"
+    else
+        echo "There are no files with ddeb extension to rename."
+    fi
 done
 ## Copy all deb packages out of docker image
 cp ../*.deb /packages

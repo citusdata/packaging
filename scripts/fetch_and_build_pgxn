@@ -16,7 +16,7 @@ builddir=$(pwd)
 
 # outputs usage message on specified device before exiting with provided status
 usage() {
-    cat << 'E_O_USAGE' >&"$1"
+    cat <<'E_O_USAGE' >&"$1"
 usage: fetch_and_build_pgxn build_type
 
     build_type: 'release'
@@ -26,7 +26,7 @@ type 'release' builds the latest release tag. At present, the only supported
 build is a 'release' build of the 'citus' project.
 E_O_USAGE
 
-    exit "${2}";
+    exit "${2}"
 }
 
 if [ "$#" -ne 1 ]; then
@@ -51,35 +51,35 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
+echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" >~/.curlrc
 
 cp -R /buildfiles/META.json "${builddir}"
 repopath="citusdata/${hubproj}"
 
 case "${1}" in
-    release)
-        packageversion=${pkglatest%-*}
-        releasetag="v${packageversion/'~'/-}"
+release)
+    packageversion=${pkglatest%-*}
+    releasetag="v${packageversion/'~'/-}"
 
-        gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
-                 jq -r '.object.sha')
-        if [ "${gitsha}" == 'null' ]; then
-            echo "$0: could not determine commit for git tag ${releasetag}" >&2
-            exit $failure
-        fi
+    gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" |
+        jq -r '.object.sha')
+    if [ "${gitsha}" == 'null' ]; then
+        echo "$0: could not determine commit for git tag ${releasetag}" >&2
+        exit $failure
+    fi
 
-        verified=$(curl -sH 'Accept:application/vnd.github.cryptographer-preview+sha' \
-                   "https://api.github.com/repos/${repopath}/git/tags/${gitsha}" | \
-                   jq -r '.verification.verified')
-        if [ "${verified}" != 'true' ]; then
-            echo "$0: could not verify signature for git tag ${releasetag}" >&2
-            exit $failure
-        fi
-        ;;
-    *)
-        echo "$0: unknown build_type -- ${1}" >&2
-        usage $stderr $badusage
-        ;;
+    verified=$(curl -sH 'Accept:application/vnd.github.cryptographer-preview+sha' \
+        "https://api.github.com/repos/${repopath}/git/tags/${gitsha}" |
+        jq -r '.verification.verified')
+    if [ "${verified}" != 'true' ]; then
+        echo "$0: could not verify signature for git tag ${releasetag}" >&2
+        exit $failure
+    fi
+    ;;
+*)
+    echo "$0: unknown build_type -- ${1}" >&2
+    usage $stderr $badusage
+    ;;
 esac
 
 tarballpath="${builddir}/${pkgname}_${packageversion}.orig.tar.gz"
@@ -87,7 +87,7 @@ packagepath="${builddir}/${pkgname}-${packageversion}"
 finalpath="${packagepath}.zip"
 
 curl -sL "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
-     -o "${tarballpath}"
+    -o "${tarballpath}"
 
 mkdir -p "${packagepath}"
 tar xf "${tarballpath}" -C "${packagepath}" --strip-components 1
