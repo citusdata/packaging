@@ -7,11 +7,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	10.2.3.citus
+Version:	10.1.4.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v10.2.3.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v10.1.4.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -43,8 +43,6 @@ make %{?_smp_mflags}
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
-%{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
-
 # Set paths to be packaged other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
@@ -79,9 +77,11 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %license LICENSE
 %endif
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
-%doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
+* Tue Feb 01 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.1.4.citus-1
+- Official 10.1.4 release of Citus
+
 * Mon Nov 29 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.3.citus-1
 - Official 10.2.3 release of Citus
 
