@@ -43,6 +43,7 @@ make %{?_smp_mflags}
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
+%{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
 
 # Set paths to be packaged other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
