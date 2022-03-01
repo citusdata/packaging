@@ -44,7 +44,6 @@ source /buildfiles/pkgvars
 # set default values for certain packaging variables
 declare pkglatest # to make shellcheck happy
 hubproj="${hubproj:-${pkgname}}"
-nightlypg="${nightlypg:-${releasepg}}"
 
 if [ -z "${pkglatest}" ]; then
     echo "$0: pkgvars file must specify a value for pkglatest" >&2
