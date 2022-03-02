@@ -46,7 +46,7 @@ make %{?_smp_mflags}
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
 %{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
 
-# Set paths to be packaged for citus  other than LICENSE, README & CHANGELOG.md
+# Set paths to be packaged other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
@@ -69,9 +69,11 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
     # Columnar files moved into its own directory like a seperate extension. Lines below adds these files into
     # package file list
     [[ -f %{buildroot}%{pginstdir}/lib/%{sname_columnar}.so ]] && echo %{pginstdir}/lib/%{sname_columnar}.so >> installation_files.list
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]] && echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*.bc >> installation_files.list
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]] && echo %{pginstdir}/lib/bitcode/%{sname_columnar}*.bc >> installation_files.list
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]] && echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*/*.bc >> installation_files.list
+    if [  -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]; then
+        echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname_columnar}*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*/*.bc >> installation_files.list
+    fi
   %endif
 %endif
 
