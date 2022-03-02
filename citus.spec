@@ -2,6 +2,7 @@
 %global pgpackageversion 11
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus
+%global sname_columnar citus_columnar
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
@@ -45,24 +46,32 @@ make %{?_smp_mflags}
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
 %{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
 
-# Set paths to be packaged other than LICENSE, README & CHANGELOG.md
+# Set paths to be packaged for citus  other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
+
 %ifarch ppc64 ppc64le
   %else
   %if 0%{?rhel} && 0%{?rhel} <= 6
   %else
+    # citus file paths to be added into package
     echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
     echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
     echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
-    
+
     # Columnar does not exist in Citus versions < 10.0
     # At this point, we don't have %{pginstdir},
     # so first check build directory for columnar.
     [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+    # Columnar files moved into its own directory like a seperate extension. Lines below adds these files into
+    # package file list
+    [[ -f %{buildroot}%{pginstdir}/lib/%{sname_columnar}.so  ]] && echo %{pginstdir}/lib/%{sname_columnar}.so >> installation_files.list
+    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]] && echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*.bc >> installation_files.list
+    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]] && echo %{pginstdir}/lib/bitcode/%{sname_columnar}*.bc >> installation_files.list
+    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]] && echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*/*.bc >> installation_files.list
   %endif
 %endif
 
