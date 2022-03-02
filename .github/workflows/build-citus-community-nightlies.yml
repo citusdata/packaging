@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.9 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.9 --depth=1 https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
@@ -53,7 +53,7 @@ jobs:
 
       - name: Build packages
         run: |
-          python -m  tools.packaging_automation.citus_package \
+          python -m tools.packaging_automation.citus_package \
           --gh_token "${GH_TOKEN}" \
           --platform "${{ matrix.platform }}" \
           --build_type "nightly" \
@@ -64,7 +64,7 @@ jobs:
 
       - name: Publish packages
         run: |
-          python -m  tools.packaging_automation.upload_to_package_cloud \
+          python -m tools.packaging_automation.upload_to_package_cloud \
           --platform "${{ matrix.platform }}" \
           --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
