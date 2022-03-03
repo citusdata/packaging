@@ -58,7 +58,7 @@ make %{?_smp_mflags}
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
-[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo  %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %if %{unencrypted_package} != ""
   echo %{pginstdir}/lib/citus.so >> installation_files.list
   echo %{pginstdir}/share/extension/citus.control >> installation_files.list
