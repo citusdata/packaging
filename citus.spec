@@ -66,8 +66,8 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
     # At this point, we don't have %{pginstdir},
     # so first check build directory for columnar.
     [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
-    # Columnar files moved into its own directory like a seperate extension. Lines below adds these files into
-    # package file list
+    # Columnar files are installed into a different directory as a separate extension.
+    # Lines below add these files into package file list.
     [[ -f %{buildroot}%{pginstdir}/lib/%{sname_columnar}.so ]] && echo %{pginstdir}/lib/%{sname_columnar}.so >> installation_files.list
     if [  -d %{buildroot}%{pginstdir}/lib/bitcode/%{sname_columnar}/ ]; then
         echo %{pginstdir}/lib/bitcode/%{sname_columnar}/*.bc >> installation_files.list
