@@ -58,6 +58,7 @@ make %{?_smp_mflags}
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %if %{unencrypted_package} != ""
   echo %{pginstdir}/lib/citus.so >> installation_files.list
   echo %{pginstdir}/share/extension/citus.control >> installation_files.list
@@ -371,7 +372,7 @@ done < "$secret_files_list"
 * Fri Sep 17 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.1.3.citus-1
 - Official 10.1.3 release of Citus Enterprise
 
-* Wed Sep 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-2
+* Thu Sep 16 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-2
 - Removes encryption from packages
 
 * Wed Sep 15 2021 - Gurkan Indibay <gindibay@microsoft.com> 10.2.0.citus-1
