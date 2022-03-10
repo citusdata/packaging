@@ -211,6 +211,3 @@ for file in ../*.ddeb; do
 done
 ## Copy all deb packages out of docker image
 cp ../*.deb /packages
-
-cat debian/rules
-cat debian/control.in
