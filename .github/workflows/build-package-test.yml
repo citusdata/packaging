@@ -10,7 +10,8 @@ env:
   CURRENT_BRANCH: ${GITHUB_REF##*/}
   TEST: true
 on:
-
+  push:
+    branches: "**"
   workflow_dispatch:
 
 jobs:
