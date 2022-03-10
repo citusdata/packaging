@@ -20,6 +20,11 @@ nprocs="${1:-1}"
 
 declare args
 
+if ["${TEST}"=="true"]; then
+    image_name="packaging-test"
+else
+    image_name="packaging"
+fi
 
 IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
 
@@ -38,7 +43,7 @@ elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
         fi
         pgshort=${pgversion//./}
         tag="${os}-${release}-pg${pgshort}"
-        args+="build --pull --no-cache -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
+        args+="build --pull --no-cache -t citus/${image_name}:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
     done
 elif [[ "${os}" = 'pgxn' ]]; then
     tag="${os}-all"

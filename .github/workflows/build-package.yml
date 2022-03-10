@@ -8,6 +8,7 @@ env:
   DOCKERHUB_PASSWORD: "${{ secrets.DOCKERHUB_PASSWORD }}"
   DOCKERHUB_USER_NAME: "${{ secrets.DOCKERHUB_USER_NAME }}"
   CURRENT_BRANCH: ${GITHUB_REF##*/}
+  TEST: false
 on:
   push:
     branches: "**"

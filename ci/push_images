@@ -12,7 +12,7 @@ badusage=64
 
 nprocs="${1:-1}"
 
-if [[ ${CURRENT_BRANCH} != "develop" ]] ; then
+if [[ ${TEST}=="false" && ${CURRENT_BRANCH} != "develop" ]] ; then
     echo "PR is not merged to develop, not pushing to DockerHub"
     exit 0;
 fi

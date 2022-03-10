@@ -8,9 +8,8 @@ env:
   DOCKERHUB_PASSWORD: "${{ secrets.DOCKERHUB_PASSWORD }}"
   DOCKERHUB_USER_NAME: "${{ secrets.DOCKERHUB_USER_NAME }}"
   CURRENT_BRANCH: ${GITHUB_REF##*/}
+  TEST: true
 on:
-  push:
-    branches: "**"
 
   workflow_dispatch:
 
@@ -59,7 +58,7 @@ jobs:
       - name: Build image for the target platform
         run: |
           git checkout -- dockerfiles
-          ./update_images_test
+          ./update_image
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
 
