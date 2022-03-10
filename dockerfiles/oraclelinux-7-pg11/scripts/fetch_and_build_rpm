@@ -33,7 +33,7 @@ E_O_USAGE
 
 # sets the next version variable used during non-release builds
 setnextversion() {
-    baseversion=$(echo "$1" | tr '~' '-' | cut -d- -f1)
+    baseversion=$(echo "$1" | tr '~' '-' | tr '_' '-' | cut -d- -f1)
     baseversion="${baseversion%.citus}"
     nextversion=$(echo "$baseversion" | perl -pe 's/^(\d+\.)(\d+)(\.\d+)$/$1.($2+1).".0"/e')
 }
@@ -58,6 +58,11 @@ nightlyref="${nightlyref:-master}"
 releasepg="${releasepg:-11,12,13}"
 nightlypg="${nightlypg:-${releasepg}}"
 versioning="${versioning:-simple}"
+if [[ "${pkglatest}" == *"beta"* ]]; then
+    release_type="beta"
+else
+    release_type="stable"
+fi
 
 if [ -z "${pkglatest}" ]; then
     echo "$0: pkgvars file must specify a value for pkglatest" >&2
@@ -77,11 +82,6 @@ case "${1}" in
     release)
         packageversion=${pkglatest%-*}
         releasetag="v${packageversion%.citus}"
-
-        packagerelease=$(echo "${pkglatest#*-}" | sed -E 's/^[0-9.]+//')
-        if [ -n "${packagerelease}" ]; then
-            releasetag="v${packageversion}-${packagerelease}"
-        fi
 
         conf_extra_version="%{nil}"
 
@@ -166,8 +166,14 @@ case "${1}" in
     release)
         # add minor/major version to package name if using fancy versioning
         if [ "${versioning}" == 'fancy' ]; then
+
             infix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+' | tr -d '.')
-            sed -i -E "1i %global pkginfix ${infix}" "${builddir}/${pkgname}.spec"
+            if [ "${release_type}" == "stable" ]; then
+                package_prefix="${infix}"
+            else
+                package_prefix="${infix}_${release_type}"
+            fi
+            sed -i -E "1i %global pkginfix ${package_prefix}" "${builddir}/${pkgname}.spec"
         fi
         ;;
     nightly)
@@ -199,5 +205,6 @@ rpmbuild --define "_sourcedir ${rpmbuilddir}" \
 --define "_rpmdir ${rpmbuilddir}" \
 --define "conf_extra_version ${conf_extra_version}" \
 -bb "${builddir}/${pkgname}.spec"
+
 
 cp /citus-rpm-build/x86_64/*.rpm /packages

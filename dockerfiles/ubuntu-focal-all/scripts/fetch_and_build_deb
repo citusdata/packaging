@@ -33,7 +33,7 @@ E_O_USAGE
 
 # sets the next version variable used during non-release builds
 setnextversion() {
-    baseversion=$(echo "$1" | tr '~' '-' | cut -d- -f1)
+    baseversion=$(echo "$1" | tr '~' '-' | tr '_' '-' | cut -d- -f1)
     baseversion="${baseversion%.citus}"
     nextversion=$(echo "$baseversion" | perl -pe 's/^(\d+\.)(\d+)(\.\d+)$/$1.($2+1).".0"/e')
 }
@@ -60,6 +60,11 @@ pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
 nightlyref="${nightlyref:-master}"
 versioning="${versioning:-simple}"
+if [[ "${pkglatest}" == *"beta"* ]]; then
+    release_type="beta"
+else
+    release_type="stable"
+fi
 # Fetch pg release and nightly versions from supported-postgres file which is originated from postgres-matrix.yml file
 # If this file is not found, releasepg and nightlypg parameters from pkgvars are used for defining pg versions
 pg_release_versions="${release_versions:-${releasepg}}"
@@ -161,9 +166,15 @@ case "${1}" in
     release)
         # add minor/major version to package name if using fancy versioning
         if [ "${versioning}" == 'fancy' ]; then
+            declare release_prefix=''
             suffix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+')
-            sed -i "/^Package:/ s/$/-${suffix}/" debian/control.in
-            sed -i "/postgresql-%v-${pkgname}/ s/$/-${suffix}/" debian/rules
+            if [ "${release_type}" == 'stable' ]; then
+                release_prefix=${suffix}
+            else
+                release_prefix="${release_type}-${suffix}"
+            fi
+            sed -i "/^Package:/ s/$/-${release_prefix}/" debian/control.in
+            sed -i "/postgresql-%v-${pkgname}/ s/$/-${release_prefix}/" debian/rules
         fi
         ;;
     nightly)
@@ -200,3 +211,6 @@ for file in ../*.ddeb; do
 done
 ## Copy all deb packages out of docker image
 cp ../*.deb /packages
+
+cat debian/rules
+cat debian/control.in
