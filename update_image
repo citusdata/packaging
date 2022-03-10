@@ -20,7 +20,7 @@ nprocs="${1:-1}"
 
 declare args
 
-if ["${TEST}"=="true"]; then
+if [ "${TEST}" == "true" ]; then
     image_name="packaging-test"
 else
     image_name="packaging"
