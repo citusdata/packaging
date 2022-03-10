@@ -12,10 +12,15 @@ badusage=64
 
 nprocs="${1:-1}"
 
-echo "Test: ${TEST}"
 if [[ ${TEST} == "false" && ${CURRENT_BRANCH} != "develop" ]] ; then
     echo "PR is not merged to develop, not pushing to DockerHub"
     exit 0;
+fi
+
+if ["${TEST}"=="true"]; then
+    image_name="packaging-test"
+else
+    image_name="packaging"
 fi
 
 echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USER_NAME}" --password-stdin
@@ -29,7 +34,7 @@ while read -r line; do
     fi
     if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
         tag="${os}-${release}-all"
-        args+="push citus/packaging:${tag}\n"
+        args+="push citus/${image_name}:${tag}\n"
     elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
         # redhat variants need an image for each PostgreSQL version
         IFS=' '
@@ -42,11 +47,11 @@ while read -r line; do
             fi
             pgshort=${pgversion//./}
             tag="${os}-${release}-pg${pgshort}"
-            args+="push citus/packaging:${tag}\n"
+            args+="push citus/${image_name}:${tag}\n"
         done
     elif [[ "${os}" = 'pgxn' ]]; then
         tag="${os}-all"
-        args+="push citus/packaging:${tag}\n"
+        args+="push citus/${image_name}:${tag}\n"
     else
         echo "$0: unrecognized OS -- ${os}" >&2
         exit $badusage

@@ -30,7 +30,7 @@ IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
 
 if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
     tag="${os}-${release}-all"
-    args+="build --pull --no-cache -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
+    args+="build --pull --no-cache -t citus/${image_name}:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
 elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
     # redhat variants need an image for each PostgreSQL version
     IFS=' '
@@ -47,7 +47,7 @@ elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
     done
 elif [[ "${os}" = 'pgxn' ]]; then
     tag="${os}-all"
-    args+="build --pull --no-cache -t citus/packaging:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
+    args+="build --pull --no-cache -t citus/${image_name}:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
 else
     echo "$0: unrecognized OS -- ${os}" >&2
     exit $badusage
