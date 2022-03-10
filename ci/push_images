@@ -24,7 +24,9 @@ declare args
 
 while read -r line; do
     IFS=',' read -r os release <<< "$line"
-
+    if [ ! -z ${TARGET_PLATFORM} ] && [ ${line} != ${TARGET_PLATFORM} ]; then
+        continue
+    fi
     if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
         tag="${os}-${release}-all"
         args+="push citus/packaging:${tag}\n"
