@@ -17,7 +17,7 @@ if [[ ${TEST} == "false" && ${CURRENT_BRANCH} != "develop" ]] ; then
     exit 0;
 fi
 
-if ["${TEST}"=="true"]; then
+if [ "${TEST}" == "true" ]; then
     image_name="packaging-test"
 else
     image_name="packaging"
