@@ -78,7 +78,7 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %license LICENSE
 %endif
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
-%{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
+%doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
 * Thu Mar 17 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.5.citus-1
