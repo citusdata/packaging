@@ -10,7 +10,7 @@
          "abstract": "Citus Distributed Database",
          "file": "citus.so",
          "docfile": "README.md",
-         "version": "11.0.0_beta"
+         "version": "11.0.0-beta"
       }
    },
    "prereqs": {
