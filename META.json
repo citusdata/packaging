@@ -16,7 +16,7 @@
    "prereqs": {
       "runtime": {
          "requires": {
-            "PostgreSQL": "11.0.0"
+            "PostgreSQL": "13.0.0"
          }
       },
       "test": {
@@ -25,7 +25,7 @@
          }
       }
    },
-   "release_status": "stable",
+   "release_status": "testing",
    "resources": {
       "homepage": "https://www.citusdata.com",
       "bugtracker": {
