@@ -10,11 +10,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	10.2.5.citus
+Version:	1.0.1_beta.citus
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-enterprise/archive/v10.2.5.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v1.0.1_beta.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -58,7 +58,6 @@ make %{?_smp_mflags}
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
-[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %if %{unencrypted_package} != ""
   echo %{pginstdir}/lib/citus.so >> installation_files.list
   echo %{pginstdir}/share/extension/citus.control >> installation_files.list
@@ -345,6 +344,9 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Mon Apr 11 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.0.1_beta.citus-1
+- Official 1.0.1_beta release of Citus Enterprise
+
 * Thu Mar 17 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.5.citus-1
 - Official 10.2.5 release of Citus Enterprise
 
