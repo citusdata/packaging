@@ -61,6 +61,7 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
 [[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %if %{unencrypted_package} != ""
   echo %{pginstdir}/lib/citus.so >> installation_files.list
+  [[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
   echo %{pginstdir}/share/extension/citus.control >> installation_files.list
   %ifarch ppc64 ppc64le
     %else
@@ -75,6 +76,7 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
       # so first check build directory for columnar.
       [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
       [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
     %endif
   %endif
 %else
