@@ -74,6 +74,7 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
       # At this point, we don't have %{pginstdir},
       # so first check build directory for columnar.
       [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
     %endif
   %endif
 %else
@@ -93,6 +94,7 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
       # At this point, we don't have %{pginstdir},
       # so first check build directory for columnar.
       [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc.gpg >> installation_files.list
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc.gpg >> installation_files.list
     %endif
   %endif
 %endif
