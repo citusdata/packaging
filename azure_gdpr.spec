@@ -7,11 +7,11 @@ Summary:	GDPR compliant logging for Azure
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.7.citus
+Version:	1.8.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/azure_gdpr/archive/v1.7.tar.gz
+Source0:	https://github.com/citusdata/azure_gdpr/archive/v1.8.tar.gz
 URL:		https://github.com/citusdata/azure_gdpr
 BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -49,6 +49,9 @@ PostgreSQL extension for GDPR compliant logging for Azure
 %endif
 
 %changelog
+* Mon Apr 25 2022 - Philip Dubé <phdub@microsoft.com> 1.8.citus-1
+- Expose GUC to signal reloading azure_gdpr_fields
+
 * Wed Jan 05 2022 - Philip Dubé <phdub@microsoft.com> 1.7.citus-1
 - Truncate strings to 1MB, as mdsd rejects strings which are long
 
