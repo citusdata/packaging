@@ -1,4 +1,4 @@
-name: Build Package
+name: Azure GDPR Build & Publish Packages
 
 env:
   MAIN_BRANCH: "all-azure_gdpr"
@@ -23,6 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+          - el/7
           - el/8
     steps:
       - name: Checkout repository
