@@ -1,0 +1,62 @@
+name: Azure GDPR Build & Publish Packages
+
+env:
+  MAIN_BRANCH: "all-azure_gdpr"
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/azure"
+  PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+on:
+  push:
+    branches:
+      - "**"
+
+  workflow_dispatch:
+
+jobs:
+  build_package:
+    name: Build package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - el/7
+          - el/8
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Clone tools branch
+        run: git clone -b v0.8.13 --depth=1  https://github.com/citusdata/tools.git tools
+
+      - name: Install package dependencies
+        run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
+
+      - name: Install python requirements
+        run: python -m pip install -r tools/packaging_automation/requirements.txt
+
+      - name: Build packages
+        run: |
+          python -m  tools.packaging_automation.citus_package \
+          --gh_token "${GH_TOKEN}" \
+          --platform "${{ matrix.platform }}" \
+          --build_type "release" \
+          --secret_key "${PACKAGING_SECRET_KEY}" \
+          --passphrase "${PACKAGING_PASSPHRASE}" \
+          --output_dir "$(pwd)/packages/" \
+          --input_files_dir "$(pwd)" \
+          --output_validation
+
+      - name: Publish packages
+        run: |
+          python -m  tools.packaging_automation.upload_to_package_cloud \
+          --platform "${{ matrix.platform }}" \
+          --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
+          --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
+          --output_file_path "$(pwd)/packages" \
+          --current_branch "${GITHUB_REF##*/}" \
+          --main_branch "${MAIN_BRANCH}"
+
