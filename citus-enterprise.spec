@@ -65,7 +65,7 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
   echo %{pginstdir}/share/extension/citus.control >> installation_files.list
   %ifarch ppc64 ppc64le
     %else
-    %if 0%{?rhel} && 0%{?rhel} <= 9
+    %if 0%{?rhel} && 0%{?rhel} <= 6
     %else
       echo %{pginstdir}/lib/bitcode/%{pname}*.bc >> installation_files.list
       echo %{pginstdir}/lib/bitcode/%{pname}/*.bc >> installation_files.list
