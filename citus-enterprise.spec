@@ -45,35 +45,6 @@ make %{?_smp_mflags}
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
 
-%clean
-%{__rm} -rf %{buildroot}
-
-%files
-%defattr(-,root,root,-)
-%doc CHANGELOG.md
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%doc LICENSE
-%else
-%license LICENSE
-%endif
-%doc %{pginstdir}/doc/extension/README-%{sname}.md
-%{pginstdir}/include/server/citus_*.h
-%{pginstdir}/include/server/distributed/*.h
-%{pginstdir}/lib/citus.so
-%{pginstdir}/share/extension/citus-*.sql
-%{pginstdir}/share/extension/citus.control
-%ifarch ppc64 ppc64le
-  %else
-  %if %{pgmajorversion} >= 11 && %{pgmajorversion} < 90
-    %if 0%{?rhel} && 0%{?rhel} <= 6
-    %else
-      %{pginstdir}/lib/bitcode/%{pname}*.bc
-      %{pginstdir}/lib/bitcode/%{pname}/*.bc
-      %{pginstdir}/lib/bitcode/%{pname}/*/*.bc
-    %endif
-  %endif
-%endif
-
 %if %{unencrypted_package} == ""
 
 set -eu
@@ -307,6 +278,37 @@ while read -r path_unencrypted; do
 done < "$secret_files_list"
 
 %endif # encrypted packages code
+
+%clean
+%{__rm} -rf %{buildroot}
+
+%files
+%defattr(-,root,root,-)
+%doc CHANGELOG.md
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%doc LICENSE
+%else
+%license LICENSE
+%endif
+%doc %{pginstdir}/doc/extension/README-%{sname}.md
+%{pginstdir}/include/server/citus_*.h
+%{pginstdir}/include/server/distributed/*.h
+%{pginstdir}/lib/citus.so
+%{pginstdir}/share/extension/citus-*.sql
+%{pginstdir}/share/extension/citus.control
+%ifarch ppc64 ppc64le
+  %else
+  %if %{pgmajorversion} >= 11 && %{pgmajorversion} < 90
+    %if 0%{?rhel} && 0%{?rhel} <= 6
+    %else
+      %{pginstdir}/lib/bitcode/%{pname}*.bc
+      %{pginstdir}/lib/bitcode/%{pname}/*.bc
+      %{pginstdir}/lib/bitcode/%{pname}/*/*.bc
+    %endif
+  %endif
+%endif
+
+
 
 
 %changelog
