@@ -10,11 +10,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	11.0.1_beta.citus
+Version:	8.3.4.citus
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-enterprise/archive/v11.0.1_beta.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v8.3.4.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -58,10 +58,8 @@ make %{?_smp_mflags}
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
-[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %if %{unencrypted_package} != ""
   echo %{pginstdir}/lib/citus.so >> installation_files.list
-  [[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
   echo %{pginstdir}/share/extension/citus.control >> installation_files.list
   %ifarch ppc64 ppc64le
     %else
@@ -75,8 +73,6 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
       # At this point, we don't have %{pginstdir},
       # so first check build directory for columnar.
       [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
-      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
-      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
     %endif
   %endif
 %else
@@ -96,7 +92,6 @@ echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
       # At this point, we don't have %{pginstdir},
       # so first check build directory for columnar.
       [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc.gpg >> installation_files.list
-      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc.gpg >> installation_files.list
     %endif
   %endif
 %endif
@@ -349,6 +344,9 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Fri May 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 8.3.4.citus-1
+- Official 8.3.4 release of Citus Enterprise
+
 * Mon Apr 11 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.1_beta.citus-1
 - Official 11.0.1_beta release of Citus Enterprise
 
