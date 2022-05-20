@@ -8,9 +8,11 @@ env:
   DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 on:
-  push:
-    branches:
-      - "**"
+# Temporarily disabled nightly tests until releasing 10x releases
+# TODO: Enable it in working releases
+#  push:
+#    branches:
+#      - "**"
   workflow_dispatch:
 
 jobs:
