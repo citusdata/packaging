@@ -27,4 +27,3 @@ rpm:
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus.so"
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/bin/pg_send_cancellation"
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/citus.*"
-
