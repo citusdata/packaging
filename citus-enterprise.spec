@@ -3,6 +3,7 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus-enterprise
 %global pname citus
+%global unencrypted_package "%{getenv:UNENCRYPTED_PACKAGE}"
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
