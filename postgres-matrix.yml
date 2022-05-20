@@ -3,7 +3,7 @@ project_name: citus
 
 version_matrix:
   - 8.0:
-      postgres_versions: [ 11]
+      postgres_versions: [10, 11]
   - 9.0:
       postgres_versions: [11, 12]
   - 9.5:
