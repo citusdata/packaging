@@ -349,11 +349,11 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
-* Fri May 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.6.citus-1
-- Official 10.2.6 release of Citus Enterprise
-
 * Fri May 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.1.5.citus-1
 - Official 10.1.5 release of Citus Enterprise
+
+* Fri May 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.6.citus-1
+- Official 10.2.6 release of Citus Enterprise
 
 * Mon Apr 11 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.1_beta.citus-1
 - Official 11.0.1_beta release of Citus Enterprise
