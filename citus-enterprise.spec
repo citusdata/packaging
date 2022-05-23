@@ -10,11 +10,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	9.2.9.citus
+Version:	9.1.3.citus
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-enterprise/archive/v9.2.9.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v9.1.3.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -46,7 +46,7 @@ if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" 
     exit 1
 fi
 
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" CC=$(command -v gcc)
 make %{?_smp_mflags}
 
 %install
@@ -349,6 +349,9 @@ done < "$secret_files_list"
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
 
 %changelog
+* Mon May 23 2022 - Gurkan Indibay <gindibay@microsoft.com> 9.1.3.citus-1
+- Official 9.1.3 release of Citus Enterprise
+
 * Mon May 23 2022 - Gurkan Indibay <gindibay@microsoft.com> 9.2.9.citus-1
 - Official 9.2.9 release of Citus Enterprise
 
