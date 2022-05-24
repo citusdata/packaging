@@ -8,10 +8,9 @@ env:
   DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 on:
-  # TODO: revert this once we finish backports of security patches
-  # push:
-  #   branches:
-  #     - "**"
+  push:
+    branches:
+      - "**"
   workflow_dispatch:
 
 jobs:
