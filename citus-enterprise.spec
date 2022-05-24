@@ -13,7 +13,7 @@ Version:	8.3.4.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:       https://github.com/citusdata/citus-enterprise/archive/v8.3.4.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v8.3.4.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
