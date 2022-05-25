@@ -1,19 +1,20 @@
-%global pgmajorversion 10
-%global pgpackageversion 10
+%global pgmajorversion 11
+%global pgpackageversion 11
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus-enterprise
 %global pname citus
+%global debug_package %{nil}
 %global unencrypted_package "%{getenv:UNENCRYPTED_PACKAGE}"
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	citus_%{pgmajorversion}
 Conflicts:	citus_%{pgmajorversion}
-Version:	8.3.4.citus
+Version:	10.2.6.citus
 Release:	1%{dist}
 License:	Commercial
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus-enterprise/archive/v8.3.4.tar.gz
+Source0:	https://github.com/citusdata/citus-enterprise/archive/v10.2.6.tar.gz
 URL:		https://github.com/citusdata/citus-enterprise
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -37,7 +38,15 @@ commands.
 %setup -q -n %{sname}-%{version}
 
 %build
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}"
+
+currentgccver="$(gcc -dumpversion)"
+requiredgccver="4.8.2"
+if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" != "$requiredgccver" ]; then
+    echo ERROR: At least GCC version "$requiredgccver" is needed to build with security flags
+    exit 1
+fi
+
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
 make %{?_smp_mflags}
 
 %install
@@ -45,7 +54,52 @@ make %{?_smp_mflags}
 # Install documentation with a better name:
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
+# Set paths to be packaged other than LICENSE, README & CHANGELOG.md
+echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
+echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
+echo %{pginstdir}/share/extension/citus-*.sql >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
+%if %{unencrypted_package} != ""
+  echo %{pginstdir}/lib/citus.so >> installation_files.list
+  [[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
+  echo %{pginstdir}/share/extension/citus.control >> installation_files.list
+  %ifarch ppc64 ppc64le
+    %else
+    %if 0%{?rhel} && 0%{?rhel} <= 6
+    %else
+      echo %{pginstdir}/lib/bitcode/%{pname}*.bc >> installation_files.list
+      echo %{pginstdir}/lib/bitcode/%{pname}/*.bc >> installation_files.list
+      echo %{pginstdir}/lib/bitcode/%{pname}/*/*.bc >> installation_files.list
 
+      # Columnar does not exist in Citus versions < 10.0
+      # At this point, we don't have %{pginstdir},
+      # so first check build directory for columnar.
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
+    %endif
+  %endif
+%else
+  echo /usr/bin/citus-enterprise-pg-%{pgmajorversion}-setup >> installation_files.list
+  echo %{pginstdir}/lib/citus_secret_files.metadata >> installation_files.list
+  echo %{pginstdir}/lib/citus.so.gpg >> installation_files.list
+  echo %{pginstdir}/share/extension/citus.control.gpg >> installation_files.list
+  %ifarch ppc64 ppc64le
+    %else
+    %if 0%{?rhel} && 0%{?rhel} <= 6
+    %else
+      echo %{pginstdir}/lib/bitcode/%{pname}*.bc.gpg >> installation_files.list
+      echo %{pginstdir}/lib/bitcode/%{pname}/*.bc.gpg >> installation_files.list
+      echo %{pginstdir}/lib/bitcode/%{pname}/*/*.bc.gpg >> installation_files.list
+
+      # Columnar does not exist in Citus versions < 10.0
+      # At this point, we don't have %{pginstdir},
+      # so first check build directory for columnar.
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc.gpg >> installation_files.list
+      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc.gpg >> installation_files.list
+    %endif
+  %endif
+%endif
 %if %{unencrypted_package} == ""
 
 set -eu
@@ -283,6 +337,7 @@ done < "$secret_files_list"
 %clean
 %{__rm} -rf %{buildroot}
 
+%files -f installation_files.list
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
@@ -292,24 +347,11 @@ done < "$secret_files_list"
 %license LICENSE
 %endif
 %doc %{pginstdir}/doc/extension/README-%{sname}.md
-%{pginstdir}/include/server/citus_*.h
-%{pginstdir}/include/server/distributed/*.h
-%{pginstdir}/lib/citus.so
-%{pginstdir}/share/extension/citus-*.sql
-%{pginstdir}/share/extension/citus.control
-%ifarch ppc64 ppc64le
-  %else
-  %if %{pgmajorversion} >= 11 && %{pgmajorversion} < 90
-    %if 0%{?rhel} && 0%{?rhel} <= 6
-    %else
-      %{pginstdir}/lib/bitcode/%{pname}*.bc
-      %{pginstdir}/lib/bitcode/%{pname}/*.bc
-      %{pginstdir}/lib/bitcode/%{pname}/*/*.bc
-    %endif
-  %endif
-%endif
 
 %changelog
+* Mon May 23 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.6.citus-1
+- Official 10.2.6 release of Citus Enterprise
+
 * Mon May 23 2022 - Gurkan Indibay <gindibay@microsoft.com> 8.3.4.citus-1
 - Official 8.3.4 release of Citus Enterprise
 
@@ -336,9 +378,6 @@ done < "$secret_files_list"
 
 * Fri May 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.1.5.citus-1
 - Official 10.1.5 release of Citus Enterprise
-
-* Fri May 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.6.citus-1
-- Official 10.2.6 release of Citus Enterprise
 
 * Mon Apr 11 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.1_beta.citus-1
 - Official 11.0.1_beta release of Citus Enterprise

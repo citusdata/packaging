@@ -16,7 +16,7 @@ override_dh_auto_test:
 
 override_dh_auto_configure:
 	debian/check-gcc-version.sh
-	+pg_buildext configure build-%v "--with-extra-version='$${CONF_EXTRA_VERSION:-}' --without-libcurl"
+	+pg_buildext configure build-%v "--with-extra-version='$${CONF_EXTRA_VERSION:-}' --without-libcurl --with-security-flags"
 
 override_dh_auto_install:
 	+pg_buildext install build-%v postgresql-%v-citus-enterprise
