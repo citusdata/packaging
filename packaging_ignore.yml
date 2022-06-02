@@ -10,6 +10,7 @@ base:
   - ".* warning: overriding recipe for target 'check'"
   - "WARNING: Not compiling with -Wl,pie flag, this is less secure"
   - "# create a temporary directory for gpg to use so it doesn't output warnings"
+  - ".* unused substitution variable \\$\\{postgresql:Depends\\}.*"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
