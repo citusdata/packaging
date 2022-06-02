@@ -1,5 +1,6 @@
 rpm_pkgname=pg-auto-failover-enterprise
 deb_pkgname=auto-failover-enterprise
+pkgname=pg-auto-failover-enterprise
 hubproj=citus-ha
 pkgdesc='Postgres extension for automated failover and high-availability'
 pkglatest=1.6.2-2
