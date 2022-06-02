@@ -8,10 +8,6 @@ RUN [[ centos != centos ]] || [[ 8 != 8 ]] || ( \
 
 RUN yum -y update
 
-# FIXME: Hack around docker/docker#10180
-RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
-    && yum clean all
-
 # Enable some other repos for some dependencies in OL/7 
 # see https://yum.oracle.com/getting-started.html#installing-from-oracle-linux-yum-server
 RUN [[ centos != oraclelinux ]] || [[ 8 != 7 ]] || ( \
