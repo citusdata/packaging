@@ -70,6 +70,7 @@ jobs:
           ./update_image
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
         run: git clone -b v0.8.13 --depth=1  https://github.com/citusdata/tools.git tools
