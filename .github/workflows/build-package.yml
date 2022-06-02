@@ -37,14 +37,21 @@ jobs:
         TARGET_PLATFORM:
           - centos,8
           - centos,7
-          - debian,bullseye
-          - debian,buster
-          - debian,stretch
           - oraclelinux,8
           - oraclelinux,7
-          - ubuntu,focal
-          - ubuntu,bionic
-          - pgxn
+        POSTGRES_VERSION:
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+        include:
+          - TARGET_PLATFORM: debian,bullseye
+          - TARGET_PLATFORM: debian,buster
+          - TARGET_PLATFORM: debian,stretch
+          - TARGET_PLATFORM: ubuntu,focal
+          - TARGET_PLATFORM: ubuntu,bionic
+          - TARGET_PLATFORM: pgxn
 
     steps:
       - name: Checkout repository

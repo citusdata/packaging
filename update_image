@@ -35,6 +35,10 @@ elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
     # redhat variants need an image for each PostgreSQL version
     IFS=' '
     for pgversion in ${pgversions}; do
+        # if pg_version is given as parameter from TARGET_PLATFORM then match the version and execute for it
+        if [ -n "${POSTGRES_VERSION}" ] && [ "${pgversion}" != "${POSTGRES_VERSION}" ] ; then
+            continue
+        fi
         if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
              [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
             # CentOS and OracleLinux 6 doesn't have pg13 packages yet.
