@@ -86,3 +86,4 @@ jobs:
         run: ./ci/push_images
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}

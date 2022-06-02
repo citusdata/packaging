@@ -36,14 +36,21 @@ jobs:
         TARGET_PLATFORM:
           - centos,8
           - centos,7
-          - debian,bullseye
-          - debian,buster
-          - debian,stretch
           - oraclelinux,8
           - oraclelinux,7
-          - ubuntu,focal
-          - ubuntu,bionic
-          - pgxn
+        POSTGRES_VERSION:
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+        include:
+          - TARGET_PLATFORM: debian,bullseye
+          - TARGET_PLATFORM: debian,buster
+          - TARGET_PLATFORM: debian,stretch
+          - TARGET_PLATFORM: ubuntu,focal
+          - TARGET_PLATFORM: ubuntu,bionic
+          - TARGET_PLATFORM: pgxn
 
     steps:
       - name: Checkout repository
@@ -62,6 +69,7 @@ jobs:
           ./update_image
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
         run: git clone -b v0.8.13 --depth=1  https://github.com/citusdata/tools.git tools
@@ -69,7 +77,7 @@ jobs:
       - name: Execute packaging tests
         run: |
           python -m pip install -r tools/packaging_automation/requirements.txt
-          python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages' -s
+          python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
         env:
           PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
 
@@ -77,3 +85,4 @@ jobs:
         run: ./ci/push_images
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
