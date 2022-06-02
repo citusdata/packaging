@@ -65,7 +65,7 @@ jobs:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.12 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.13 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
