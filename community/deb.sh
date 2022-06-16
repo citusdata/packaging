@@ -97,7 +97,7 @@ pgdg_check ()
 
 install_debian_keyring ()
 {
-  if [ "${os}" = "debian" ]; then
+  if [ "${os,,}" = "debian" ]; then
     echo "Installing debian-archive-keyring which is needed for installing "
     echo "apt-transport-https on many Debian systems."
     apt-get install -y debian-archive-keyring &> /dev/null
