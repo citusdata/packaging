@@ -7,8 +7,8 @@
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
-Provides:	citus_%{pgmajorversion}
-Conflicts:	citus_%{pgmajorversion}
+Provides:	%{sname}_%{pgmajorversion}
+Conflicts:	%{sname}_%{pgmajorversion}
 Version:	11.0.2.citus
 Release:	1%{dist}
 License:	AGPLv3
