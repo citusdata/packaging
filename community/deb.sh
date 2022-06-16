@@ -273,9 +273,24 @@ main ()
 
   echo -n "Importing Citus Data Community gpg key... "
   # import the gpg key
-  # below command decodes the ASCII armored gpg file (instead of binary file)
-  # and adds the unarmored gpg key as keyring
   curl -fsSL "${gpg_key_url}" | gpg --dearmor > ${gpg_keyring_path}
+  # grant 644 permisions to gpg keyring path
+  chmod 0644 "${gpg_keyring_path}"
+  # check for os/dist based on pre debian stretch
+  if
+  { [ "${os,,}" = "debian" ] && [ "${version_id}" -lt 9 ]; } ||
+  { [ "${os,,}" = "ubuntu" ] && [ "${version_id}" -lt 16 ]; } ||
+  { [ "${os,,}" = "linuxmint" ] && [ "${version_id}" -lt 19 ]; } ||
+  { [ "${os,,}" = "raspbian" ] && [ "${version_id}" -lt 9 ]; } ||
+  { { [ "${os,,}" = "elementaryos" ] || [ "${os,,}" = "elementary" ]; } && [ "${version_id}" -lt 5 ]; }
+  then
+    # move to trusted.gpg.d
+    mv ${gpg_keyring_path} /etc/apt/trusted.gpg.d/citusdata_community.gpg
+    # deletes the keyrings directory if it is empty
+    if ! ls -1qA $apt_keyrings_dir | grep -q .;then
+      rm -r $apt_keyrings_dir
+    fi
+  fi
   echo "done."
 
   echo -n "Running apt-get update... "
