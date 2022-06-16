@@ -2,16 +2,18 @@
 %global pgpackageversion 11
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus
+%global debug_package %{nil}
+
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	11.0.1_beta.citus
+Version:	11.0.2.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v11.0.1_beta.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v11.0.2.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -35,7 +37,15 @@ commands.
 %setup -q -n %{sname}-%{version}
 
 %build
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags
+
+currentgccver="$(gcc -dumpversion)"
+requiredgccver="4.8.2"
+if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" != "$requiredgccver" ]; then
+    echo ERROR: At least GCC version "$requiredgccver" is needed to build with security flags
+    exit 1
+fi
+
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
 make %{?_smp_mflags}
 
 %install
@@ -51,21 +61,22 @@ echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
 [[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %ifarch ppc64 ppc64le
-  %else
-  %if 0%{?rhel} && 0%{?rhel} <= 6
-  %else
-    echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
-    echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
-    echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
-    
-    # Columnar does not exist in Citus versions < 10.0
-    # At this point, we don't have %{pginstdir},
-    # so first check build directory for columnar.
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
-  %endif
+%else
+    %if 0%{?rhel} && 0%{?rhel} <= 6
+    %else
+        echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
+
+        # Columnar does not exist in Citus versions < 10.0
+        # At this point, we don't have %{pginstdir},
+        # so first check build directory for columnar.
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
+    %endif
 %endif
 
 %clean
@@ -84,11 +95,8 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
-* Mon Apr 11 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.1_beta.citus-1
-- Official 11.0.1_beta release of Citus
-
-* Thu Mar 24 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.0_beta.citus-1
-- Official 11.0.0_beta release of Citus
+* Thu Jun 16 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.2.citus-1
+- Official 11.0.2 release of Citus
 
 * Thu Mar 17 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.5.citus-1
 - Official 10.2.5 release of Citus
