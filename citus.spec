@@ -48,6 +48,7 @@ make %{?_smp_mflags}
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %ifarch ppc64 ppc64le
@@ -62,6 +63,8 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
     # At this point, we don't have %{pginstdir},
     # so first check build directory for columnar.
     [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
+    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
   %endif
 %endif
 
