@@ -66,16 +66,16 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %else
     %if 0%{?rhel} && 0%{?rhel} <= 6
     %else
-      echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
-      echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
-      echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
 
-      # Columnar does not exist in Citus versions < 10.0
-      # At this point, we don't have %{pginstdir},
-      # so first check build directory for columnar.
-      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
-      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
-      [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
+        # Columnar does not exist in Citus versions < 10.0
+        # At this point, we don't have %{pginstdir},
+        # so first check build directory for columnar.
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
     %endif
 %endif
 
