@@ -155,6 +155,19 @@ detect_os ()
   echo "Detected operating system as $os/$dist."
 }
 
+detect_version_id () {
+  # detect version_id and round down float to integer
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    version_id=${VERSION_ID%%.*}
+  elif [ -f /usr/lib/os-release ]; then
+    . /usr/lib/os-release
+    version_id=${VERSION_ID%%.*}
+  else
+    version_id="1"
+  fi
+}
+
 detect_codename ()
 {
   if [ "${os}" = "debian" ]; then
@@ -202,6 +215,7 @@ main ()
 {
   detect_os
   detect_codename
+  detect_version_id
 
   # Need to first run apt-get update so that apt-transport-https can be
   # installed
@@ -227,7 +241,11 @@ main ()
   apt_config_url="https://repos.citusdata.com/community/config_file.list?os=${os}&dist=${dist}&source=script"
 
   apt_source_path="/etc/apt/sources.list.d/citusdata_community.list"
-  gpg_keyring_path="/usr/share/keyrings/citusdata_community-archive-keyring.gpg"
+  apt_keyrings_dir="/etc/apt/keyrings"
+  if [ ! -d "$apt_keyrings_dir" ]; then
+    mkdir -p "$apt_keyrings_dir"
+  fi
+  gpg_keyring_path="$apt_keyrings_dir/citusdata_community-archive-keyring.gpg"
 
   echo -n "Installing $apt_source_path... "
 
