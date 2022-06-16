@@ -51,6 +51,7 @@ echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
 [[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %ifarch ppc64 ppc64le
   %else
   %if 0%{?rhel} && 0%{?rhel} <= 6
