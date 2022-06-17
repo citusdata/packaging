@@ -282,8 +282,8 @@ main ()
   CITUS_REPO_TOKEN="${CITUS_REPO_TOKEN//:/%3A}"
 
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
-  gpg_key_install_url="https://repos.citusdata.com/enterprise/gpg_key_url.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}"
-  apt_config_url="https://repos.citusdata.com/enterprise/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
+  gpg_key_install_url="https://repos.citusdata.com/enterprise/gpg_key_url.list?os=${os}&dist=${dist}"
+  apt_config_url="https://repos.citusdata.com/enterprise/config_file.list?os=${os}&dist=${dist}&source=script"
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`
   if [ "${gpg_key_url}" = "" ]; then
