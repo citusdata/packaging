@@ -236,16 +236,16 @@ main ()
   apt-get install -y apt-transport-https &> /dev/null
   echo "done."
 
+  repo_name="community"
+  gpg_key_url="https://repos.citusdata.com/${repo_name}/gpgkey"
+  apt_config_url="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${dist}&source=script"
 
-  gpg_key_url="https://repos.citusdata.com/community/gpgkey"
-  apt_config_url="https://repos.citusdata.com/community/config_file.list?os=${os}&dist=${dist}&source=script"
-
-  apt_source_path="/etc/apt/sources.list.d/citusdata_community.list"
+  apt_source_path="/etc/apt/sources.list.d/citusdata_${repo_name}.list"
   apt_keyrings_dir="/etc/apt/keyrings"
   if [ ! -d "$apt_keyrings_dir" ]; then
     mkdir -p "$apt_keyrings_dir"
   fi
-  gpg_keyring_path="$apt_keyrings_dir/citusdata_community-archive-keyring.gpg"
+  gpg_keyring_path="${apt_keyrings_dir}/citusdata_${repo_name}-archive-keyring.gpg"
 
   echo -n "Installing $apt_source_path... "
 
@@ -291,6 +291,8 @@ main ()
 
   echo -n "Importing Citus Data Community gpg key... "
   # import the gpg key
+  # below command decodes the ASCII armored gpg file (instead of binary file)
+  # and adds the unarmored gpg key as keyring
   curl -fsSL "${gpg_key_url}" | gpg --dearmor > ${gpg_keyring_path}
   # grant 644 permisions to gpg keyring path
   chmod 0644 "${gpg_keyring_path}"
