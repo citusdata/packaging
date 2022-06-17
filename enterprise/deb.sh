@@ -293,14 +293,17 @@ main ()
   fi
 
 
-  repo_name="enterprise"
-  gpg_key_url="https://repos.citusdata.com/${repo_name}/gpgkey"
-  apt_config_url="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${dist}&source=script"
+  apt_source_path="/etc/apt/sources.list.d/citusdata_enterprise.list"
+  apt_keyrings_dir="/etc/apt/keyrings"
+  if [ ! -d "$apt_keyrings_dir" ]; then
+    mkdir -p "$apt_keyrings_dir"
+  fi
+  gpg_keyring_path="$apt_keyrings_dir/citusdata_enterprise-archive-keyring.gpg"
 
-  echo -n "Installing $apt_source_path... "
+  echo -n "Installing $apt_source_path..."
 
   # create an apt config file for this repository
-  curl -GsSf -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${apt_config_url}" > $apt_source_path
+  curl -sSf "${apt_config_url}" > $apt_source_path
   curl_exit_code=$?
 
   if [ "$curl_exit_code" = "22" ]; then
@@ -355,7 +358,7 @@ main ()
   { { [ "${os,,}" = "elementaryos" ] || [ "${os,,}" = "elementary" ]; } && [ "${version_id}" -lt 5 ]; }
   then
     # move to trusted.gpg.d
-    mv ${gpg_keyring_path} /etc/apt/trusted.gpg.d/citusdata_community.gpg
+    mv ${gpg_keyring_path} /etc/apt/trusted.gpg.d/citusdata_enterprise.gpg
     # deletes the keyrings directory if it is empty
     if ! ls -1qA $apt_keyrings_dir | grep -q .;then
       rm -r $apt_keyrings_dir
