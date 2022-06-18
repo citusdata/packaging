@@ -299,7 +299,7 @@ main ()
   echo -n "Installing $apt_source_path... "
 
   # create an apt config file for this repository
-  curl -GsSf -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${apt_config_url}" > $apt_source_path
+  curl -sSf "${apt_config_url}" > $apt_source_path
   curl_exit_code=$?
 
   if [ "$curl_exit_code" = "22" ]; then
