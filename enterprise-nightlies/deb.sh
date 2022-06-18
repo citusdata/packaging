@@ -283,7 +283,7 @@ main ()
 
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
   gpg_key_install_url="https://repos.citusdata.com/enterprise-nightlies/gpg_key_url.list?os=${os}&dist=${dist}"
-  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/enterprise-nightlies/config_file.list?os=${os}&dist=${dist}&name=${unique_id}&source=script
+  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/enterprise-nightlies/config_file.list?os=${os}&dist=${dist}&name=${unique_id}&source=script"
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`
   if [ "${gpg_key_url}" = "" ]; then
