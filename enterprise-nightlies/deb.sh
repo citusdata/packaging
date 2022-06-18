@@ -97,7 +97,7 @@ pgdg_check ()
 
 install_debian_keyring ()
 {
-  if [ "${os}" = "debian" ]; then
+  if [ "${os,,}" = "debian" ]; then
     echo "Installing debian-archive-keyring which is needed for installing "
     echo "apt-transport-https on many Debian systems."
     apt-get install -y debian-archive-keyring &> /dev/null
@@ -185,6 +185,19 @@ detect_os ()
   echo "Detected operating system as $os/$dist."
 }
 
+detect_version_id () {
+  # detect version_id and round down float to integer
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    version_id=${VERSION_ID%%.*}
+  elif [ -f /usr/lib/os-release ]; then
+    . /usr/lib/os-release
+    version_id=${VERSION_ID%%.*}
+  else
+    version_id="1"
+  fi
+}
+
 detect_codename ()
 {
   if [ "${os}" = "debian" ]; then
@@ -232,6 +245,7 @@ main ()
 {
   detect_os
   detect_codename
+  detect_version_id
 
   # Need to first run apt-get update so that apt-transport-https can be
   # installed
@@ -269,7 +283,7 @@ main ()
 
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
   gpg_key_install_url="https://repos.citusdata.com/enterprise-nightlies/gpg_key_url.list?os=${os}&dist=${dist}"
-  apt_config_url="https://repos.citusdata.com/enterprise-nightlies/config_file.list?os=${os}&dist=${dist}&source=script"
+  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/enterprise-nightlies/config_file.list?os=${os}&dist=${dist}&name=${unique_id}&source=script
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`
   if [ "${gpg_key_url}" = "" ]; then

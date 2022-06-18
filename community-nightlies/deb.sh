@@ -305,7 +305,7 @@ main ()
   { { [ "${os,,}" = "elementaryos" ] || [ "${os,,}" = "elementary" ]; } && [ "${version_id}" -lt 5 ]; }
   then
     # move to trusted.gpg.d
-    mv ${gpg_keyring_path} /etc/apt/trusted.gpg.d/citusdata_community.gpg
+    mv ${gpg_keyring_path} /etc/apt/trusted.gpg.d/citusdata_${repo_name}.gpg
     # deletes the keyrings directory if it is empty
     if ! ls -1qA $apt_keyrings_dir | grep -q .;then
       rm -r $apt_keyrings_dir
