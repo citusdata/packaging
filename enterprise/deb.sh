@@ -97,7 +97,7 @@ pgdg_check ()
 
 install_debian_keyring ()
 {
-  if [ "${os}" = "debian" ]; then
+  if [ "${os,,}" = "debian" ]; then
     echo "Installing debian-archive-keyring which is needed for installing "
     echo "apt-transport-https on many Debian systems."
     apt-get install -y debian-archive-keyring &> /dev/null
@@ -185,6 +185,19 @@ detect_os ()
   echo "Detected operating system as $os/$dist."
 }
 
+detect_version_id () {
+  # detect version_id and round down float to integer
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    version_id=${VERSION_ID%%.*}
+  elif [ -f /usr/lib/os-release ]; then
+    . /usr/lib/os-release
+    version_id=${VERSION_ID%%.*}
+  else
+    version_id="1"
+  fi
+}
+
 detect_codename ()
 {
   if [ "${os}" = "debian" ]; then
@@ -232,6 +245,7 @@ main ()
 {
   detect_os
   detect_codename
+  detect_version_id
 
   # Need to first run apt-get update so that apt-transport-https can be
   # installed
@@ -268,8 +282,9 @@ main ()
   CITUS_REPO_TOKEN="${CITUS_REPO_TOKEN//:/%3A}"
 
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
-  gpg_key_install_url="https://repos.citusdata.com/enterprise/gpg_key_url.list?os=${os}&dist=${dist}"
-  apt_config_url="https://repos.citusdata.com/enterprise/config_file.list?os=${os}&dist=${dist}&source=script"
+  gpg_key_install_url="https://repos.citusdata.com/enterprise/gpg_key_url.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}"
+
+  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/enterprise/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`
   if [ "${gpg_key_url}" = "" ]; then
@@ -280,12 +295,16 @@ main ()
 
 
   apt_source_path="/etc/apt/sources.list.d/citusdata_enterprise.list"
-  gpg_keyring_path="/usr/share/keyrings/citusdata_enterprise-archive-keyring.gpg"
+  apt_keyrings_dir="/etc/apt/keyrings"
+  if [ ! -d "$apt_keyrings_dir" ]; then
+    mkdir -p "$apt_keyrings_dir"
+  fi
+  gpg_keyring_path="$apt_keyrings_dir/citusdata_enterprise-archive-keyring.gpg"
 
-  echo -n "Installing $apt_source_path... "
+  echo -n "Installing $apt_source_path..."
 
   # create an apt config file for this repository
-  curl -GsSf -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${apt_config_url}" > $apt_source_path
+  curl -sSf "${apt_config_url}" > $apt_source_path
   curl_exit_code=$?
 
   if [ "$curl_exit_code" = "22" ]; then
@@ -329,6 +348,23 @@ main ()
   # below command decodes the ASCII armored gpg file (instead of binary file)
   # and adds the unarmored gpg key as keyring
   curl -fsSL "${gpg_key_url}" | gpg --dearmor > ${gpg_keyring_path}
+  # grant 644 permisions to gpg keyring path
+  chmod 0644 "${gpg_keyring_path}"
+  # check for os/dist based on pre debian stretch
+  if
+  { [ "${os,,}" = "debian" ] && [ "${version_id}" -lt 9 ]; } ||
+  { [ "${os,,}" = "ubuntu" ] && [ "${version_id}" -lt 16 ]; } ||
+  { [ "${os,,}" = "linuxmint" ] && [ "${version_id}" -lt 19 ]; } ||
+  { [ "${os,,}" = "raspbian" ] && [ "${version_id}" -lt 9 ]; } ||
+  { { [ "${os,,}" = "elementaryos" ] || [ "${os,,}" = "elementary" ]; } && [ "${version_id}" -lt 5 ]; }
+  then
+    # move to trusted.gpg.d
+    mv ${gpg_keyring_path} /etc/apt/trusted.gpg.d/citusdata_enterprise.gpg
+    # deletes the keyrings directory if it is empty
+    if ! ls -1qA $apt_keyrings_dir | grep -q .;then
+      rm -r $apt_keyrings_dir
+    fi
+  fi
   echo "done."
 
   echo -n "Running apt-get update... "
