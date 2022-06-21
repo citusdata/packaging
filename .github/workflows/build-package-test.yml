@@ -50,6 +50,7 @@ jobs:
           - TARGET_PLATFORM: debian,stretch
           - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,bionic
+          - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: pgxn
 
     steps:
@@ -72,7 +73,7 @@ jobs:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.13 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.15 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
@@ -82,7 +83,9 @@ jobs:
           PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
 
       - name: Push images
-        run: ./ci/push_images
+        run: |
+            export CURRENT_BRANCH=${GITHUB_REF##*/}
+            ./ci/push_images
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
