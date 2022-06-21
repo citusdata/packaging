@@ -24,7 +24,7 @@ usage: fetch_and_build_rpm build_type build_directory
 
 fetch_and_build_rpm builds Red Hat packages using local build files. The build
 type 'release' builds the latest release tag, 'nightly' builds a nightly from
-the latest 'master' commit, and any other type is interpreted as a git ref to
+the latest on default branch commit, and any other type is interpreted as a git ref to
 facilitate building one-off packages for customers.
 E_O_USAGE
 
@@ -58,7 +58,12 @@ source /buildfiles/pkgvars
 declare pkglatest # to make shellcheck happy
 pkgname="${rpm_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
-nightlyref="${nightlyref:-master}"
+
+repopath="citusdata/${hubproj}"
+default_branch=$(curl -s "https://api.github.com/repos/${repopath}" | \
+                 jq -r '.object.sha')
+nightlyref="${nightlyref:-${default_branch}}"
+
 releasepg="${releasepg:-11,12,13}"
 nightlypg="${nightlypg:-${releasepg}}"
 versioning="${versioning:-simple}"
@@ -80,7 +85,6 @@ email=$(determine_email)
 export RPM_PACKAGER="${name} <${email}>"
 
 cp "/buildfiles/${pkgname}.spec" /buildfiles/rpmlintrc "${builddir}"
-repopath="citusdata/${hubproj}"
 
 case "${1}" in
     release)
@@ -115,6 +119,7 @@ case "${1}" in
         if [ "${1}" == 'nightly' ]; then
             ref=${nightlyref}
             infix='git'
+            echo "Nightly build is using the branch ${ref}"
         else
             ref=${1}
             infix='pre'
