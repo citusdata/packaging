@@ -73,7 +73,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' > /etc/
         libzstd-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install sphinx==1.8
+RUN pip3 install sphinx
 
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
