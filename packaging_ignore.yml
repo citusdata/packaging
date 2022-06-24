@@ -13,6 +13,12 @@ base:
   - ".* unused substitution variable \\$\\{misc:Depends\\}.*"
   - ".*: substitution variable \\$\\{postgresql:Depends\\} unused, but is defined.*"
   - ".* unused substitution variable \\$\\{postgresql:Depends\\}.*"
+  - "autoreconf: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
+  - ".*: warning: 'RSA_new' is deprecated: Since OpenSSL 3.0 [-Wdeprecated-declarations]"
+  - ".*: warning: 'RSA_generate_key_ex' is deprecated: Since OpenSSL 3.0 [-Wdeprecated-declarations]"
+  - ".*: warning: 'RSA_new' is deprecated [-Wdeprecated-declarations]"
+  - ".*: warning: 'RSA_generate_key_ex' is deprecated [-Wdeprecated-declarations]"
+  - ".*: warning: 'EVP_PKEY_assign' is deprecated [-Wdeprecated-declarations]"
   
 debian:
   - ".*: W: invalid-license Commercial"
