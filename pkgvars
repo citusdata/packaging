@@ -1,4 +1,6 @@
 pkgname=azure_gdpr
+hubproj=azure_gdpr
+deb_pkgname=azure-gdpr
 pkgdesc='Azure_gdpr'
 pkglatest=1.8.citus-1
 releasepg=11,12,13,14

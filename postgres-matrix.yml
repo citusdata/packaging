@@ -1,5 +1,5 @@
 name: Postgres Version Matrix
-project_name: azure-gdpr
+project_name: azure_gdpr
 
 version_matrix:
   - 1.8:
