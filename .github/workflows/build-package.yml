@@ -24,7 +24,6 @@ jobs:
         platform:
           - el/7
           - el/8
-          - ubuntu/focal
           - debian/stretch
           - debian/buster
           - debian/bullseye
