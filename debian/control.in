@@ -3,7 +3,7 @@ Section: database
 Priority: optional
 Maintainer: Citus Data <packaging@citusdata.com>
 Uploaders: Citus Data <packaging@citusdata.com>
-Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~), libedit-dev, libpam0g-dev, libselinux1-dev, libxslt1-dev
+Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~)
 Standards-Version: 3.9.7
 Homepage: https://github.com/citusdata/azure_gdpr
 
