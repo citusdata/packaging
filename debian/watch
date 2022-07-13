@@ -1,0 +1,5 @@
+version=3
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/azure_gdpr-$1\.tar\.gz/,\
+uversionmangle=s/(\d)[_\.\-\+]?((RC|rc|pre|dev|beta|alpha)\.?\d*)$/$1~$2/,\
+pgpsigurlmangle=s/archive\/v(\d\S*)\.tar\.gz/releases\/download\/v$1\/azure_gdpr-$1.tar.gz.asc/ \
+https://github.com/citusdata/azure_gdpr/releases /citusdata/azure_gdpr/archive/v(\d\S*)\.tar\.gz

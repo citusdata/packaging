@@ -1,0 +1,10 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: azure-gdpr
+Source: https://github.com/citusdata/azure_gdpr
+
+License: Commercial
+ This program is commercial software.
+
+Files: *
+Copyright: 2012-2016, Citus Data, Inc.
+License: Commercial
