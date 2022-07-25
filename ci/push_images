@@ -64,6 +64,7 @@ done <"${topdir}/os-list.csv"
 
 #echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker
 
+docker tag citus/"${image_name}":"${tag}" citusengine.azurecr.io/citus/"${image_name}":"${tag}"
 echo "${ACR_PASSWORD}" | docker login citusengine.azurecr.io -u "${ACR_SERVICE_PRINCIPAL_ID}" --password-stdin
 ONEBRANCH_ACR_REGISTRY_NAME="citusengine.azurecr.io/citus/"
 ACR_COMMAND=$(echo "${args}" | sed "s#citus/#${ONEBRANCH_ACR_REGISTRY_NAME}#")
