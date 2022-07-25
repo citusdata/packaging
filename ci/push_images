@@ -64,4 +64,9 @@ done <"${topdir}/os-list.csv"
 
 echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker
 
+echo "${ACR_PASSWORD}" | docker login citusengine.azurecr.io -u "${ACR_SERVICE_PRINCIPAL_ID}" --password-stdin
+ONEBRANCH_ACR_REGISTRY_NAME="citusengine.azurecr.io/citus/"
+ACR_COMMAND=$(echo "${args}" | sed "s#citus/#${ONEBRANCH_ACR_REGISTRY_NAME}#")
+echo -e "${ACR_COMMAND}" | xargs -t -L1 -P "${nprocs}" docker
+
 
