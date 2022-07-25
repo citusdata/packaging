@@ -2,6 +2,15 @@
 
 # make bash behave
 set -euo pipefail
+# In one branch we execute commands inside One Branch steps, since One Branch does not allow executing docker inside
+# docker. Additionally, Onebranch needs containers not to close so we make it hang for OneBranch to be able to
+# execute commands.
+if [[ ${ONE_BRANCH_CONTAINER} == 'true' ]]; then
+  echo "INFO: One Branch Image"
+  tail -f /dev/null
+  exit 0
+fi
+
 IFS=$'\n\t'
 
 # constants
@@ -149,6 +158,8 @@ mkdir -p "${rpmbuilddir}"
 
 pkgsrcdir="${builddir}/${pkgname}-${packageversion}"
 mkdir "${pkgsrcdir}"
+
+
 
 download=$(mktemp)
 tarballurl="https://api.github.com/repos/${repopath}/tarball/${gitsha}"
