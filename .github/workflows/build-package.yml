@@ -53,6 +53,7 @@ jobs:
           - TARGET_PLATFORM: debian,stretch
           - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,bionic
+          - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: pgxn
 
     steps:
@@ -76,6 +77,7 @@ jobs:
 
       - name: Clone tools repo for test
         run: git clone -b one_branch_additions --depth=1  https://github.com/citusdata/tools.git tools
+
 
       - name: Execute packaging tests
         run: |

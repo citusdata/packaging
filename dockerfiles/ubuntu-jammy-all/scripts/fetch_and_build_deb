@@ -1,0 +1,213 @@
+#!/bin/bash
+
+# make bash behave
+set -euo pipefail
+IFS=$'\n\t'
+
+# constants
+stdout=1
+stderr=2
+success=0
+failure=1
+badusage=64
+noinput=66
+
+nextversion='0.0.0'
+builddir=$(pwd)
+
+# outputs usage message on specified device before exiting with provided status
+usage() {
+    cat << 'E_O_USAGE' >&"$1"
+usage: fetch_and_build_deb build_type
+
+    build_type: 'release', 'nightly', or a valid git reference
+
+fetch_and_build_deb builds Debian packages using local build files. The build
+type 'release' builds the latest release tag, 'nightly' builds a nightly from
+the latest 'master' commit, and any other type is interpreted as a git ref to
+facilitate building one-off packages for customers.
+E_O_USAGE
+
+    exit "${2}";
+}
+
+# sets the next version variable used during non-release builds
+setnextversion() {
+    baseversion=$(echo "$1" | tr '~' '-' | tr '_' '-' | cut -d- -f1)
+    baseversion="${baseversion%.citus}"
+    nextversion=$(echo "$baseversion" | perl -pe 's/^(\d+\.)(\d+)(\.\d+)$/$1.($2+1).".0"/e')
+}
+
+if [ "$#" -ne 1 ]; then
+    usage $stderr $badusage
+fi
+
+if [ "${1}" = '-h' ]; then
+    usage $stdout $success
+fi
+
+# populate variables from packaging metadata file
+# shellcheck source=/dev/null
+source /buildfiles/pkgvars
+# Read PostgreSQL versions from file.
+# supported-postgres file is derived file from postgres-matrix.yml file by citus_package.
+# If file does not exist, skip populating file
+[[ -f "/buildfiles/supported-postgres" ]] && source /buildfiles/supported-postgres
+
+# Fetch pkgname, hubproj, nightlyref, versioning from pkgvars file
+declare pkglatest # to make shellcheck happy
+pkgname="${deb_pkgname:-${pkgname}}"
+hubproj="${hubproj:-${pkgname}}"
+nightlyref="${nightlyref:-master}"
+versioning="${versioning:-simple}"
+if [[ "${pkglatest}" == *"beta"* ]]; then
+    release_type="beta"
+else
+    release_type="stable"
+fi
+# Fetch pg release and nightly versions from supported-postgres file which is originated from postgres-matrix.yml file
+# If this file is not found, releasepg and nightlypg parameters from pkgvars are used for defining pg versions
+pg_release_versions="${release_versions:-${releasepg}}"
+pg_nightly_versions="${nightly_versions:-${nightlypg}}"
+
+
+echo "Postgres versions:"
+echo "Release Versions: ${pg_release_versions}"
+echo "Nightly Versions: ${pg_nightly_versions}"
+
+if [ -z "${pkglatest}" ]; then
+    echo "$0: pkgvars file must specify a value for pkglatest" >&2
+    exit $noinput
+fi
+
+echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
+
+export NAME
+NAME=$(determine_name)
+
+export EMAIL
+EMAIL=$(determine_email)
+
+cp -R /buildfiles/debian "${builddir}"
+repopath="citusdata/${hubproj}"
+
+case "${1}" in
+    release)
+        packageversion=${pkglatest%-*}
+        releasetag="v${packageversion/'~'/-}"
+        releasetag="${releasetag%.citus}"
+
+        gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
+                 jq -r '.object.sha')
+        if [ "${gitsha}" == 'null' ]; then
+            echo "$0: could not determine commit for git tag ${releasetag}" >&2
+            exit $failure
+        fi
+
+        verified=$(curl -sH 'Accept:application/vnd.github.cryptographer-preview+sha' \
+                   "https://api.github.com/repos/${repopath}/git/tags/${gitsha}" | \
+                   jq -r '.verification.verified')
+        if [ "${verified}" != 'true' ]; then
+            echo "$0: could not verify signature for git tag ${releasetag}" >&2
+            exit $failure
+        fi
+
+        echo "${pg_release_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
+        ;;
+    *)
+        if [ "${1}" == 'nightly' ]; then
+            ref=${nightlyref}
+            infix='git'
+        else
+            ref=${1}
+            infix='pre'
+        fi
+
+        setnextversion "${pkglatest}"
+
+        set +e
+        gitsha=$(curl -sfH 'Accept:application/vnd.github.v3.sha' \
+                 "https://api.github.com/repos/${repopath}/commits/${ref}")
+        if [ "${?}" -ne 0 ]; then
+            echo "$0: could not determine commit for git ref ${ref}" >&2
+            exit $failure
+        fi
+        set -e
+
+        timestamp=$(date +'%Y%m%d')
+
+        packagesuffix="${infix}.${timestamp}.${gitsha:0:7}"
+        packageversion="${nextversion}.citus~${packagesuffix}"
+        export CONF_EXTRA_VERSION="+${packagesuffix}"
+
+        echo "${pg_nightly_versions}" | tr ',' '\n' > "${builddir}/debian/pgversions"
+        ;;
+esac
+
+tarballpath="${builddir}/${pkgname}_${packageversion}.orig.tar.gz"
+packagepath="${builddir}/${packageversion}"
+
+curl -sL "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
+     -o "${tarballpath}"
+
+mkdir -p "${packagepath}"
+tar xf "${tarballpath}" -C "${packagepath}" --strip-components 1
+
+# add our email/name to debian control file as uploader if not a release
+if [ "${1}" != 'release' ]; then
+    sed -i -E "/^Uploaders:/s/ .+$/ ${NAME} <${EMAIL}>/" "${builddir}/debian/control.in"
+fi
+
+cp -R "${builddir}/debian" "${packagepath}/debian"
+
+cd "${packagepath}"
+
+case "${1}" in
+    release)
+        # add minor/major version to package name if using fancy versioning
+        if [ "${versioning}" == 'fancy' ]; then
+            declare release_prefix=''
+            suffix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+')
+            if [ "${release_type}" == 'stable' ]; then
+                release_prefix=${suffix}
+            else
+                release_prefix="${release_type}-${suffix}"
+            fi
+            sed -i "/^Package:/ s/$/-${release_prefix}/" debian/control.in
+            sed -i "/postgresql-%v-${pkgname}/ s/$/-${release_prefix}/" debian/rules
+        fi
+        ;;
+    nightly)
+        msg="Nightly package. Built from ${nightlyref} "
+        msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
+        dch -v "${packageversion}-1" -D experimental -u low "${msg}"
+        ;;
+    *)
+        msg="Custom package. Built from ${gitsha:0:7} "
+        msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
+        dch -v "${packageversion}-1" -D UNRELEASED -u low "${msg}"
+        ;;
+esac
+
+
+pg_buildext updatecontrol
+
+procs="$(nproc)"
+mjobs="$(expr $procs + 1)"
+
+DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild --prepend-path /usr/local/bin --preserve-envvar CONF_EXTRA_VERSION --preserve-envvar UNENCRYPTED_PACKAGE --preserve-envvar PACKAGE_ENCRYPTION_KEY -uc -us -B --lintian-opts --profile debian --allow-root
+
+## Rename all *.ddeb files to *.deb since we upload debug packages with .deb suffix
+# .ddeb suffix is automatically chosen when naming debug packages for Ubuntu
+# releases. For this reason, we rename all *.ddeb files to *.deb since we upload
+# debug packages with .deb suffix.
+for file in ../*.ddeb; do
+  if [ -e "${file}" ]; then
+    echo "Renaming ${file} to ${file%.ddeb}.deb"
+    mv "${file}" "${file%.ddeb}.deb";
+  else
+    echo "There are no files with ddeb extension to rename."
+  fi
+done
+## Copy all deb packages out of docker image
+cp ../*.deb /packages
