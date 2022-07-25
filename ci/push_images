@@ -12,10 +12,10 @@ badusage=64
 
 nprocs="${1:-1}"
 
-if [[ ${TEST} == "false" && ${CURRENT_BRANCH} != "develop" ]] ; then
-    echo "PR is not merged to develop, not pushing to DockerHub"
-    exit 0;
-fi
+#if [[ ${TEST} == "false" && ${CURRENT_BRANCH} != "develop" ]] ; then
+#    echo "PR is not merged to develop, not pushing to DockerHub"
+#    exit 0;
+#fi
 
 if [ "${TEST}" == "true" ]; then
     image_name="packaging-test"
@@ -62,7 +62,7 @@ while read -r line; do
     fi
 done <"${topdir}/os-list.csv"
 
-echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker
+#echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker
 
 echo "${ACR_PASSWORD}" | docker login citusengine.azurecr.io -u "${ACR_SERVICE_PRINCIPAL_ID}" --password-stdin
 ONEBRANCH_ACR_REGISTRY_NAME="citusengine.azurecr.io/citus/"
