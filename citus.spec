@@ -61,9 +61,12 @@ echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 # Since files below may be non-existent in some versions, ignoring the error in case of file absence
-echo %{pginstdir}/share/extension/citus_columnar.control >> installation_files.list || true
-echo %{pginstdir}/share/extension/columnar-*.sql >> installation_files.list || true
-echo %{pginstdir}/share/extension/citus_columnar-*.sql >> installation_files.list || true
+[[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/share/extension/citus_columnar.control >> installation_files.list
+columnar_sql_files=(`find %{pginstdir}/share/extension -maxdepth 1 -name "columnar-*.sql"`)
+if [ ${#columnar_sql_files[@]} -gt 0 ]; then
+    echo %{pginstdir}/share/extension/columnar-*.sql >> installation_files.list
+fi
+[[ -f %{pginstdir}/share/extension/citus_columnar.control ]] && echo %{pginstdir}/share/extension/citus_columnar.control >> installation_files.list
 [[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %ifarch ppc64 ppc64le
 %else
