@@ -1,14 +1,13 @@
 #!/bin/bash
 
 # make bash behave
-set -eo pipefail
+set -euo pipefail
 # In one branch we execute commands inside One Branch steps, since One Branch does not allow executing docker inside
 # docker. Additionally, Onebranch needs containers not to close so we make it hang for OneBranch to be able to
 # execute commands.
-if [[ -z ${CONTAINER_BUILD_RUN_ENABLED} ]]; then
+if [ "${CONTAINER_BUILD_RUN_ENABLED:-""}" == "" ]; then
   echo "INFO: Image working in waiting mode. Not executing build script"
   tail -f /dev/null
-  exit 0
 fi
 
 IFS=$'\n\t'
