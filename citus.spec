@@ -72,7 +72,6 @@ if [ ${#citus_columnar_sql_files[@]} -gt 0 ]; then
     echo %{pginstdir}/share/extension/citus_columnar-*.sql >> installation_files.list
 fi
 
-[[ -f %{pginstdir}/share/extension/citus_columnar.control ]] && echo %{pginstdir}/share/extension/citus_columnar.control >> installation_files.list
 [[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %ifarch ppc64 ppc64le
 %else
