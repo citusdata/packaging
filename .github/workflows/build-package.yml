@@ -47,6 +47,7 @@ jobs:
           - 12
           - 13
           - 14
+          - 15
         include:
           - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,buster
@@ -55,6 +56,9 @@ jobs:
           - TARGET_PLATFORM: ubuntu,bionic
           - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: pgxn
+        exclude:
+          - TARGET_PLATFORM: oraclelinux,7
+            POSTGRES_VERSION: 15
 
     steps:
       - name: Checkout repository

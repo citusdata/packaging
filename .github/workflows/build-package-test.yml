@@ -46,6 +46,7 @@ jobs:
           - 12
           - 13
           - 14
+          - 15
         include:
           - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,buster
@@ -54,6 +55,9 @@ jobs:
           - TARGET_PLATFORM: ubuntu,bionic
           - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: pgxn
+        exclude:
+          - TARGET_PLATFORM: oraclelinux,7
+            POSTGRES_VERSION: 15
 
     steps:
       - name: Checkout repository
@@ -86,8 +90,8 @@ jobs:
 
       - name: Push images
         run: |
-            export CURRENT_BRANCH=${GITHUB_REF##*/}
-            ./ci/push_images
+          export CURRENT_BRANCH=${GITHUB_REF##*/}
+          ./ci/push_images
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}

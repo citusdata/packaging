@@ -41,9 +41,9 @@ RUN if [[ %%os%%   == oraclelinux ]] && [[ %%release%% == 7 ]]; then yum install
         && rpm -ivh lz4-devel-r131-1.el6.x86_64.rpm;  \
         else yum install -y lz4 lz4-devel; fi
 
-
 # install build tools and PostgreSQL development files
-RUN ( yum install -y https://%%rpm_url%% \
+RUN ( yum install -y https://%%rpm_url%%  \
+    && ( [[ %%pgshort%% != 15 ]] || sed -i '/\[pgdg15-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
     && [[ -z "%%extra-repositories%%" ]] || yum install -y %%extra-repositories%%) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \

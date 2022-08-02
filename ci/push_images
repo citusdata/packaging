@@ -4,7 +4,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-pgversions='10 11 12 13 14'
+pgversions='10 11 12 13 14 15'
 topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 dockerfiles_dir="${topdir}/dockerfiles"
 
@@ -61,6 +61,8 @@ while read -r line; do
         exit $badusage
     fi
 done <"${topdir}/os-list.csv"
+
+echo "Arguments: ${args}"
 
 echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker
 

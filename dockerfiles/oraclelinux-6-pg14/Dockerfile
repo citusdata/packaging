@@ -41,9 +41,9 @@ RUN if [[ oraclelinux   == oraclelinux ]] && [[ 6 == 7 ]]; then yum install -y w
         && rpm -ivh lz4-devel-r131-1.el6.x86_64.rpm;  \
         else yum install -y lz4 lz4-devel; fi
 
-
 # install build tools and PostgreSQL development files
-RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
+    && ( [[ 14 != 15 ]] || sed -i '/\[pgdg15-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
     && [[ -z "" ]] || yum install -y ) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \

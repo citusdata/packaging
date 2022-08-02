@@ -39,7 +39,7 @@ RUN set -ex; \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main 15' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -63,6 +63,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/a
         libxslt-dev \
         lintian \
         postgresql-server-dev-all \
+        postgresql-server-dev-15 \
         wget \
         zlib1g-dev \
         python3-pip \
@@ -88,6 +89,10 @@ RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/scr
 # patch pg_buildext to use multiple processors
 COPY make_pg_buildext_parallel.patch /
 RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+# Added for pg15 beta package support. Without this pg_buildext gives below error
+# No current PostgreSQL versions are supported by this package
+COPY supported_versions_pg15.patch /
+RUN patch /usr/share/postgresql-common/supported-versions < /supported_versions_pg15.patch
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH
