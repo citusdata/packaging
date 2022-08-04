@@ -89,13 +89,13 @@ RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/scr
 # patch pg_buildext to use multiple processors
 COPY make_pg_buildext_parallel.patch /
 RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+
 # Added for pg15 beta package support. Without this pg_buildext gives below error
-# No current PostgreSQL versions are supported by this package
-COPY supported_versions_pg15.patch /
-RUN patch /usr/share/postgresql-common/supported-versions < /supported_versions_pg15.patch
+ENV DEB_PG_SUPPORTED_VERSIONS=10 11 12 13 14 15
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH
+
 COPY scripts /scripts
 VOLUME /packages
 
