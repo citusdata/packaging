@@ -62,8 +62,6 @@ while read -r line; do
     fi
 done <"${topdir}/os-list.csv"
 
-echo "Arguments: ${args}"
-
 echo -e "${args}" | xargs -t -L1 -P "${nprocs}" docker
 
 docker tag citus/"${image_name}":"${tag}" citusengine.azurecr.io/citus/"${image_name}":"${tag}"
