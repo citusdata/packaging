@@ -1,3 +1,5 @@
 exclude:
-  - ol/7:
-      postgres_versions: [15]
+  nightly:
+    ol/7: [15]
+  release:
+    all: [15]
