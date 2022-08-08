@@ -1,0 +1,3 @@
+exclude:
+  - ol/7:
+      postgres_versions: [15]
