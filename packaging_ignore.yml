@@ -21,6 +21,7 @@ base:
   - ".*: warning: 'RSA_generate_key_ex' is deprecated \\[-Wdeprecated-declarations\\]"
   - ".*: warning: 'EVP_PKEY_assign' is deprecated.*"
   - "\\d+ warnings generated."
+  - "configure: WARNING: unrecognized options: --without-pg-version-check"
 
 debian:
   - ".*: W: invalid-license Commercial"
