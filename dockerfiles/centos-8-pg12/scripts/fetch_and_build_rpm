@@ -173,38 +173,42 @@ sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
     "${builddir}/${pkgname}.spec"
 
 osname=$(awk '{print $1}' /etc/system-release)
+os_release=$(awk '{print $4}' /etc/system-release)
 if [ "${osname}" == 'Oracle' ]; then
     locale='C'
-elif [ "${osname}" == 'Fedora' ] || [ "${osname}" == 'CentOS' ]; then
+elif [ "${osname}" == 'Fedora' ] || [[ "${osname}" == 'CentOS'  && "${os_release}" == 8* ]]; then
     locale='C.utf8'
 else
     locale='en_US.utf8'
 fi
 
+if [ "${versioning}" == 'fancy' ]; then
+  infix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+' | tr -d '.')
+  if [ "${release_type}" == "stable" ]; then
+      package_prefix="${infix}"
+  else
+      package_prefix="${infix}_${release_type}"
+  fi
+  sed -i -E "1i %global pkginfix ${package_prefix}" "${builddir}/${pkgname}.spec"
+fi
+
 case "${1}" in
     release)
         # add minor/major version to package name if using fancy versioning
-        if [ "${versioning}" == 'fancy' ]; then
-
-            infix=$(echo "${packageversion}" | grep -oE '^[0-9]+\.[0-9]+' | tr -d '.')
-            if [ "${release_type}" == "stable" ]; then
-                package_prefix="${infix}"
-            else
-                package_prefix="${infix}_${release_type}"
-            fi
-            sed -i -E "1i %global pkginfix ${package_prefix}" "${builddir}/${pkgname}.spec"
-        fi
         ;;
     nightly)
         msg="Nightly package. Built from ${nightlyref} "
         msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
-        LC_ALL=${locale} rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
+        LC_ALL=${locale}
+        rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
         sed -i -E 's/0.1.git/0.0.git/' "${builddir}/${pkgname}.spec"
+        sed -i -E "1i %global pkginfix ${package_prefix}" "${builddir}/${pkgname}.spec"
         ;;
     *)
         msg="Custom package. Built from ${gitsha:0:7} "
         msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
-        LC_ALL=${locale} rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
+        LC_ALL=${locale}
+        rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
         sed -i -E 's/0.1.pre/0.0.pre/' "${builddir}/${pkgname}.spec"
         ;;
 esac
