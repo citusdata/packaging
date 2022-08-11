@@ -199,16 +199,14 @@ case "${1}" in
     nightly)
         msg="Nightly package. Built from ${nightlyref} "
         msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
-        LC_ALL=${locale}
-        rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
+        LC_ALL=${locale} rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
         sed -i -E 's/0.1.git/0.0.git/' "${builddir}/${pkgname}.spec"
         sed -i -E "1i %global pkginfix ${package_prefix}" "${builddir}/${pkgname}.spec"
         ;;
     *)
         msg="Custom package. Built from ${gitsha:0:7} "
         msg+=$(date +'on %l:%M %p (%Z) on %A, %B %Y' | tr -s ' ')
-        LC_ALL=${locale}
-        rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
+        LC_ALL=${locale} rpmdev-bumpspec -c "${msg}" "${builddir}/${pkgname}.spec"
         sed -i -E 's/0.1.pre/0.0.pre/' "${builddir}/${pkgname}.spec"
         ;;
 esac
