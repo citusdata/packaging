@@ -172,11 +172,11 @@ sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
           -e "/^%global pgpackageversion/s/[0-9.]+$/${PGVERSION}/" \
     "${builddir}/${pkgname}.spec"
 
-osname=$(awk '{print $1}' /etc/system-release)
+os_name=$(awk '{print $1}' /etc/system-release)
 os_release=$(awk '{print $4}' /etc/system-release)
-if [ "${osname}" == 'Oracle' ]; then
+if [ "${os_name}" == 'Oracle' ]; then
     locale='C'
-elif [ "${osname}" == 'Fedora' ] || [[ "${osname}" == 'CentOS'  && "${os_release}" == 8* ]]; then
+elif [ "${os_name}" == 'Fedora' ] || [[ "${os_name}" == 'CentOS'  && "${os_release}" == 8* ]]; then
     locale='C.utf8'
 else
     locale='en_US.utf8'
