@@ -1,6 +1,5 @@
 base:
   - ".* warning: ignoring old recipe for target 'check'"
-  - "sh: warning: setlocale: LC_ALL: cannot change locale \\(C.utf8\\): No such file or directory"
   - "dpkg-buildpackage: warning: using a gain-root-command while being root"
   - "/sbin/ldconfig: Warning: ignoring configuration file that cannot be opened: /etc/ld.so.conf: No such file or directory"
   - "warning: line \\d+: multiple %files for package *"
