@@ -1,0 +1,8 @@
+name: Postgres Version Matrix
+project_name: pg-cron
+
+version_matrix:
+  - 1.4.1:
+      postgres_versions: [10, 11, 12, 13, 14]
+  - 1.4.2:
+      postgres_versions: [ 10, 11, 12, 13, 14, 15 ]
