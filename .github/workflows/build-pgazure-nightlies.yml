@@ -1,4 +1,4 @@
-name: Build and publish citus community nightly packages
+name: Build and publish pgazure nightly packages
 
 env:
   MAIN_BRANCH: "all-pg-azure-storage"
