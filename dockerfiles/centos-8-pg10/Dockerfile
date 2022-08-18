@@ -98,7 +98,7 @@ RUN yum -y install  perl-IPC-Cmd libuuid-devel cmake3
 
 # by default git 1.8.x is being installed in centos 7
 # Git 2.7.1 is minimum requirement for cmake so we remove and reinstall latests git from an up-to-date repo
-# Symbolic link is not being created for cmake from cmake3 by default. Therefore, we create the link a well
+# Symbolic link is not being created for cmake from cmake3 by default. Therefore, we need to create the link as well.
 # devtoolset-8-gcc-c++ is required to compile azure sdk in pg azure storage project
 RUN [[ centos != centos ]] || [[ 8 != 7 ]] || ( \
     yum -y install  perl-IPC-Cmd libuuid-devel cmake3 && \
