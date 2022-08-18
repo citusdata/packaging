@@ -1,8 +1,8 @@
-name: Azure GDPR Build & Publish Packages
+name: PG Azure Storage Build & Publish Packages
 
 env:
-  MAIN_BRANCH: "all-azure_gdpr"
-  PACKAGE_CLOUD_REPO_NAME: "citusdata/azure"
+  MAIN_BRANCH: "all-pg-azure-storage"
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/pgazure"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -23,20 +23,20 @@ jobs:
       matrix:
         platform:
           - el/7
-          - el/8
-          - debian/stretch
-          - debian/buster
-          - debian/bullseye
-          - ubuntu/bionic
-          - ubuntu/focal
-          - ubuntu/jammy
+#          - el/8
+#          - debian/stretch
+#          - debian/buster
+#          - debian/bullseye
+#          - ubuntu/bionic
+#          - ubuntu/focal
+#          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Clone tools branch
-        run: git clone -b v0.8.15 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.17 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources

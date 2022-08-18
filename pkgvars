@@ -1,8 +1,10 @@
-pkgname=azure_gdpr
-hubproj=azure_gdpr
-deb_pkgname=azure-gdpr
-pkgdesc='Azure_gdpr'
-pkglatest=1.8.citus-1
-releasepg=11,12,13,14
-nightlypg=11,12,13,14
+pkgname=pgazure
+hubproj=pgazure
+deb_pkgname=pg-azure-storage
+pkgdesc='PG Azure Storage'
+pkglatest=0.0.1.citus-1
+releasepg=13,14
+nightlypg=13,14
 versioning=fancy
+nightlyref=velioglu/packaging_test
+
