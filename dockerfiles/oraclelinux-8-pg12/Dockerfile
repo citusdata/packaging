@@ -93,6 +93,20 @@ RUN { \
     } \
     && yum clean all
 
+# install cmake, devtoolset and its dependencies to build azure sdk
+RUN yum -y install  perl-IPC-Cmd libuuid-devel cmake3
+
+# by default git 1.8.x is being installed in centos 7
+# Git 2.7.1 is minimum requirement for cmake so we remove and reinstall latests git from an up-to-date repo
+# Symbolic link is not being created for cmake from cmake3 by default. Therefore, we create the link a well
+# devtoolset-8-gcc-c++ is required to compile azure sdk in pg azure storage project
+RUN [[ oraclelinux != centos ]] || [[ 8 != 7 ]] || ( \
+    yum -y install  perl-IPC-Cmd libuuid-devel cmake3 && \
+    ln -s /usr/bin/cmake3 /usr/bin/cmake  && \
+    yum -y remove git && \
+    yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm && \
+    yum -y install git && \
+    yum -y install  devtoolset-8-gcc-c++ && scl enable devtoolset-8 bash )
 
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
