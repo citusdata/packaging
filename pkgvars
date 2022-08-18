@@ -1,5 +1,4 @@
 pkgname=pgcron
 hubproj=pg_cron
 pkgdesc='Periodic job scheduler of PostgreSQL'
-pkglatest=1.4.1.citus-1
-releasepg=9.5,9.6,10,11,12,13,14
+pkglatest=1.4.2.citus-1

@@ -1,3 +1,9 @@
+pgcron (1.4.2.citus-1) stable; urgency=low
+
+  * Official 1.4.2 release of Citus
+
+ -- Gurkan Indibay <marco@citusdata.com>  Thu, 18 Aug 2022 14:55:45 +0000
+
 pgcron (1.4.1.citus-1) stable; urgency=low
 
   * Official 1.4.1 release of Citus
