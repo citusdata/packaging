@@ -3,4 +3,4 @@ project_name: azure_gdpr
 
 version_matrix:
   - 1.0.0:
-      postgres_versions: [13,14]
+      postgres_versions: [14]
