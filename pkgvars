@@ -3,4 +3,3 @@ pkgdesc='Citus (Open-Source)'
 pkglatest=10.2.7.citus-1
 nightlyref=main
 versioning=fancy
-
