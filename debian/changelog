@@ -1,3 +1,9 @@
+citus-enterprise (10.2.8.citus-1) stable; urgency=low
+
+  * Official 10.2.8 release of Citus Enterprise
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 19 Aug 2022 13:23:44 +0000
+
 citus-enterprise (10.2.6.citus-1) stable; urgency=low
 
   * Official 10.2.6 release of Citus Enterprise
