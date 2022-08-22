@@ -14,7 +14,7 @@ Group:		Applications/Databases
 Source0:	https://github.com/citusdata/pgazure/archive/v1.0.0.tar.gz
 URL:		https://github.com/citusdata/pgazure
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel libxml2-devel libxslt-devel openssl-devel
-Requires:	postgresql%{pgmajorversion}-server libcurl >= 7.68.0
+Requires:	postgresql%{pgmajorversion}-server libcurl
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
