@@ -3,4 +3,4 @@ project_name: hll
 
 version_matrix:
   - 2.16:
-      postgres_versions: [11, 12, 13, 14]
+      postgres_versions: [11, 12, 13, 14,15]
