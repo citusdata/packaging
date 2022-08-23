@@ -49,7 +49,7 @@ jobs:
           python -m  tools.packaging_automation.citus_package \
           --gh_token "${GH_TOKEN}" \
           --platform "${{ matrix.platform }}" \
-          --build_type "release" \
+          --build_type "nightly" \
           --secret_key "${PACKAGING_SECRET_KEY}" \
           --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
