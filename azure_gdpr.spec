@@ -49,7 +49,7 @@ PostgreSQL extension for GDPR compliant logging for Azure
 %endif
 
 %changelog
-* Wed Aug 25 2022 - Gurkan Indibay <phdub@microsoft.com> 1.9.citus-1
+* Wed Aug 25 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.9.citus-1
 - Official 1.9 release of Azure GDPR
 
 * Mon Apr 25 2022 - Philip Dubé <phdub@microsoft.com> 1.8.citus-1
