@@ -1,5 +1,4 @@
 pkgname=hll
 hubproj=postgresql-hll
 pkgdesc=HyperLogLog
-pkglatest=2.16.citus-1
-releasepg=11,12,13,14
+pkglatest=2.17.citus-1
