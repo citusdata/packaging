@@ -60,7 +60,10 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
-* Mon Sep 13 2021 - Hanefi Onaldi <Hanefi.Onaldi@Microsoft.com> 2.17.citus-1
+* Fri Aug 26 2022 - Gurkan Indibay <gindibay@Microsoft.com> 2.17.citus-1
+- Support for PostgreSQL 15
+
+* Mon Sep 13 2021 - Hanefi Onaldi <Hanefi.Onaldi@Microsoft.com> 2.16.citus-1
 - Support for PostgreSQL 14
 
 * Thu Nov 26 2020 - Hanefi Onaldi <Hanefi.Onaldi@Microsoft.com> 2.15.citus-1
