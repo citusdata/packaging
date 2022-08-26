@@ -166,6 +166,12 @@ tarballpath="${rpmbuilddir}/${gitsha}"
 tar xf "${download}" -C "${pkgsrcdir}" --strip-components 1
 tar czf "${tarballpath}" "${pkgsrcdir}"
 
+# git metadata needs to be setup to initialize submodules
+# in repos which rely on git submodules
+if [[ -z "${pkgsrcdir}/.gitmodules" ]]; then
+    setup_submodules "${pkgsrcdir}"
+fi
+
 # force our URL and expanded folder names into spec
 sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
           -e "/^%global pgmajorversion/s/[0-9]+$/${PGVERSION//'.'/}/" \
