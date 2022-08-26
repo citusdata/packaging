@@ -168,7 +168,7 @@ tar czf "${tarballpath}" "${pkgsrcdir}"
 
 # git metadata needs to be setup to initialize submodules
 # in repos which rely on git submodules
-if [[ $(ls -a "${pkgsrcdir}" | grep .gitmodules | wc -l) -gt 0 ]]; then
+if [[ -z "${pkgsrcdir}/.gitmodules" ]]; then
     setup_submodules "${pkgsrcdir}"
 fi
 
