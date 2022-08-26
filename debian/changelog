@@ -1,3 +1,9 @@
+topn (2.5.0.citus-1) stable; urgency=low
+
+  * Support for PostgreSQL 15
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 26 Aug 2022 11:20:00 +0300
+
 topn (2.4.0) stable; urgency=low
 
   * Adds support for PostgreSQL 14
