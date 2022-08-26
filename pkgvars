@@ -1,5 +1,4 @@
 pkgname=topn
 hubproj=postgresql-topn
 pkgdesc='Counter Based Implementation for top-n Approximation'
-pkglatest=2.4.0.citus-1
-releasepg=11,12,13,14
+pkglatest=2.5.0.citus-1
