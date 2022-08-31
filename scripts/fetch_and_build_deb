@@ -161,12 +161,20 @@ curl -sL "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
 mkdir -p "${packagepath}"
 tar xf "${tarballpath}" -C "${packagepath}" --strip-components 1
 
+if [[ -f "${packagepath}/.gitmodules" ]]; then
+    setup_submodules "${packagepath}"
+fi
+
 # add our email/name to debian control file as uploader if not a release
 if [ "${1}" != 'release' ]; then
     sed -i -E "/^Uploaders:/s/ .+$/ ${NAME} <${EMAIL}>/" "${builddir}/debian/control.in"
 fi
 
 cp -R "${builddir}/debian" "${packagepath}/debian"
+
+# git metadata needs to be setup to initialize submodules
+# in repos which rely on git submodules
+
 
 cd "${packagepath}"
 
