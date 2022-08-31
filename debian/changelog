@@ -1,11 +1,5 @@
-azure-gdpr (1.8.citus-1) stable; urgency=low
+pgazure (1.0.citus-1) stable; urgency=low
 
-  * Official 1.8 release of Azure GDPR
+  * Official 1.0 release of pgazure.
 
  -- Philip Dube <phdub@microsoft.com>  Mon, 25 Apr 2022 10:45:00 +0300
-
-azure-gdpr (1.7.citus-1) stable; urgency=low
-
-  * Official 1.7 release of Azure GDPR
-
- -- Philip Dube <phdub@microsoft.com>  Wed, 05 Jan 2022 10:45:00 +0300

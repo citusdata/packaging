@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: azure-gdpr
+Upstream-Name: pgazure
 Source: https://github.com/citusdata/azure_gdpr
 
 License: Commercial

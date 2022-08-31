@@ -1,4 +1,4 @@
-Source: azure-gdpr
+Source: pgazure
 Section: database
 Priority: optional
 Maintainer: Citus Data <packaging@citusdata.com>
@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all 
 Standards-Version: 3.9.7
 Homepage: https://github.com/citusdata/azure_gdpr
 
-Package: postgresql-PGVERSION-azure-gdpr
+Package: postgresql-PGVERSION-pgazure
 Architecture: any
 Depends: ${shlibs:Depends},${misc:Depends}, postgresql-PGVERSION
 Description: GDPR compliant logging for Azure
