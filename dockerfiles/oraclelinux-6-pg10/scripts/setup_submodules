@@ -23,7 +23,7 @@ git config -f .gitmodules --get-regexp '^submodule\..*\.path$' |
         branch_key="$(echo "${KEY}" | sed 's/\.path$/.branch/')"
 
         URL="$(git config -f .gitmodules --get "${url_key}")"
-        BRANCH="$(git config -f .gitmodules --get "${branch_key}" || echo "master")"
+        BRANCH="$(git config -f .gitmodules --get "${branch_key}" || echo "main")"
 
         git submodule add --force -b "${BRANCH}" --name "${NAME}" "${URL}" "${MODULE_PATH}" || continue
     done
