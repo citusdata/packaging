@@ -1,5 +1,5 @@
-pgazure (1.0.citus-1) stable; urgency=low
+azure-storage (1.0.citus-1) stable; urgency=low
 
-  * Official 1.0 release of pgazure.
+  * Official 1.0 release of azure-storage.
 
- -- Philip Dube <phdub@microsoft.com>  Mon, 25 Apr 2022 10:45:00 +0300
+ -- Gurkan Indibay <gindibay@microsoft.com>  Mon, 25 Apr 2022 10:45:00 +0300

@@ -1,7 +1,7 @@
-%global pgmajorversion 13
-%global pgpackageversion 13
+%global pgmajorversion 14
+%global pgpackageversion 14
 %global pginstdir /usr/pgsql-%{pgpackageversion}
-%global sname pgazure
+%global sname azure_storage
 
 Summary:	Pg Azure storage
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
@@ -42,7 +42,7 @@ make %{?_smp_mflags}
 %{pginstdir}/share/extension/%{sname}.control
 %{pginstdir}/bin/pgaz
 %{pginstdir}/bin/mock_pgaz
-%{pginstdir}/share/extension/pgazure-*.sql
+%{pginstdir}/share/extension/azure_storage-*.sql
 %ifarch ppc64 ppc64le
   %else
   %if 0%{?rhel} && 0%{?rhel} <= 6

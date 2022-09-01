@@ -15,7 +15,7 @@ override_dh_auto_test:
 	# nothing to do here, see debian/tests/* instead
 
 override_dh_auto_install:
-	+pg_buildext loop postgresql-%v-pgazure
+	+pg_buildext loop postgresql-%v-azure-storage
 
 %:
 	dh $@
