@@ -9,6 +9,9 @@ cd $REPO_PATH
 
 git init
 
+# extracts
+# submodule.{SUBMODULE_NAME}.path {SUBMODULE_PATH}
+# for each submodule in .gitsubmodules 
 git config -f .gitmodules --get-regexp '^submodule\..*\.path$' |
     while read -r KEY MODULE_PATH
     do
@@ -19,7 +22,10 @@ git config -f .gitmodules --get-regexp '^submodule\..*\.path$' |
 
         NAME="$(echo "${KEY}" | sed 's/^submodule\.\(.*\)\.path$/\1/')"
 
+        # submodule.{SUBMODULE_NAME}.url
         url_key="$(echo "${KEY}" | sed 's/\.path$/.url/')"
+
+        # submodule.{SUBMODULE_NAME}.branch
         branch_key="$(echo "${KEY}" | sed 's/\.path$/.branch/')"
 
         URL="$(git config -f .gitmodules --get "${url_key}")"
