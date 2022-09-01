@@ -98,7 +98,4 @@ ENV PATH /scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages
 
-RUN apt update -y
-RUN apt install -y git
-
 ENTRYPOINT ["/scripts/fetch_and_build_deb"]
