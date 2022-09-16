@@ -30,4 +30,5 @@ rpm:
   - ".*: W: no-documentation"
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus.so"
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/bin/pg_send_cancellation"
+  - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/bin/citus_columnar.so"
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/citus.*"
