@@ -44,7 +44,7 @@ if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" 
     exit 1
 fi
 
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc) --without-pg-version-check
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
 make %{?_smp_mflags}
 
 %install
