@@ -25,7 +25,6 @@ jobs:
         platform:
           - el/7
           - el/8
-          - ol/7
           - ol/8
           - debian/stretch
           - debian/buster
