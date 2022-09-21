@@ -37,6 +37,13 @@ RUN set -ex; \
     rm -rf "$GNUPGHOME"; \
     apt-key list
 
+# add buster backports repo to be able to download missing packages in buster main repo
+RUN ( [ ubuntu != debian ] || [ jammy != buster ] ) || ( \
+    echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
+    apt-get update -y \
+    )
+
+
 # install build tools and PostgreSQL development files
 
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 15' > /etc/apt/sources.list.d/pgdg.list \
@@ -109,6 +116,8 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
     make install && \
     rm -f cmake-3.22.2.tar.gz && \
     rm -rf cmake-3.22.2
+
+
 
 # Added for pg15 beta package support.
 ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15"
