@@ -71,9 +71,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main 15' > /e
         liblz4-dev \
         liblz4-1 \
         libzstd1 \
-        libzstd-dev \
-        sudo \
-    && rm -rf /var/lib/apt/lists/*
+        libzstd-dev
 
 RUN pip3 install sphinx
 
@@ -83,12 +81,33 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 
     && chmod +x /usr/bin/jq
 
 # install packagecloud repos for pg_auto_failover
-RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.deb.sh | bash \
-    && rm -rf /var/lib/apt/lists/*
+RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.deb.sh | bash
 
 # patch pg_buildext to use multiple processors
 COPY make_pg_buildext_parallel.patch /
 RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+
+# install cmake dependencies and pgazure build dependencies
+RUN apt install -y  checkinstall \
+                    git \
+                    libtemplate-perl \
+                    make \
+                    pkg-config \
+                    tar \
+                    unzip \
+                    uuid \
+                    uuid-dev \
+                    zip \
+                 && rm -rf /var/lib/apt/lists/*
+
+# install cmake from source
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2.tar.gz && \
+    tar -zxvf cmake-3.22.2.tar.gz && \
+    cd cmake-3.22.2 && ./bootstrap && \
+    make && \
+    make install && \
+    rm -f cmake-3.22.2.tar.gz && \
+    rm -rf cmake-3.22.2
 
 # Added for pg15 beta package support.
 ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15"
