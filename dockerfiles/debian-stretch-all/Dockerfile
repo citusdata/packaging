@@ -71,7 +71,8 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main 15' > /
         liblz4-dev \
         liblz4-1 \
         libzstd1 \
-        libzstd-dev
+        libzstd-dev \
+        sudo
 
 RUN pip3 install sphinx
 
