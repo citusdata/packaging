@@ -39,10 +39,8 @@ RUN set -ex; \
 
 # add buster backports repo to be able to download missing packages in buster main repo
 RUN ( [ ubuntu != debian ] || [ jammy != buster ] ) || ( \
-    echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
-    apt-get update -y \
+    echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list  \
     )
-
 
 # install build tools and PostgreSQL development files
 
@@ -79,7 +77,19 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 15' > /et
         liblz4-1 \
         libzstd1 \
         libzstd-dev \
-        sudo
+# below are needed for cmake and pgazure build
+        checkinstall \
+        git \
+        libtemplate-perl \
+        make \
+        pkg-config \
+        tar \
+        unzip \
+        uuid \
+        uuid-dev \
+        zip \
+        sudo \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install sphinx
 
@@ -95,18 +105,6 @@ RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/scr
 COPY make_pg_buildext_parallel.patch /
 RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 
-# install cmake dependencies and pgazure build dependencies
-RUN apt install -y  checkinstall \
-                    git \
-                    libtemplate-perl \
-                    make \
-                    pkg-config \
-                    tar \
-                    unzip \
-                    uuid \
-                    uuid-dev \
-                    zip \
-                 && rm -rf /var/lib/apt/lists/*
 
 # install cmake from source
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2.tar.gz && \
