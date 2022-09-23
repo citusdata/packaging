@@ -81,7 +81,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main 15' > /e
         checkinstall \
         git \
         libtemplate-perl \
-        make \
         pkg-config \
         tar \
         unzip \

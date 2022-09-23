@@ -81,7 +81,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 15' > /et
         checkinstall \
         git \
         libtemplate-perl \
-        make \
         pkg-config \
         tar \
         unzip \

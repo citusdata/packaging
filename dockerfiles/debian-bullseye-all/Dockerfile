@@ -81,7 +81,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main 15' > 
         checkinstall \
         git \
         libtemplate-perl \
-        make \
         pkg-config \
         tar \
         unzip \
