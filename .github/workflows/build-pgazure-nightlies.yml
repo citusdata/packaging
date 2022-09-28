@@ -31,12 +31,11 @@ jobs:
           # - el/8
 # temporarily removed from nightlies since pg15 beta is not being downloaded for ol/7
 # - ol/7
-# Haven't worked on deb support for pgazure. Will enable below block after deb support is added
-#          - debian/stretch
-#          - debian/buster
-#          - debian/bullseye
-#          - ubuntu/bionic
-#          - ubuntu/focal
+          - debian/stretch
+          - debian/buster
+          - debian/bullseye
+          - ubuntu/bionic
+          - ubuntu/focal
 
     steps:
       - name: Checkout repository
