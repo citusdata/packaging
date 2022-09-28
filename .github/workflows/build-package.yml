@@ -80,7 +80,7 @@ jobs:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.17 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.19 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
