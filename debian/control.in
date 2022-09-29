@@ -5,11 +5,11 @@ Maintainer: Citus Data <packaging@citusdata.com>
 Uploaders: Citus Data <packaging@citusdata.com>
 Build-Depends: debhelper (>= 9), autotools-dev, flex, postgresql-server-dev-all (>= 158~)
 Standards-Version: 3.9.7
-Homepage: https://github.com/citusdata/azure_gdpr
+Homepage: https://github.com/citusdata/pgazure
 
 Package: postgresql-PGVERSION-azure-storage
 Architecture: any
 Depends: ${shlibs:Depends},${misc:Depends}, postgresql-PGVERSION
-Description: GDPR compliant logging for Azure
- This app adds logs for GDPR
+Description: Postgres Azure Storage Extension
+ Azure Storage Extension for PostgreSQL
 
