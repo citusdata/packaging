@@ -2,7 +2,7 @@ name: PG Azure Storage Build & Publish Packages
 
 env:
   MAIN_BRANCH: "all-pg-azure-storage"
-  PACKAGE_CLOUD_REPO_NAME: "citusdata/pgazure"
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
