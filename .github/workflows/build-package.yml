@@ -54,7 +54,6 @@ jobs:
           --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
           --input_files_dir "$(pwd)" \
-          --output_validation
 
       - name: Publish packages
         run: |
