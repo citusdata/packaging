@@ -7,7 +7,7 @@ Summary:	Pg Azure storage
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	0.0.1.citus
+Version:	1.0.0.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
@@ -54,5 +54,5 @@ make %{?_smp_mflags}
 
 %changelog
 
-* Wed Nov 11 2020 - Hanefi Önaldi <Hanefi.Onaldi@microsoft.com> 1.0.citus-1
-- Official 1.0 release of Pg Azure Storage
+* Fri Sep 30 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.0.0.citus-1
+- Official 1.0.0 release of Pg Azure Storage
