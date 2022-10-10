@@ -1,7 +1,7 @@
 name: Build and publish pgazure nightly packages
 
 env:
-  MAIN_BRANCH: "all-pg-azure-storage-debfix"
+  MAIN_BRANCH: "all-pg-azure-storage"
   PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise-nightlies"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
