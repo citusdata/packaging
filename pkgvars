@@ -4,5 +4,5 @@ deb_pkgname=azure-storage
 pkgdesc='PG Azure Storage'
 pkglatest=1.0.0.citus-1
 versioning=fancy
-nightlyref=fix-packaging-for-older-deb
+nightlyref=fix-packaging-for-older-deb2
 
