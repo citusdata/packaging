@@ -24,10 +24,10 @@ jobs:
         platform:
           - el/7
 #          - el/8
-#          - debian/stretch
+          - debian/stretch
           - debian/buster
           - debian/bullseye
-#          - ubuntu/bionic
+          - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
 
