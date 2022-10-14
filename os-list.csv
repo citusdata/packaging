@@ -1,12 +1,11 @@
 centos,8
 centos,7
-debian,buster
-debian,stretch
 debian,bullseye
+debian,buster
+oraclelinux,9
 oraclelinux,8
 oraclelinux,7
-oraclelinux,6
+ubuntu,jammy
 ubuntu,focal
 ubuntu,bionic
-ubuntu,jammy
 pgxn
