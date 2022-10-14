@@ -1,0 +1,16 @@
+name: Check the integrity of files generated from templates
+
+on: push
+jobs:
+  check-dockerfiles:
+    name: Check if the dockerfiles are updated using latest templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Remove all generated files
+        run: rm -rf dockerfiles/*
+      - name: Regenerate all files from templates
+        run: ./update_dockerfiles
+      - name: Check if all the files are still the same
+        run: git diff --exit-code dockerfiles
