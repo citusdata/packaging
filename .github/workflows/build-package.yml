@@ -26,12 +26,13 @@ jobs:
           - el/7
           - el/8
           - ol/8
-          - debian/stretch
-          - debian/buster
-          - debian/bullseye
-          - ubuntu/bionic
-          - ubuntu/focal
-          - ubuntu/jammy
+#Temporarily disabled deb packages since pg15 ga deb packages are not ready
+#         - debian/stretch
+#          - debian/buster
+#          - debian/bullseye
+#          - ubuntu/bionic
+#          - ubuntu/focal
+#          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
