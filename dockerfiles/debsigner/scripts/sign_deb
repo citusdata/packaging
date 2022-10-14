@@ -1,8 +1,0 @@
-#!/usr/bin/expect --
-set timeout -1
-
-spawn debsigs --sign=maint {*}$argv
-
-expect -exact "Enter passphrase"
-send -- "$env(PACKAGING_PASSPHRASE)\r"
-expect eof

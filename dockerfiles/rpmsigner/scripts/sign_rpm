@@ -1,8 +1,0 @@
-#!/usr/bin/expect --
-set timeout -1
-
-spawn rpmsign --addsign {*}$argv
-
-expect -exact "Enter pass phrase: "
-send -- "$env(PACKAGING_PASSPHRASE)\r"
-expect eof
