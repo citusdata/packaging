@@ -1,3 +1,9 @@
+citus (11.1.3.citus-1) stable; urgency=low
+
+  * Official 11.1.3 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 14 Oct 2022 11:01:23 +0000
+
 citus (11.1.2.citus-1) stable; urgency=low
 
   * Official 11.1.2 release of Citus
