@@ -40,8 +40,8 @@ make %{?_smp_mflags}
 %defattr(-,root,root,-)
 %{pginstdir}/lib/%{sname}.so
 %{pginstdir}/share/extension/%{sname}.control
-%{pginstdir}/bin/pgaz
-%{pginstdir}/bin/mock_pgaz
+%{pginstdir}/bin/azure_storage_cli
+%{pginstdir}/bin/mock_azure_storage_cli
 %{pginstdir}/share/extension/azure_storage-*.sql
 %ifarch ppc64 ppc64le
   %else
