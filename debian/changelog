@@ -1,5 +1,5 @@
-azure-storage (1.0.0.citus-1) stable; urgency=low
+azure-storage (1.0.2.citus-1) stable; urgency=low
 
-  * Official 1.0.0 release of azure-storage.
+  * Official 1.0.2 release of azure-storage.
 
  -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 30 Sep 2022 10:45:00 +0300

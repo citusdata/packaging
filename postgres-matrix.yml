@@ -2,5 +2,5 @@ name: Postgres Version Matrix
 project_name: pg_azure
 
 version_matrix:
-  - 1.0.0:
+  - 1.0.2:
       postgres_versions: [13,14,15]
