@@ -8,11 +8,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	11.1.3.citus
+Version:	11.1.4.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v11.1.3.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v11.1.4.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -44,7 +44,7 @@ if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" 
     exit 1
 fi
 
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc) 
 make %{?_smp_mflags}
 
 %install
@@ -106,6 +106,9 @@ fi
 %doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
+* Mon Oct 24 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.4.citus-1
+- Official 11.1.4 release of Citus
+
 * Fri Oct 14 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.3.citus-1
 - Official 11.1.3 release of Citus
 
