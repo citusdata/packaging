@@ -31,12 +31,9 @@ jobs:
           # - el/8
 # temporarily removed from nightlies since pg15 beta is not being downloaded for ol/7
 # - ol/7
-# Not enabled since build fails for debian/stretch
-#          - debian/stretch
           - debian/buster
           - debian/bullseye
-# Not enabled since build fails for ubuntu/bionic
-#          - ubuntu/bionic
+          - ubuntu/bionic
           - ubuntu/focal
 
     steps:
