@@ -36,7 +36,7 @@ pgdg_check ()
   if yum list -q postgresql15-server &> /dev/null; then
     echo "Detected postgresql15-server..."
   else
-    echo -n "Installing pgdg14 repo... "
+    echo -n "Installing pgdg15 repo... "
     
     if [ "${dist}" = "8" ]; then
       dnf -qy module disable postgresql
