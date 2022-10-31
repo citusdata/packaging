@@ -32,11 +32,11 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for postgresql14-server..."
-  if yum list -q postgresql14-server &> /dev/null; then
-    echo "Detected postgresql14-server..."
+  echo "Checking for postgresql15-server..."
+  if yum list -q postgresql15-server &> /dev/null; then
+    echo "Detected postgresql15-server..."
   else
-    echo -n "Installing pgdg14 repo... "
+    echo -n "Installing pgdg repo... "
     
     if [ "${dist}" = "8" ]; then
       dnf -qy module disable postgresql
@@ -44,8 +44,8 @@ pgdg_check ()
 
     yum install -d0 -e0 -y "${repo_url}"
 
-    if ! yum info -y -q postgresql14-server &> /dev/null; then
-      echo "PGDG repositories don't have postgresql14-server package for your operating system"
+    if ! yum info -y -q postgresql15-server &> /dev/null; then
+      echo "PGDG repositories don't have postgresql15-server package for your operating system"
       echo "Cannot install Citus, exiting."
       exit 1
     fi
