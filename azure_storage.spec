@@ -7,11 +7,11 @@ Summary:	Pg Azure storage
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.0.2.citus
+Version:	1.0.3.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pgazure/archive/v1.0.2.tar.gz
+Source0:	https://github.com/citusdata/pgazure/archive/v1.0.3.tar.gz
 URL:		https://github.com/citusdata/pgazure
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel libxml2-devel libxslt-devel openssl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -53,6 +53,8 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
+* Fri Nov 4 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.0.3.citus-1
+- Official 1.0.3 release of Pg Azure Storage
 
 * Fri Sep 30 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.0.2.citus-1
 - Official 1.0.2 release of Pg Azure Storage
