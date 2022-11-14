@@ -40,6 +40,7 @@ jobs:
           - centos,7
           - oraclelinux,8
           - oraclelinux,7
+          - almalinux,9
         POSTGRES_VERSION:
           - 10
           - 11
