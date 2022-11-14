@@ -31,7 +31,7 @@ IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
 if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
     tag="${os}-${release}-all"
     args+="build --pull --no-cache -t citus/${image_name}:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"
-elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; then
+elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]] || [[ "${os}" = 'almalinux' ]]; then
     # redhat variants need an image for each PostgreSQL version
     IFS=' '
     for pgversion in ${pgversions}; do
