@@ -21,19 +21,23 @@ function update_extra_repositories_and_packages {
     case ${os}+${release} in
         centos+6|centos+7)
             extra_repositories='epel-release centos-release-scl-rh'
-            extra_packages='llvm-toolset-7-clang llvm5.0'
+            extra_packages='llvm-toolset-7-clang llvm5.0 spectool curl'
             ;;
         centos+8)
             extra_repositories='epel-release'
-            extra_packages='llvm-toolset ccache'
+            extra_packages='llvm-toolset ccache spectool curl'
             ;;
         oraclelinux+6|oraclelinux+7)
             extra_repositories=''
-            extra_packages='llvm-toolset-7-clang llvm5.0'
+            extra_packages='llvm-toolset-7-clang llvm5.0 spectool curl'
             ;;
         oraclelinux+8)
             extra_repositories='oracle-epel-release-el8'
-            extra_packages='llvm-toolset ccache'
+            extra_packages='llvm-toolset ccache spectool curl'
+            ;;
+        almalinux+9)
+            extra_repositories='epel-release'
+            extra_packages='llvm-toolset ccache rpmdevtools krb5-devel'
             ;;
     esac
 }
@@ -46,7 +50,7 @@ function update_rpm_dockerfile {
     pgshort=${pgversion//./}
     target_subdir="${dockerfiles_dir}/${os}-${release}-pg${pgshort}"
 
-    if ! [[ "${os}" =~ centos|oraclelinux ]]; then
+    if ! [[ "${os}" =~ centos|oraclelinux|almalinux ]]; then
         echo "$0: unrecognized OS -- ${os}" >&2
         exit $badusage
     fi
@@ -86,7 +90,8 @@ while read -r line; do
         cp -R make_pg_buildext_parallel.patch scripts "${target_subdir}"
         rm "${target_subdir}/scripts/fetch_and_build_rpm" \
            "${target_subdir}/scripts/fetch_and_build_pgxn"
-    elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
+    elif [[ "${os}" = 'centos' ]]  || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]] || \
+         [[ "${os}" = 'almalinux' ]]; then
         # redhat variants need a Dockerfile for each PostgreSQL version
         IFS=' '
         for pgversion in ${pgversions}; do

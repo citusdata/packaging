@@ -46,7 +46,6 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
     && [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
-        curl \
         flex \
         gcc-c++ \
         hunspell-en \
@@ -60,12 +59,11 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
         readline-devel \
         rpm-build \
         rpmlint \
-        spectool \
         tar \
         libzstd \
         libzstd-devel \
-        llvm-toolset-7-clang llvm5.0 \
-    && ( [[ 7 < 8 ]] || dnf -qy module disable postgresql ) \
+        llvm-toolset-7-clang llvm5.0 spectool curl \
+    && ( [[ 7 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
 

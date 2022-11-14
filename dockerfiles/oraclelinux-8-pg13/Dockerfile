@@ -46,7 +46,6 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8
     && [[ -z "oracle-epel-release-el8" ]] || yum install -y oracle-epel-release-el8) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
-        curl \
         flex \
         gcc-c++ \
         hunspell-en \
@@ -60,12 +59,11 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8
         readline-devel \
         rpm-build \
         rpmlint \
-        spectool \
         tar \
         libzstd \
         libzstd-devel \
-        llvm-toolset ccache \
-    && ( [[ 8 < 8 ]] || dnf -qy module disable postgresql ) \
+        llvm-toolset ccache spectool curl \
+    && ( [[ 8 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql13-server postgresql13-devel \
     && yum clean all
 
