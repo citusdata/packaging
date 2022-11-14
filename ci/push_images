@@ -35,7 +35,7 @@ while read -r line; do
     if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
         tag="${os}-${release}-all"
         args+="push citus/${image_name}:${tag}\n"
-    elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]
+    elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]] ||
          [[ "${os}" = 'almalinux' ]] ; then
         # redhat variants need an image for each PostgreSQL version
         IFS=' '
