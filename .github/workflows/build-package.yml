@@ -55,7 +55,6 @@ jobs:
           - TARGET_PLATFORM: ubuntu,bionic
           - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,jammy
-          - TARGET_PLATFORM: ubuntu,kinetic
           - TARGET_PLATFORM: pgxn
 
     steps:
