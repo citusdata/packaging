@@ -48,11 +48,13 @@ jobs:
           - 14
           - 15
         include:
-          - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,buster
-          - TARGET_PLATFORM: ubuntu,focal
+          - TARGET_PLATFORM: debian,bullseye
+          - TARGET_PLATFORM: debian,bookworm
           - TARGET_PLATFORM: ubuntu,bionic
+          - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,jammy
+          - TARGET_PLATFORM: ubuntu,kinetic
           - TARGET_PLATFORM: pgxn
     steps:
       - name: Checkout repository
