@@ -49,11 +49,13 @@ jobs:
           - 14
           - 15
         include:
-          - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,buster
-          - TARGET_PLATFORM: ubuntu,focal
+          - TARGET_PLATFORM: debian,bullseye
+          - TARGET_PLATFORM: debian,bookworm
           - TARGET_PLATFORM: ubuntu,bionic
+          - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,jammy
+          - TARGET_PLATFORM: ubuntu,kinetic
           - TARGET_PLATFORM: pgxn
 
     steps:
@@ -76,7 +78,7 @@ jobs:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.22 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b ubuntu_kinetic_support --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |

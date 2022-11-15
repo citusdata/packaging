@@ -1,11 +1,13 @@
 centos,8
 centos,7
 debian,buster
-debian,bullseye
+debian,bullseye,
+debian,bookworm
 oraclelinux,8
 oraclelinux,7
 oraclelinux,6
 ubuntu,focal
 ubuntu,bionic
 ubuntu,jammy
+ubuntu,kinetic
 pgxn
