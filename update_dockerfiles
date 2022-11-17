@@ -35,6 +35,7 @@ function update_extra_repositories_and_packages {
             extra_repositories='oracle-epel-release-el8'
             extra_packages='llvm-toolset ccache spectool curl'
             ;;
+        # almalinux already has curl installed and installing it again causes conflicting installation error
         almalinux+9)
             extra_repositories='epel-release'
             extra_packages='llvm-toolset ccache rpmdevtools krb5-devel'
