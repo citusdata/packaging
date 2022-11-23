@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# make bash behave
+set -euo pipefail
+IFS=$'\n\t'
+
+# constants
+success=0
+failure=1
+badinput=65
+
+pgxnuser='citusdata'
+pgxnurl='https://manager.pgxn.org/upload'
+
+# shellcheck disable=SC2012
+archive=$1
+
+
+echo "Password: ${PGXN_PASSWORD}"
+echo "User: ${pgxnuser}"
+
+# TODO: use pgxnclient in Travis to only release on new versions
+httpcode=$(curl -sL -u "${pgxnuser}:${PGXN_PASSWORD}" \
+           -F "archive=@${archive};type=application/zip" \
+           -o /dev/null -w '%{http_code}' "${pgxnurl}")
+
+if [ "${httpcode}" -eq 200 ]; then
+    echo "Successfully uploaded ${archive} to PGXN!" >&2
+    exit $success
+elif [ "${httpcode}" -eq 409 ]; then
+    echo "PGXN already contains ${archive}!" >&2
+    exit $success
+elif [ "${httpcode}" -eq 401 ]; then
+    echo "PGXN rejected our credentials" >&2
+    exit $badinput
+else
+    echo "Encountered an unknown error" >&2
+    echo "HTTP Code: ${httpcode}" >&2
+    exit $failure
+fi

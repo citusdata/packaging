@@ -4,8 +4,9 @@ on:
     branches:
       - "**"
 jobs:
-  release:
-    name: Release on PGXN
+  release_check:
+    if: github.ref != 'refs/heads/pgxn-citus'
+    name: Release check
     runs-on: ubuntu-latest
     container: pgxn/pgxn-tools
     steps:
@@ -13,16 +14,23 @@ jobs:
         uses: actions/checkout@v2
       - name: Bundle the Release
         run: pgxn-bundle
-      - name: Release on PGXN
+  release_pgxn:
+    if: github.ref == 'refs/heads/pgxn-citus'
+    name: Actual Release on PGXN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Release package
         env:
           MAIN_BRANCH: pgxn-citus
           PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
           PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        shell: bash
         run: |
-          CURRENT_BRANCH="${GITHUB_REF##*/}"
-          if [ "${CURRENT_BRANCH}" = "${MAIN_BRANCH}" ]
-          then
-            pgxn-release
-          else
-            echo "Distro will not be released since current branch '${CURRENT_BRANCH}' is different from main branch '${MAIN_BRANCH}'"
-          fi
+          sudo apt install -y  zip
+          source pkgvars
+          pkg_path=$(pwd)/"citus-${pkglatest}.zip"
+          ./scripts/fetch_and_build_pgxn release
+          ./scripts/release_pgxn $pkg_path
