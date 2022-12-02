@@ -30,6 +30,7 @@ jobs:
           - ol/7
           - debian/buster
           - debian/bullseye
+          - debian/bookworm
           - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
