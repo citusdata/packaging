@@ -112,7 +112,7 @@ RUN !( ( [ oraclelinux = centos ] && [ 6 = 7 ] ) || \
        ( [ oraclelinux = oraclelinux ] && [ 6 = 7 ] ) || \
        ( [ oraclelinux = oraclelinux ] && [ 6 = 8 ] ) \
      ) || ( \
-        wget https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
+        curl -O https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
         tar -xvf Python-3.8.12.tar.xz && \
         cd Python-3.8.12 && \
         ./configure --enable-optimizations && \
