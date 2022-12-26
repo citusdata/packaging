@@ -116,6 +116,9 @@ RUN !( ( [ centos = centos ] && [ 7 = 7 ] ) || \
         tar -xvf Python-3.8.16.tar.xz && \
         cd Python-3.8.16 && \
         ./configure --enable-optimizations && \
+        make -j 8 && \
+        make altinstall && \
+        cd .. && \
         rm -f Python-3.8.16.tar.xz && \
         rm -rf Python-3.8.16  \
      )
