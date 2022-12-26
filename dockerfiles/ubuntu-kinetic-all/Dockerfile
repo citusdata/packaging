@@ -120,12 +120,12 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
 RUN !( ( [ ubuntu = debian ] && [ kinetic = buster ] ) || \
         ( [ ubuntu = ubuntu ] && [ kinetic = bionic ] ) \
      ) || ( \
-        wget https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
-        tar -xvf Python-3.8.12.tar.xz && \
-        cd Python-3.8.12 && \
+        wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
+        tar -xvf Python-3.8.16.tar.xz && \
+        cd Python-3.8.16 && \
         ./configure --enable-optimizations && \
-        rm -f Python-3.8.12.tar.xz && \
-        rm -rf Python-3.8.12  \
+        rm -f Python-3.8.16.tar.xz && \
+        rm -rf Python-3.8.16  \
      )
 
 

@@ -112,12 +112,12 @@ RUN !( ( [ centos = centos ] && [ 7 = 7 ] ) || \
        ( [ centos = oraclelinux ] && [ 7 = 7 ] ) || \
        ( [ centos = oraclelinux ] && [ 7 = 8 ] ) \
      ) || ( \
-        curl -O https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
-        tar -xvf Python-3.8.12.tar.xz && \
-        cd Python-3.8.12 && \
+        curl -O https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
+        tar -xvf Python-3.8.16.tar.xz && \
+        cd Python-3.8.16 && \
         ./configure --enable-optimizations && \
-        rm -f Python-3.8.12.tar.xz && \
-        rm -rf Python-3.8.12  \
+        rm -f Python-3.8.16.tar.xz && \
+        rm -rf Python-3.8.16  \
      )
 
 RUN touch /rpmlintrc \
