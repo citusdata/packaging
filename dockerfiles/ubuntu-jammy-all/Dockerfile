@@ -115,6 +115,19 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
     rm -f cmake-3.22.2.tar.gz && \
     rm -rf cmake-3.22.2
 
+# install python 3.8 to be able to execute tools scripts
+# if os/release in (debian/buster,ubuntu/bionic)
+RUN !( ( [ ubuntu = debian ] && [ jammy = buster ] ) || \
+        ( [ ubuntu = ubuntu ] && [ jammy = bionic ] ) \
+     ) || ( \
+        wget https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
+        tar -xvf Python-3.8.12.tar.xz && \
+        cd Python-3.8.12 && \
+        ./configure --enable-optimizations && \
+        rm -f Python-3.8.12.tar.xz && \
+        rm -rf Python-3.8.12  \
+     )
+
 
 
 # Added for pg15 beta package support.

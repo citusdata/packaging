@@ -105,6 +105,21 @@ RUN [[ almalinux != centos ]] || [[ 9 != 7 ]] || ( \
     yum -y install git && \
     yum -y install  devtoolset-8-gcc-c++ && scl enable devtoolset-8 bash )
 
+# install python 3.8 to be able to execute tools scripts
+# if os in (centos, oraclelinux) and release in (7, 8)
+RUN !( ( [ almalinux = centos ] && [ 9 = 7 ] ) || \
+       ( [ almalinux = centos ] && [ 9 = 8 ] ) ||
+       ( [ almalinux = oraclelinux ] && [ 9 = 7 ] ) || \
+       ( [ almalinux = oraclelinux ] && [ 9 = 8 ] ) \
+     ) || ( \
+        wget https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
+        tar -xvf Python-3.8.12.tar.xz && \
+        cd Python-3.8.12 && \
+        ./configure --enable-optimizations && \
+        rm -f Python-3.8.12.tar.xz && \
+        rm -rf Python-3.8.12  \
+     )
+
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
