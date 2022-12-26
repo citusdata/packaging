@@ -120,6 +120,12 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
 RUN !( ( [ ubuntu = debian ] && [ jammy = buster ] ) || \
         ( [ ubuntu = ubuntu ] && [ jammy = bionic ] ) \
      ) || ( \
+        apt-get install -y  libncurses5-dev  \
+                            libgdbm-dev \
+                            libnss3-dev \
+                            libsqlite3-dev \
+                            libffi-dev \
+                            libbz2-dev \
         wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
         tar -xvf Python-3.8.16.tar.xz && \
         cd Python-3.8.16 && \

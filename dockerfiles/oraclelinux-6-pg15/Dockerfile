@@ -112,6 +112,7 @@ RUN !( ( [ oraclelinux = centos ] && [ 6 = 7 ] ) || \
        ( [ oraclelinux = oraclelinux ] && [ 6 = 7 ] ) || \
        ( [ oraclelinux = oraclelinux ] && [ 6 = 8 ] ) \
      ) || ( \
+        yum -y install bzip2-devel libffi-devel xz-devel
         curl -O https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
         tar -xvf Python-3.8.16.tar.xz && \
         cd Python-3.8.16 && \
