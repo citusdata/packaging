@@ -108,7 +108,7 @@ RUN [[ %%os%% != centos ]] || [[ %%release%% != 7 ]] || ( \
 # install python 3.8 to be able to execute tools scripts
 # if os in (centos, oraclelinux) and release in (7, 8)
 RUN !( ( [ %%os%% = centos ] && [ %%release%% = 7 ] ) || \
-       ( [ %%os%% = centos ] && [ %%release%% = 8 ] ) ||
+       ( [ %%os%% = centos ] && [ %%release%% = 8 ] ) || \
        ( [ %%os%% = oraclelinux ] && [ %%release%% = 7 ] ) || \
        ( [ %%os%% = oraclelinux ] && [ %%release%% = 8 ] ) \
      ) || ( \

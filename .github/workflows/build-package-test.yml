@@ -88,7 +88,7 @@ jobs:
 
       - name: Push images
         run: |
-          export CURRENT_BRANCH=${GITHUB_REF##*/}
+          export CURRENT_BRANCH=develop
           ./ci/push_images
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}

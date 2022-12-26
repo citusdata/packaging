@@ -108,7 +108,7 @@ RUN [[ oraclelinux != centos ]] || [[ 7 != 7 ]] || ( \
 # install python 3.8 to be able to execute tools scripts
 # if os in (centos, oraclelinux) and release in (7, 8)
 RUN !( ( [ oraclelinux = centos ] && [ 7 = 7 ] ) || \
-       ( [ oraclelinux = centos ] && [ 7 = 8 ] ) ||
+       ( [ oraclelinux = centos ] && [ 7 = 8 ] ) || \
        ( [ oraclelinux = oraclelinux ] && [ 7 = 7 ] ) || \
        ( [ oraclelinux = oraclelinux ] && [ 7 = 8 ] ) \
      ) || ( \
