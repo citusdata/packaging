@@ -122,7 +122,10 @@ RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
     echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
     echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
 
-RUN source ~/.bashrc && pyenv install 3.8.16 && pyenv global 3.8.16
+# install python 3.8 and set it as default. Reloading the bashrc did not worked for ubuntu \
+# therefore I need to export the path explicitly here.
+RUN source ~/.bashrc && export PYENV_ROOT="$HOME/.pyenv" && export PATH="$PYENV_ROOT/bin:$PATH" && \
+    pyenv install 3.8.16 && pyenv global 3.8.16
 
 
 
