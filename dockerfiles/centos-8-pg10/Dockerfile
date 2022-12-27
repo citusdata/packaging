@@ -123,7 +123,8 @@ RUN !( ( [ centos = centos ] && [ 8 = 7 ] ) || \
         make altinstall && \
         cd .. && \
         rm -f Python-3.8.16.tar.xz && \
-        rm -rf Python-3.8.16  \
+        rm -rf Python-3.8.16 && \
+        ln -fs /usr/local/bin/python3.8 /usr/bin/python3 \
      )
 
 RUN touch /rpmlintrc \
