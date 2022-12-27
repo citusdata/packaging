@@ -118,7 +118,7 @@ RUN !( ( [ oraclelinux = centos ] && [ 8 = 7 ] ) || \
         curl -O https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tar.xz && \
         tar -xvf Python-3.8.12.tar.xz && \
         cd Python-3.8.12 && \
-        ./configure --enable-optimizations && \
+        ./configure  && \
         make -j 8 && \
         make altinstall && \
         cd .. && \

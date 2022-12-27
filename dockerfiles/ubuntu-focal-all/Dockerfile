@@ -123,12 +123,13 @@ RUN !( ( [ ubuntu = debian ] && [ focal = buster ] ) || \
         wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
         tar -xvf Python-3.8.16.tar.xz && \
         cd Python-3.8.16 && \
-        ./configure --enable-optimizations && \
+        ./configure && \
         make -j 8 && \
         make altinstall && \
         cd .. && \
         rm -f Python-3.8.16.tar.xz && \
-        rm -rf Python-3.8.16  \
+        rm -rf Python-3.8.16  && \
+        update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.8 1 \
      )
 
 
