@@ -1,6 +1,7 @@
 # vim:set ft=dockerfile:
 FROM debian:bullseye
 ARG DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-c"]
 
 # See https://github.com/tianon/docker-brew-debian/issues/49 for discussion of the following
 #
@@ -115,22 +116,13 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
     rm -f cmake-3.22.2.tar.gz && \
     rm -rf cmake-3.22.2
 
-# install python 3.8 to be able to execute tools scripts
-# if os/release in (debian/buster,ubuntu/bionic)
-RUN !( ( [ debian = debian ] && [ bullseye = buster ] ) || \
-        ( [ debian = ubuntu ] && [ bullseye = bionic ] ) \
-     ) || ( \
-        wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
-        tar -xvf Python-3.8.16.tar.xz && \
-        cd Python-3.8.16 && \
-        ./configure && \
-        make -j 8 && \
-        make altinstall && \
-        cd .. && \
-        rm -f Python-3.8.16.tar.xz && \
-        rm -rf Python-3.8.16  && \
-        update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.8 1 \
-     )
+# install pyenv and python 3.8 to be able to execute tools scripts
+RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
+    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
+
+RUN source ~/.bashrc && pyenv install 3.8.16 && pyenv global 3.8.16
 
 
 

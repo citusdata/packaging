@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
 FROM almalinux:9
-
+SHELL ["/bin/bash", "-c"]
 RUN [[ almalinux != centos ]] || [[ 9 != 8 ]] || ( \
     cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
     && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-* \
@@ -107,25 +107,15 @@ RUN [[ almalinux != centos ]] || [[ 9 != 7 ]] || ( \
 
 # install python 3.8 to be able to execute tools scripts
 # if os in (centos, oraclelinux) and release in (7, 8)
-RUN !( ( [ almalinux = centos ] && [ 9 = 7 ] ) || \
-       ( [ almalinux = centos ] && [ 9 = 8 ] ) || \
-       ( [ almalinux = oraclelinux ] && [ 9 = 7 ] ) || \
-       ( [ almalinux = oraclelinux ] && [ 9 = 8 ] ) \
-     ) || ( \
-        yum -y install  bzip2-devel \
-                        libffi-devel \
-                        xz-devel && \
-        curl -O https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tar.xz && \
-        tar -xvf Python-3.8.16.tar.xz && \
-        cd Python-3.8.16 && \
-        ./configure  && \
-        make -j 8 && \
-        make altinstall && \
-        cd .. && \
-        rm -f Python-3.8.16.tar.xz && \
-        rm -rf Python-3.8.16 && \
-        ln -fs /usr/local/bin/python3.8 /usr/bin/python3 \
-     )
+RUN yum -y install  bzip2-devel \
+                libffi-devel \
+                xz-devel && \
+    git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
+    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
+
+RUN source ~/.bashrc && pyenv install 3.8.16 && pyenv global 3.8.16
 
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
