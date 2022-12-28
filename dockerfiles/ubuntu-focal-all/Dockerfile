@@ -117,7 +117,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
     rm -rf cmake-3.22.2
 
 # install pyenv and python 3.8 to be able to execute tools scripts
-RUN ARG PYTHON_VERSION=3.8.16
+ARG PYTHON_VERSION=3.8.16
 RUN set -ex \
     && curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
     && pyenv update \
