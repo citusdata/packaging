@@ -106,6 +106,7 @@ RUN [[ oraclelinux != centos ]] || [[ 6 != 7 ]] || ( \
     yum -y install  devtoolset-8-gcc-c++ && scl enable devtoolset-8 bash )
 
 # install python 3.8 to be able to execute tools scripts
+RUN ARG PYTHON_VERSION=3.8.16
 RUN yum -y install  bzip2-devel \
                 libffi-devel \
                 xz-devel && \
