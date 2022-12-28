@@ -45,6 +45,9 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
     && [[ -z "" ]] || yum install -y ) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
+        bzip2-devel \
+        libffi-devel \
+        xz-devel \
         flex \
         gcc-c++ \
         hunspell-en \
@@ -106,10 +109,7 @@ RUN [[ oraclelinux != centos ]] || [[ 7 != 7 ]] || ( \
 
 # install python 3.8 to be able to execute tools scripts
 ARG PYTHON_VERSION=3.8.16
-RUN yum -y install  bzip2-devel \
-                libffi-devel \
-                xz-devel && \
-    set -ex \
+RUN set -ex \
     && curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
     && export PYENV_ROOT="$HOME/.pyenv" && export PATH="$PYENV_ROOT/bin:$PATH" \
     && pyenv update \
