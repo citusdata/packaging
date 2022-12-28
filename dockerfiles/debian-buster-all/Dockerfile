@@ -1,7 +1,6 @@
 # vim:set ft=dockerfile:
 FROM debian:buster
 ARG DEBIAN_FRONTEND=noninteractive
-SHELL ["/bin/bash", "-c"]
 
 # See https://github.com/tianon/docker-brew-debian/issues/49 for discussion of the following
 #
@@ -120,6 +119,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
 ARG PYTHON_VERSION=3.8.16
 RUN set -ex \
     && curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
+    && export PYENV_ROOT="$HOME/.pyenv" && export PATH="$PYENV_ROOT/bin:$PATH" \
     && pyenv update \
     && pyenv install $PYTHON_VERSION \
     && pyenv global $PYTHON_VERSION \

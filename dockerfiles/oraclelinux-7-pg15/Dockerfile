@@ -1,6 +1,5 @@
 # vim:set ft=dockerfile:
 FROM oraclelinux:7
-SHELL ["/bin/bash", "-c"]
 RUN [[ oraclelinux != centos ]] || [[ 7 != 8 ]] || ( \
     cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
     && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-* \
@@ -112,6 +111,7 @@ RUN yum -y install  bzip2-devel \
                 xz-devel && \
     set -ex \
     && curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
+    && export PYENV_ROOT="$HOME/.pyenv" && export PATH="$PYENV_ROOT/bin:$PATH" \
     && pyenv update \
     && pyenv install $PYTHON_VERSION \
     && pyenv global $PYTHON_VERSION \
