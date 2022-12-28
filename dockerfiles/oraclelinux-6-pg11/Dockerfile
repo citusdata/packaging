@@ -106,16 +106,15 @@ RUN [[ oraclelinux != centos ]] || [[ 6 != 7 ]] || ( \
     yum -y install  devtoolset-8-gcc-c++ && scl enable devtoolset-8 bash )
 
 # install python 3.8 to be able to execute tools scripts
-# if os in (centos, oraclelinux) and release in (7, 8)
 RUN yum -y install  bzip2-devel \
                 libffi-devel \
                 xz-devel && \
-    git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
-    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
-    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
-
-RUN source ~/.bashrc && pyenv install 3.8.16 && pyenv global 3.8.16
+    set -ex \
+    && curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
+    && pyenv update \
+    && pyenv install $PYTHON_VERSION \
+    && pyenv global $PYTHON_VERSION \
+    && pyenv rehash
 
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros

@@ -117,16 +117,13 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
     rm -rf cmake-3.22.2
 
 # install pyenv and python 3.8 to be able to execute tools scripts
-RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
-    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
-    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
-
-# install python 3.8 and set it as default. Reloading the bashrc did not worked for ubuntu \
-# therefore I need to export the path explicitly here.
-RUN source ~/.bashrc && export PYENV_ROOT="$HOME/.pyenv" && export PATH="$PYENV_ROOT/bin:$PATH" && \
-    pyenv install 3.8.16 && pyenv global 3.8.16
-
+RUN ARG PYTHON_VERSION=3.8.16
+RUN set -ex \
+    && curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
+    && pyenv update \
+    && pyenv install $PYTHON_VERSION \
+    && pyenv global $PYTHON_VERSION \
+    && pyenv rehash
 
 
 # Added for pg15 beta package support.
