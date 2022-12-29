@@ -55,6 +55,8 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
         devscripts \
         fakeroot \
         flex \
+        libbz2-dev \
+        libffi-dev \
         libcurl4-openssl-dev \
         libdistro-info-perl \
         libedit-dev \
