@@ -15,6 +15,7 @@ base:
   - ".* unused substitution variable \\$\\{misc:Depends\\}.*"
   - ".*: substitution variable \\$\\{postgresql:Depends\\} unused, but is defined.*"
   - ".* unused substitution variable \\$\\{postgresql:Depends\\}.*"
+  - ".* warning: field 'compareValueFunctionCall' with variable sized type 'FunctionCall2InfoData'.*"
   - ".*: warning: 'RSA_new' is deprecated: Since OpenSSL 3.0 \\[-Wdeprecated-declarations\\]"
   - ".*: warning: 'RSA_generate_key_ex' is deprecated: Since OpenSSL 3.0 \\[-Wdeprecated-declarations\\]"
   - ".*: warning: 'RSA_new' is deprecated \\[-Wdeprecated-declarations\\]"
@@ -23,6 +24,7 @@ base:
   - "autoreconf: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
   - "autoheader: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
   - "\\d+ warnings generated."
+
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"

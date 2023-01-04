@@ -1,15 +1,3 @@
-citus-enterprise (10.2.8.citus-1) stable; urgency=low
-
-  * Official 10.2.8 release of Citus Enterprise
-
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 19 Aug 2022 13:23:44 +0000
-
-citus-enterprise (10.2.6.citus-1) stable; urgency=low
-
-  * Official 10.2.6 release of Citus Enterprise
-
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 20 May 2022 12:06:44 +0000
-
 citus-enterprise (8.3.4.citus-1) stable; urgency=low
 
   * Official 8.3.4 release of Citus Enterprise
@@ -63,6 +51,12 @@ citus-enterprise (10.1.5.citus-1) stable; urgency=low
   * Official 10.1.5 release of Citus Enterprise
 
  -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 20 May 2022 12:49:03 +0000
+
+citus-enterprise (10.2.6.citus-1) stable; urgency=low
+
+  * Official 10.2.6 release of Citus Enterprise
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 20 May 2022 12:06:44 +0000
 
 citus-enterprise (11.0.1-beta.citus-1) stable; urgency=low
 
