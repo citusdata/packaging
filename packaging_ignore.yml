@@ -24,6 +24,7 @@ base:
   - "autoreconf: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
   - "autoheader: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
   - "\\d+ warnings generated."
+  - "1 warning generated."
 
 debian:
   - ".*: W: invalid-license Commercial"
