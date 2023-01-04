@@ -19,6 +19,14 @@ base:
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
+  - ".*: warning: 'RSA_new' is deprecated: Since OpenSSL 3.0 \\[-Wdeprecated-declarations\\]"
+  - ".*: warning: 'RSA_generate_key_ex' is deprecated: Since OpenSSL 3.0 \\[-Wdeprecated-declarations\\]"
+  - ".*: warning: 'RSA_new' is deprecated \\[-Wdeprecated-declarations\\]"
+  - ".*: warning: 'RSA_generate_key_ex' is deprecated \\[-Wdeprecated-declarations\\]"
+  - ".*: warning: 'EVP_PKEY_assign' is deprecated.*"
+  - "autoreconf: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
+  - "autoheader: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
+  - "\\d+ warnings generated."
 
 rpm:
   - ".*: W: invalid-license Commercial"
