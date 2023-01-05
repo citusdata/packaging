@@ -1,7 +1,7 @@
 name: Build Package
 
 env:
-  MAIN_BRANCH: "all-enterprise"
+  MAIN_BRANCH: "8.3.4-ent-base"
   PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -23,21 +23,14 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - el/7
-          - el/8
-          - ol/7
-          - ol/8
-          - debian/stretch
-          - debian/buster
-          - ubuntu/bionic
-          - ubuntu/focal
+          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Clone tools branch
-        run: git clone -b v0.8.12 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.24 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
