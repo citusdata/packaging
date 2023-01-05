@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - ubuntu/focal
+          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
