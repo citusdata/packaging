@@ -23,14 +23,6 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - el/7
-          - el/8
-          - ol/7
-          - ol/8
-          - debian/stretch
-          - debian/buster
-          - ubuntu/bionic
-          - ubuntu/focal
           - ubuntu/jammy
 
     steps:
