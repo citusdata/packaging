@@ -1,7 +1,7 @@
 name: Build Package
 
 env:
-  MAIN_BRANCH: "all-enterprise"
+  MAIN_BRANCH: "9.5.11-ent-base"
   PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
