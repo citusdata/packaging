@@ -31,7 +31,7 @@ for version in postgres_versions:
         yaml.dump(data, file)
         print()
         result = subprocess.run(
-            ["python", "-m", "tools.packaging_automation.citus_package", "--gh_token", "'${GH_TOKEN}'", "--platform",
+            ["python", "-m", "tools.packaging_automation.citus_package", "--gh_token", github_token, "--platform",
              platform,
              "--build_type", "nightly",
              "--secret_key", packaging_secret_key,
