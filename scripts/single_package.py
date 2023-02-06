@@ -2,7 +2,8 @@ import yaml
 import subprocess
 
 # load yaml file
-with open("postgres-matrix.yaml") as file:
+postgres_matrix_filename = f"postgres-matrix.yml"
+with open(postgres_matrix_filename) as file:
     data = yaml.full_load(file)
 
 # get the postgres_versions list
@@ -11,8 +12,8 @@ postgres_versions = data['version_matrix'][0]['postgres_versions']
 # loop through each version and write to a separate file
 for version in postgres_versions:
     data['version_matrix'][0]['postgres_versions'] = [version]
-    filename = f"postgres-matrix.yml"
-    with open(filename, 'w') as file:
+
+    with open(postgres_matrix_filename, 'w') as file:
         yaml.dump(data, file)
     result = subprocess.run(
         ["python", "-m ", "tools.packaging_automation.citus_package", "--gh_token", "'${GH_TOKEN}'", "--platform",
