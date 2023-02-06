@@ -7,10 +7,12 @@ with open(postgres_matrix_filename) as file:
     data = yaml.full_load(file)
 
 # get the postgres_versions list
+print(f"Version matrix: {data['version_matrix']}")
 postgres_versions = data['version_matrix'][0]['postgres_versions']
 
 # loop through each version and write to a separate file
 for version in postgres_versions:
+
     data['version_matrix'][0]['postgres_versions'] = [version]
 
     with open(postgres_matrix_filename, 'w') as file:
