@@ -35,7 +35,7 @@ for version in postgres_versions:
              "--passphrase", packaging_passphrase,
              "--output_dir", f"{current_path}/packages/",
              "--input_files_dir", f"{current_path}/packaging"],
-            capture_output=True)
+            check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         print(result.stderr.decode("utf-8"))
         print(result.stdout.decode("utf-8"))
 
