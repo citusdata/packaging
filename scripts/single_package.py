@@ -11,7 +11,7 @@ postgres_versions = data['version_matrix'][0]['postgres_versions']
 # loop through each version and write to a separate file
 for version in postgres_versions:
     data['version_matrix'][0]['postgres_versions'] = [version]
-    filename = f"postgres-matrix.yaml"
+    filename = f"postgres-matrix.yml"
     with open(filename, 'w') as file:
         yaml.dump(data, file)
     result = subprocess.run(
