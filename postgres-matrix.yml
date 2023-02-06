@@ -3,4 +3,4 @@ project_name: pg_azure
 
 version_matrix:
   - 1.0.2:
-      postgres_versions: [14]
+      postgres_versions: [15]
