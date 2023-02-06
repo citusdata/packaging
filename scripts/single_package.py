@@ -37,6 +37,7 @@ for version in postgres_versions:
              "--input_files_dir", f"{current_path}/packaging"],
             capture_output=True)
         print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
 
 version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = postgres_versions
 with open(postgres_matrix_filename, 'w') as file:
