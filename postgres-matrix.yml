@@ -4,5 +4,3 @@ version_matrix:
 - 1.0.2:
     postgres_versions:
     - 13
-    - 14
-    - 15
