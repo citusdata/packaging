@@ -1,5 +1,12 @@
 import yaml
 import subprocess
+import os
+
+platform = os.getenv("PLATFORM")
+github_token = os.getenv("GH_TOKEN")
+packaging_secret_key = os.getenv("PACKAGING_SECRET_KEY")
+packaging_passphrase = os.getenv("PACKAGING_PASSPHRASE")
+current_path = os.getcwd()
 
 # load yaml file
 postgres_matrix_filename = f"postgres-matrix.yml"
@@ -21,12 +28,12 @@ for version in postgres_versions:
 
         result = subprocess.run(
             ["python", "-m", "tools.packaging_automation.citus_package", "--gh_token", "'${GH_TOKEN}'", "--platform",
-             "'${PLATFORM}'",
+             platform,
              "--build_type", "nightly",
-             "--secret_key", "'${PACKAGING_SECRET_KEY}'",
-             "--passphrase", "'${PACKAGING_PASSPHRASE}'",
-             "--output_dir", "$(pwd)/packages/",
-             "--input_files_dir", "$(pwd)/packaging"],
+             "--secret_key", packaging_secret_key,
+             "--passphrase", packaging_passphrase,
+             "--output_dir", f"{current_path}/packages/",
+             "--input_files_dir", f"{current_path}/packaging"],
             capture_output=True)
         print(result.stderr.decode("utf-8"))
 
