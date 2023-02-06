@@ -19,9 +19,15 @@ for version in postgres_versions:
     with open(postgres_matrix_filename, 'w') as file:
         yaml.dump(data, file)
         result = subprocess.run(
-            ["python", "-m ", "tools.packaging_automation.citus_package"],
+            ["python", "-m ", "tools.packaging_automation.citus_package", "--gh_token", "'${GH_TOKEN}'", "--platform",
+             "'${PLATFORM}'",
+             "--build_type", "nightly",
+             "--secret_key", "'${PACKAGING_SECRET_KEY}'",
+             "--passphrase", "'${PACKAGING_PASSPHRASE}'",
+             "--output_dir", "$(pwd)/packages/",
+             "--input_files_dir", "$(pwd)/packaging"],
             capture_output=True)
-        print(result.stderr.decode("utf-8"))
+        print(result.stdout.decode("utf-8"))
 
 version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = postgres_versions
 with open(postgres_matrix_filename, 'w') as file:
