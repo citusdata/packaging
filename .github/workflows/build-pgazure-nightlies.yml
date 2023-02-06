@@ -58,7 +58,6 @@ jobs:
       - name: Build packages
         run: |
           python -m  scripts.single_package
-          echo "Platform is ${PLATFORM}"
         env:
           PLATFORM: ${{ matrix.platform }}
       - name: Archive production artifacts
