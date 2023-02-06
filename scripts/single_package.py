@@ -24,9 +24,12 @@ for version in postgres_versions:
     version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = [version]
     print(f"Running for version:  {version}")
     print(f"Platform: {platform}")
+    print(f"Github token: {github_token}")
+    print(f"packaging_secret_key: {packaging_secret_key}")
+    print(f"packaging_passphrase: {packaging_passphrase}")
     with open(postgres_matrix_filename, 'w') as file:
         yaml.dump(data, file)
-
+        print()
         result = subprocess.run(
             ["python", "-m", "tools.packaging_automation.citus_package", "--gh_token", "'${GH_TOKEN}'", "--platform",
              platform,
