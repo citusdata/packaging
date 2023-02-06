@@ -57,15 +57,9 @@ jobs:
 
       - name: Build packages
         run: |
-          python -m  tools.packaging_automation.citus_package \
-          --gh_token "${GH_TOKEN}" \
-          --platform "${{ matrix.platform }}" \
-          --build_type "nightly" \
-          --secret_key "${PACKAGING_SECRET_KEY}" \
-          --passphrase "${PACKAGING_PASSPHRASE}" \
-          --output_dir "$(pwd)/packages/" \
-          --input_files_dir "$(pwd)/packaging" \
-          --package_unsigned
+          python -m  scripts.single_package
+        env:
+          PLATFORM: ${{ matrix.platform }}
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
