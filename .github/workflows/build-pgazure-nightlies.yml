@@ -57,7 +57,7 @@ jobs:
 
       - name: Build packages
         run: |
-          python -m  scripts.single_package
+          python -m scripts.single_package
         env:
           PLATFORM: ${{ matrix.platform }}
       - name: Archive production artifacts
