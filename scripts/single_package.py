@@ -23,6 +23,7 @@ postgres_versions = version_matrix[0][list(version_matrix[0].keys())[0]]['postgr
 for version in postgres_versions:
     version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = [version]
     print(f"Running for version:  {version}")
+    print(f"Platform: {platform}")
     with open(postgres_matrix_filename, 'w') as file:
         yaml.dump(data, file)
 
