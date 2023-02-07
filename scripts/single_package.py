@@ -29,7 +29,6 @@ for version in postgres_versions:
     print(f"packaging_passphrase: {packaging_passphrase}")
     with open(postgres_matrix_filename, 'w') as file:
         yaml.dump(data, file)
-        print()
         result = subprocess.run(
             ["python", "-m", "tools.packaging_automation.citus_package", "--gh_token", github_token, "--platform",
              platform,
