@@ -9,6 +9,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  BUILD_TYPE: nightly
 on:
   push:
     branches:
@@ -25,12 +26,14 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          # We will remove el/8 support for all apps in the future. For this project packaging image should be updated.But we
-          # don't want to invest.
-          # - el/8
-          # temporarily removed from nightlies since pg15 beta is not being downloaded for ol/7
-          # - ol/7
+          - el/7
+#          - el/8
+          - debian/stretch
+          - debian/buster
+          - debian/bullseye
+          - ubuntu/bionic
           - ubuntu/focal
+          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
