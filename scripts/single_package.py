@@ -1,12 +1,22 @@
 import yaml
 import subprocess
 import os
+import shlex
 
 platform = os.getenv("PLATFORM")
 github_token = os.getenv("GH_TOKEN")
 packaging_secret_key = os.getenv("PACKAGING_SECRET_KEY")
 packaging_passphrase = os.getenv("PACKAGING_PASSPHRASE")
 current_path = os.getcwd()
+
+
+def run_with_output(command, *args, **kwargs):
+    # this method's main objective is to return output. Therefore it is caller's responsibility to handle
+    # success status
+    # pylint: disable=subprocess-run-check
+    result = subprocess.run(shlex.split(command), *args, capture_output=True, **kwargs)
+    return result
+
 
 # load yaml file
 postgres_matrix_filename = f"postgres-matrix.yml"
@@ -22,26 +32,17 @@ postgres_versions = version_matrix[0][list(version_matrix[0].keys())[0]]['postgr
 # loop through each version and write to a separate file
 for version in postgres_versions:
     version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = [version]
-    print(f"Running for version:  {version}")
-    print(f"Platform: {platform}")
-    print(f"Github token: {github_token}")
-    print(f"packaging_secret_key: {packaging_secret_key}")
-    print(f"packaging_passphrase: {packaging_passphrase}")
+
     with open(postgres_matrix_filename, 'w') as file:
         yaml.dump(data, file)
-        result = subprocess.run(
-            ["python", "-m", "tools.packaging_automation.citus_package", "--gh_token", github_token, "--platform",
-             platform,
-             "--build_type", "nightly",
-             "--secret_key", packaging_secret_key,
-             "--passphrase", packaging_passphrase,
-             "--output_dir", f"{current_path}/packages/",
-             "--input_files_dir", f"{current_path}/packaging"],
-            check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        result = run_with_output(
+            f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
+            f"--build_type nightly --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
+            f"--output_dir {current_path}/packages/ --input_files_dir {current_path}/packaging", text=True)
         if result.stderr:
-            print(result.stderr.decode("utf-8"))
+            print(result.stderr)
         if result.stdout:
-            print(result.stdout.decode("utf-8"))
+            print(result.stdout)
 
 version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = postgres_versions
 with open(postgres_matrix_filename, 'w') as file:
