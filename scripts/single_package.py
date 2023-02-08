@@ -35,6 +35,7 @@ for version in postgres_versions:
     version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = [version]
 
     with open(postgres_matrix_filename, 'w') as file:
+        print(f"Package build for postgres version {version} started")
         yaml.dump(data, file)
         result = run_with_output(
             f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
@@ -44,6 +45,8 @@ for version in postgres_versions:
             print(result.stderr)
         if result.stdout:
             print(result.stdout)
+
+        print(f"Package build for postgres version {version} finished")
 
 version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = postgres_versions
 with open(postgres_matrix_filename, 'w') as file:
