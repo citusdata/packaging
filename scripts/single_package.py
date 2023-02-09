@@ -37,7 +37,7 @@ for version in postgres_versions:
     with open(postgres_matrix_filename, 'w') as file:
         print(f"Package build for postgres version {version} started")
         yaml.dump(data, file)
-    with open(postgres_matrix_filename, 'w') as file:
+    with open(postgres_matrix_filename, 'r') as file:
         print("---------Contents of postgres-matrix.yml--------")
         contents = file.read()
         print(contents)
