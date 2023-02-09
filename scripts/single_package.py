@@ -37,20 +37,21 @@ for version in postgres_versions:
     with open(postgres_matrix_filename, 'w') as file:
         print(f"Package build for postgres version {version} started")
         yaml.dump(data, file)
+    with open(postgres_matrix_filename, 'w') as file:
         print("---------Contents of postgres-matrix.yml--------")
         contents = file.read()
         print(contents)
         print("--------End of contents of postgres-matrix.yml-----")
-        result = run_with_output(
-            f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
-            f"--build_type nightly --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
-            f"--output_dir {current_path}/packages/ --input_files_dir {current_path}/packaging", text=True)
-        if result.stderr:
-            print(result.stderr)
-        if result.stdout:
-            print(result.stdout)
+    result = run_with_output(
+        f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
+        f"--build_type nightly --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
+        f"--output_dir {current_path}/packages/ --input_files_dir {current_path}/packaging", text=True)
+    if result.stderr:
+        print(result.stderr)
+    if result.stdout:
+        print(result.stdout)
 
-        print(f"Package build for postgres version {version} finished")
+    print(f"Package build for postgres version {version} finished")
 
 version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = postgres_versions
 with open(postgres_matrix_filename, 'w') as file:
