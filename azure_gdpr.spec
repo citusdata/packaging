@@ -7,7 +7,7 @@ Summary:	GDPR compliant logging for Azure
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.9.citus
+Version:	2.0.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
@@ -49,6 +49,10 @@ PostgreSQL extension for GDPR compliant logging for Azure
 %endif
 
 %changelog
+* Sun Feb 12 2023 - Philip Dubé <phdub@microsoft.com> 2.0.citus-1
+- support prepending log_line_prefix to message
+- log query counting to MonOBPgSqlQueryStats
+
 * Wed Aug 24 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.9.citus-1
 - Official 1.9 release of Azure GDPR
 

@@ -1,3 +1,10 @@
+azure-gdpr (2.0.citus-1) stable; urgency=low
+
+  * support prepending log_line_prefix to message
+  * log query counting to MonOBPgSqlQueryStats
+
+ -- Philip Dube <phdub@microsoft.com>  Sun, 12 Feb 2023 11:28:00 +0000
+
 azure-gdpr (1.9.citus-1) stable; urgency=low
 
   * Official 1.9 release of Azure GDPR
