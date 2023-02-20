@@ -30,6 +30,8 @@ version_matrix = data['version_matrix']
 print(f"Version matrix: {version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions']}")
 postgres_versions = version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions']
 
+print(f"Packaging Path: {current_path}")
+
 # loop through each version and write to a separate file
 for version in postgres_versions:
     version_matrix[0][list(version_matrix[0].keys())[0]]['postgres_versions'] = [version]
@@ -45,7 +47,7 @@ for version in postgres_versions:
     result = run_with_output(
         f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
         f"--build_type nightly --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
-        f"--output_dir {current_path}/packages/ --input_files_dir {current_path}/packaging", text=True)
+        f"--output_dir {current_path}/packages/ --input_files_dir {current_path}", text=True)
     if result.stderr:
         print(result.stderr)
     if result.stdout:
