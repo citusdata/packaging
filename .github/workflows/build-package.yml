@@ -58,6 +58,8 @@ jobs:
           else 
             python -m scripts.single_package 
           fi
+        env:
+          PLATFORM: ${{ matrix.platform }}
 
       - name: Publish packages
         run: |
