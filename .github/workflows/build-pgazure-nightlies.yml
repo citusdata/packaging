@@ -50,7 +50,7 @@ jobs:
         run: git clone -b pgaz_test --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Clone build branch
-        run: git clone -b "single_package_debian_with_script" --depth=1  https://github.com/citusdata/packaging.git packaging
+        run: git clone -b "all-pg-azure-storage" --depth=1  https://github.com/citusdata/packaging.git packaging
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install -y libcurl4
@@ -60,6 +60,7 @@ jobs:
 
       - name: Build packages
         run: |
+          export PACKAGING_PATH=$(pwd)/packaging
           python -m scripts.single_package
         env:
           PLATFORM: ${{ matrix.platform }}

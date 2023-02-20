@@ -8,7 +8,7 @@ github_token = os.getenv("GH_TOKEN")
 packaging_secret_key = os.getenv("PACKAGING_SECRET_KEY")
 packaging_passphrase = os.getenv("PACKAGING_PASSPHRASE")
 build_type = os.getenv("BUILD_TYPE")
-current_path = os.getcwd()
+current_path = os.getenv("PACKAGING_PATH")
 
 
 def run_with_output(command, *args, **kwargs):

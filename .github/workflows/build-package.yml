@@ -46,6 +46,7 @@ jobs:
 
       - name: Build packages
         run: |
+          export PACKAGING_PATH=$(pwd)
           if [ "${{ matrix.platform }}" == "el/7" ]; then 
             python -m  tools.packaging_automation.citus_package \
             --gh_token "${GH_TOKEN}" \
