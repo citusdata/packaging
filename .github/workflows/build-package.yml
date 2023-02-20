@@ -46,7 +46,7 @@ jobs:
 
       - name: Build packages
         run: |
-          if [ "${{ matrix.platform }}" == "el/7" ]; then \
+          if [ "${{ matrix.platform }}" == "el/7" ]; then 
             python -m  tools.packaging_automation.citus_package \
             --gh_token "${GH_TOKEN}" \
             --platform "${{ matrix.platform }}" \
@@ -55,8 +55,8 @@ jobs:
             --passphrase "${PACKAGING_PASSPHRASE}" \
             --output_dir "$(pwd)/packages/" \
             --input_files_dir "$(pwd)" \
-          else \
-            python -m scripts.single_package \
+          else 
+            python -m scripts.single_package 
           fi
 
       - name: Publish packages
