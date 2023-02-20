@@ -1,7 +1,7 @@
 name: PG Azure Storage Build & Publish Packages
 
 env:
-  MAIN_BRANCH: "all-pg-azure-storage"
+  MAIN_BRANCH: "single_package_debian_with_script"
   PACKAGE_CLOUD_REPO_NAME: "citusdata/enterprise"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -46,14 +46,18 @@ jobs:
 
       - name: Build packages
         run: |
-          python -m  tools.packaging_automation.citus_package \
-          --gh_token "${GH_TOKEN}" \
-          --platform "${{ matrix.platform }}" \
-          --build_type "release" \
-          --secret_key "${PACKAGING_SECRET_KEY}" \
-          --passphrase "${PACKAGING_PASSPHRASE}" \
-          --output_dir "$(pwd)/packages/" \
-          --input_files_dir "$(pwd)" \
+          if [ "${{ matrix.platform }}" == "el/7" ]; then \
+            python -m  tools.packaging_automation.citus_package \
+            --gh_token "${GH_TOKEN}" \
+            --platform "${{ matrix.platform }}" \
+            --build_type "release" \
+            --secret_key "${PACKAGING_SECRET_KEY}" \
+            --passphrase "${PACKAGING_PASSPHRASE}" \
+            --output_dir "$(pwd)/packages/" \
+            --input_files_dir "$(pwd)" \
+          else \
+            python -m scripts.single_package \
+          fi
 
       - name: Publish packages
         run: |
@@ -63,5 +67,5 @@ jobs:
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
-          --main_branch "${GITHUB_REF##*/}"
+          --main_branch "${MAIN_BRANCH}"
 
