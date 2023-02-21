@@ -8,6 +8,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+
 on:
   push:
     branches:
@@ -57,6 +58,7 @@ jobs:
             --output_dir "$(pwd)/packages/" \
             --input_files_dir "$(pwd)" 
           else 
+            export PACKAGE_TYPE: "release"
             python -m scripts.single_package 
           fi
         env:

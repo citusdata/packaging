@@ -9,6 +9,7 @@ packaging_secret_key = os.getenv("PACKAGING_SECRET_KEY")
 packaging_passphrase = os.getenv("PACKAGING_PASSPHRASE")
 build_type = os.getenv("BUILD_TYPE")
 current_path = os.getenv("PACKAGING_PATH")
+package_type = os.getenv("PACKAGE_TYPE")
 
 
 def run_with_output(command, *args, **kwargs):
@@ -46,7 +47,7 @@ for version in postgres_versions:
         print("--------End of contents of postgres-matrix.yml-----")
     result = run_with_output(
         f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
-        f"--build_type release --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
+        f"--build_type {package_type} --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
         f"--output_dir {current_path}/packages/ --input_files_dir {current_path}", text=True)
     if result.stderr:
         print(result.stderr)
