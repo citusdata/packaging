@@ -46,7 +46,7 @@ for version in postgres_versions:
         print("--------End of contents of postgres-matrix.yml-----")
     result = run_with_output(
         f"python -m tools.packaging_automation.citus_package --gh_token {github_token} --platform {platform} "
-        f"--build_type nightly --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
+        f"--build_type release --secret_key '{packaging_secret_key}' --passphrase '{packaging_passphrase}' "
         f"--output_dir {current_path}/packages/ --input_files_dir {current_path}", text=True)
     if result.stderr:
         print(result.stderr)
