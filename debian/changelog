@@ -2,7 +2,7 @@ azure-gdpr (2.1.citus-1) stable; urgency=low
 
   * separate logged query counts into internal & external counts
 
-  -- Philip Dube <phdub@microsoft.com>  Sun, 11 Mar 2023 11:45:00 +0000
+ -- Philip Dube <phdub@microsoft.com>  Sun, 11 Mar 2023 11:45:00 +0000
 
 azure-gdpr (2.0.citus-1) stable; urgency=low
 
