@@ -56,7 +56,7 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
-* Thu Apr 4 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.1-1
+* Tue Apr 4 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.1-1
 - Official 1.5.1 release of Pg Cron
 * Thu Aug 18 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.4.2-1
 - Official 1.4.2 release of Pg Cron
