@@ -56,9 +56,11 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
-* Thu Aug 18 2022 - Gurkan Indibay <marco@citusdata.com> 1.4.2-1
+* Thu Apr 4 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.4.2-1
+- Official 1.5.1 release of Pg Cron
+* Thu Aug 18 2022 - Gurkan Indibay <gindibay@microsoft.com> 1.4.2-1
 - Official 1.4.2 release of Pg Cron
-* Wed Sep 29 2021 - Gurkan Indibay <marco@citusdata.com> 1.4.1-1
+* Wed Sep 29 2021 - Gurkan Indibay <gindibay@microsoft.com> 1.4.1-1
 - Official 1.4.1 release of Pg Cron
 * Mon Mar 29 2021 - Marco Slot <marco@citusdata.com> 1.3.1-1
 - Fixes a memory leak
