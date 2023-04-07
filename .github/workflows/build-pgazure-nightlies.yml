@@ -9,6 +9,11 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  MSRUSTUP_PAT: ${{ secrets.MSRUSTUP_PAT }}
+  MSCODEHUB_USERNAME: ${{ secrets.MSCODEHUB_USERNAME }}
+  MSCODEHUB_PASSWORD: ${{ secrets.MSCODEHUB_PASSWORD }}
+  INSTALL_RUST: 1
+  CI: 1
 on:
   push:
     branches:
