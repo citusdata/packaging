@@ -69,8 +69,8 @@ jobs:
           --secret_key "${PACKAGING_SECRET_KEY}" \
           --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
-          --input_files_dir "$(pwd)/packaging" \
-          --package_unsigned
+          --input_files_dir "$(pwd)/packaging"
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
