@@ -59,6 +59,8 @@ jobs:
 
       - name: Build packages
         run: |
+          echo "INSTALL_RUST=${INSTALL_RUST}"
+          echo "CI=${CI}"
           python -m  tools.packaging_automation.citus_package \
           --gh_token "${GH_TOKEN}" \
           --platform "${{ matrix.platform }}" \
