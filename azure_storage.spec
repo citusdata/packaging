@@ -53,7 +53,7 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
-* Fri Apr 7 2022 - Gledis Zeneli <gindibay@microsoft> 1.2.0.citus-1
+* Fri Apr 7 2023 - Gledis Zeneli <gindibay@microsoft> 1.2.0.citus-1
 - Official 1.2.0 release of Pg Azure Storage
 
 * Thu Dec 22 2022 - Gledis Zeneli <glediszeneli@microsoft> 1.1.0.citus-1
