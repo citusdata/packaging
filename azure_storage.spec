@@ -2,6 +2,8 @@
 %global pgpackageversion 14
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname azure_storage
+%global INSTALL_RUST 1
+%global CI 1
 
 Summary:	Pg Azure storage
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
@@ -24,6 +26,8 @@ PostgreSQL extension for Azure storage
 %setup -q -n %{sname}-%{version}
 
 %build
+
+
 # make %{?_smp_mflags}
 # PG_CONFIG=%{pginstdir}/bin/pg_config make %{?_smp_mflags}
 # export PATH=/usr/pgsql-11/bin/pg_config:$PATH
@@ -32,6 +36,8 @@ make %{?_smp_mflags}
 # make %{?_smp_mflags}
 
 %install
+export INSTALL_RUST=1
+export CI=1
 %make_install PG_CONFIG=%{pginstdir}/bin/pg_config
 %clean
 %{__rm} -rf %{buildroot}
