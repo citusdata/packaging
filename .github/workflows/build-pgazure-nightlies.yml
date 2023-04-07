@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b pgaz_test --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b pg_azure_storage_env --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Clone build branch
         run: git clone -b "all-pg-azure-storage" --depth=1  https://github.com/citusdata/packaging.git packaging
