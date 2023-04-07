@@ -1,4 +1,4 @@
 pkgname=pgcron
 hubproj=pg_cron
 pkgdesc='Periodic job scheduler of PostgreSQL'
-pkglatest=1.5.1.citus-1
+pkglatest=1.5.2.citus-1

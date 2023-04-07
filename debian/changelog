@@ -1,8 +1,14 @@
+pgcron (1.5.2.citus-1) stable; urgency=low
+
+  * Official 1.5.2 release of PG Cron
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 7 Apr 2022 12:55:45 +0000
+
 pgcron (1.5.1.citus-1) stable; urgency=low
 
   * Official 1.5.1 release of PG Cron
 
- -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 4 Apr 2022 10:55:45 +0000
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 4 Apr 2023 10:55:45 +0000
 
 pgcron (1.4.2.citus-1) stable; urgency=low
 
