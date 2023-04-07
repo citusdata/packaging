@@ -1,4 +1,6 @@
 #!/usr/bin/make -f
+export INSTALL_RUST=1
+export CI=1
 
 include /usr/share/postgresql-common/pgxs_debian_control.mk
 
