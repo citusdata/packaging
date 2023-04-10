@@ -8,6 +8,7 @@ RUN [[ oraclelinux != centos ]] || [[ 8 != 8 ]] || ( \
 RUN yum -y update
 
 RUN  [[ 8 != 8 ]] || ( \
+    dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf repolist && \
     dnf config-manager --enable epel && \
