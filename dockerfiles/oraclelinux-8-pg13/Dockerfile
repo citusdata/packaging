@@ -120,6 +120,12 @@ RUN set -ex \
     && echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc \
     && echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 
+# install llvm-toolset-7 to be able to install clang 5.0
+# clang 5.0 is required to build pg_azure_storage project
+RUN yum install -y llvm-toolset-7 && yum clean all
+ENV LD_LIBRARY_PATH=/opt/rh/llvm-toolset-7/root/usr/lib64/:$LD_LIBRARY_PATH
+ENV PATH=/opt/rh/llvm-toolset-7/root/usr/bin:$PATH
+
 RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
