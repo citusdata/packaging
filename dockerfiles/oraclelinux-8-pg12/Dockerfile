@@ -12,13 +12,16 @@ RUN yum -y update
 RUN  [[ 8 != 8 ]] || ( \
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install epel-release -y && \
-    dnf --enablerepo=powertools install -y \
-        perl-IPC-Run \
+    dnf --enablerepo=powertools install -y perl-IPC-Run \
     )
 
 RUN  [[ 8 != 9 ]] || ( \
-    dnf install -y gcc make perl-devel perl-App-cpanminus && \
-    cpan IPC::Run \
+    dnf install epel-release -y && \
+    dnf config-manager --enable epel && \
+    dnf install yum-utils -y && \
+    dnf config-manager --set-enabled powertools && \
+    dnf install -y perl-IPC-Run \
+
     )
 
 # FIXME: Hack around docker/docker#10180
