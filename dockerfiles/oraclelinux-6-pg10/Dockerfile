@@ -11,13 +11,13 @@ RUN yum -y update
 
 RUN  [[ 6 != 8 ]] || ( \
     dnf install epel-release -y && \
-    dnf --enablerepo=powertools install -y \
+    dnf --enablerepo=crb install -y \
         perl-IPC-Run \
     )
 
 RUN  [[ 6 != 9 ]] || ( \
     dnf install epel-release -y && \
-    dnf --enablerepo=powertools install -y \
+    dnf --enablerepo=crb install -y \
         perl-IPC-Run \
     )
 
