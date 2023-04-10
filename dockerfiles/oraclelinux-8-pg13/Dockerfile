@@ -16,15 +16,12 @@ RUN  [[ oraclelinux != centos ]] || [[ 8 != 8 ]] || ( \
     )
 
 RUN  [[ oraclelinux != oraclelinux ]] || [[ 8 != 8 ]] || ( \
-    # curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
-    # curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
-    # dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm -y  && \
-    # dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm -y && \
-    # rm -f perl-IPC-Run-0.99-1.el8.noarch.rpm && \
-    # rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
-    dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
-    echo -e '[epel-vault]\nname=Extra Packages for Enterprise Linux 8 - $basearch - Vault\nbaseurl=https://vault.epel.cloud/8/$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8' > /etc/yum.repos.d/epel-vault.repo && \
-    dnf clean all \
+    curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
+    curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm -y  && \
+    dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm -y && \
+    rm -f perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
     )
 
 RUN  [[ oraclelinux != almalinux ]] || [[ 8 != 9 ]] || ( \
