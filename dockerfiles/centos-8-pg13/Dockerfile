@@ -12,7 +12,7 @@ RUN yum -y update
 RUN  [[ 8 != 8 ]] || ( \
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install epel-release -y && \
-    dnf --enablerepo=crb install -y \
+    dnf --enablerepo=powertools install -y \
         perl-IPC-Run \
     )
 
