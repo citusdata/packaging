@@ -10,6 +10,9 @@ RUN [[ centos != centos ]] || [[ 8 != 8 ]] || ( \
 RUN yum -y update
 
 RUN  [[ 8 != 8 ]] || ( \
+    dnf -y install dnf-plugins-core && \
+    dnf config-manager --set-enabled powertools && \
+    dnf repolist && \
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install epel-release -y && \
     dnf --enablerepo=powertools install -y perl-IPC-Run \
@@ -19,6 +22,7 @@ RUN  [[ 8 != 9 ]] || ( \
     dnf install epel-release -y && \
     dnf config-manager --enable epel && \
     dnf install yum-utils -y && \
+    sudo dnf install 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
     dnf install -y perl-IPC-Run \
 
