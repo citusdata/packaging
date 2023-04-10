@@ -105,7 +105,10 @@ RUN [[ oraclelinux != centos ]] || [[ 6 != 7 ]] || ( \
     yum -y remove git && \
     yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm && \
     yum -y install git && \
-    yum -y install  devtoolset-8-gcc-c++ && scl enable devtoolset-8 bash )
+    yum -y install  devtoolset-8-gcc-c++ && scl enable devtoolset-8 bash && \
+    yum -y install llvm-toolset-7 && \
+    yum clean all \
+    )
 
 # install python 3.8 to be able to execute tools scripts
 ARG PYTHON_VERSION=3.8.16
@@ -122,7 +125,6 @@ RUN set -ex \
 
 # install llvm-toolset-7 to be able to install clang 5.0
 # clang 5.0 is required to build pg_azure_storage project
-RUN yum install -y llvm-toolset-7 && yum clean all
 ENV LD_LIBRARY_PATH=/opt/rh/llvm-toolset-7/root/usr/lib64/:$LD_LIBRARY_PATH
 ENV PATH=/opt/rh/llvm-toolset-7/root/usr/bin:$PATH
 
