@@ -9,12 +9,10 @@ RUN yum -y update
 
 RUN  [[ oraclelinux != centos ]] || [[ 7 != 8 ]] || ( \
     dnf install epel-release -y && \
-    dnf -y install dnf-plugins-core && \
-    dnf repolist && \
-    dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
-    dnf config-manager --set-enabled powertools && \
+    dnf install dnf-plugins-core -y && \
     dnf install epel-release -y && \
-    dnf --enablerepo=powertools install -y perl-IPC-Run \
+    dnf config-manager --set-enabled powertools && \
+    dnf install -y perl-IPC-Run \
     )
 
 RUN  [[ oraclelinux != oraclelinux ]] || [[ 7 != 8 ]] || ( \
@@ -30,9 +28,6 @@ RUN  [[ oraclelinux != almalinux ]] || [[ 7 != 9 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf config-manager --enable epel && \
-    dnf update -y && \
-    dnf install yum-utils -y && \
-    dnf install 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled crb && \
     dnf install -y perl-IPC-Run \
     )
