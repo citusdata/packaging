@@ -12,8 +12,6 @@ env:
   MSRUSTUP_PAT: ${{ secrets.MSRUSTUP_PAT }}
   MSCODEHUB_USERNAME: ${{ secrets.MSCODEHUB_USERNAME }}
   MSCODEHUB_PASSWORD: ${{ secrets.MSCODEHUB_PASSWORD }}
-  INSTALL_RUST: "1"
-  CI: "1"
 on:
   push:
     branches:

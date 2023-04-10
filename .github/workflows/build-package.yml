@@ -8,6 +8,9 @@ env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+  MSRUSTUP_PAT: ${{ secrets.MSRUSTUP_PAT }}
+  MSCODEHUB_USERNAME: ${{ secrets.MSCODEHUB_USERNAME }}
+  MSCODEHUB_PASSWORD: ${{ secrets.MSCODEHUB_PASSWORD }}
 on:
   push:
     branches:
