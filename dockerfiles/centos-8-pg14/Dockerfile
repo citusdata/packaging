@@ -20,8 +20,8 @@ RUN  [[ centos != centos ]] || [[ 8 != 8 ]] || ( \
 RUN  [[ centos != oraclelinux ]] || [[ 8 != 8 ]] || ( \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
-    dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
-    dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm -y  && \
+    dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm -y && \
     rm -f perl-IPC-Run-0.99-1.el8.noarch.rpm && \
     rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
     )
