@@ -10,7 +10,7 @@ RUN [[ almalinux != centos ]] || [[ 9 != 8 ]] || ( \
 RUN yum -y update
 
 RUN  [[ 9 != 8 ]] || ( \
-    dnf config-manager --add-repo=https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
+    dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
     dnf install epel-release -y && \
     dnf --enablerepo=crb install -y \
         perl-IPC-Run \
@@ -18,9 +18,8 @@ RUN  [[ 9 != 8 ]] || ( \
 
 RUN  [[ 9 != 9 ]] || ( \
 
-    dnf install epel-release -y && \
-    dnf install -y \
-        perl-IPC-Run \
+    dnf install -y gcc make perl-devel && \
+    cpan IPC::Run \
     )
 
 # FIXME: Hack around docker/docker#10180
