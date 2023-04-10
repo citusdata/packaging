@@ -26,10 +26,6 @@ RUN  [[ %%os%% != oraclelinux ]] || [[ %%release%% != 8 ]] || ( \
     rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
     )
 
-
-    cpanm IPC::Run \
-    )
-
 RUN  [[ %%os%% != almalinux ]] || [[ %%release%% != 9 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
