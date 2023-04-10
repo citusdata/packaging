@@ -20,6 +20,7 @@ RUN  [[ 7 != 8 ]] || ( \
 
 RUN  [[ 7 != 9 ]] || ( \
     dnf install epel-release -y && \
+    dnf -y install dnf-plugins-core && \
     dnf config-manager --enable epel && \
     dnf install yum-utils -y && \
     sudo dnf install 'dnf-command(config-manager)' && \
