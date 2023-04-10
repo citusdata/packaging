@@ -18,10 +18,10 @@ RUN  [[ almalinux != centos ]] || [[ 9 != 8 ]] || ( \
     )
 
 RUN  [[ almalinux != oraclelinux ]] || [[ 9 != 8 ]] || ( \
-    curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
-    dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
     dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm \
+    dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm && \
     rm -f perl-IPC-Run-0.99-1.el8.noarch.rpm && \
     rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
     )
@@ -33,7 +33,6 @@ RUN  [[ almalinux != almalinux ]] || [[ 9 != 9 ]] || ( \
     dnf update -y && \
     dnf install yum-utils -y && \
     dnf install 'dnf-command(config-manager)' && \
-    dnf repolist && \
     dnf config-manager --set-enabled crb && \
     dnf install -y perl-IPC-Run \
     )
