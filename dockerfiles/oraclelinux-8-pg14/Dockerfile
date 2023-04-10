@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
 FROM oraclelinux:8
-RUN [[ oraclelinux != centos ]] [[ 8 != 8 ]] || ( \
+RUN [[ oraclelinux != centos ]] || [[ 8 != 8 ]] || ( \
     cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
     && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-* \
     )
@@ -17,7 +17,7 @@ RUN  [[ 8 != 8 ]] || ( \
     dnf --enablerepo=powertools install -y perl-IPC-Run \
     )
 
-RUN  [[ oraclelinux != almalinux ]] [[ 8 != 9 ]] || ( \
+RUN  [[ oraclelinux != almalinux ]] || [[ 8 != 9 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf config-manager --enable epel && \
