@@ -5,7 +5,21 @@ RUN [[ oraclelinux != centos ]] || [[ 8 != 8 ]] || ( \
     && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-* \
     )
 
+
+
 RUN yum -y update
+
+RUN  [[ 8 != 8 ]] || ( \
+    dnf install epel-release -y && \
+    dnf --enablerepo=powertools install -y \
+        perl-IPC-Run \
+    )
+
+RUN  [[ 8 != 9 ]] || ( \
+    dnf install epel-release -y && \
+    dnf --enablerepo=powertools install -y \
+        perl-IPC-Run \
+    )
 
 # FIXME: Hack around docker/docker#10180
 RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /var/lib/rpm/* ) \
