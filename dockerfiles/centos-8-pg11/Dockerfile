@@ -23,7 +23,7 @@ RUN  [[ 8 != 9 ]] || ( \
     dnf -y install dnf-plugins-core && \
     dnf config-manager --enable epel && \
     dnf install yum-utils -y && \
-    sudo dnf install 'dnf-command(config-manager)' && \
+    dnf install 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
     dnf install -y perl-IPC-Run \
 
