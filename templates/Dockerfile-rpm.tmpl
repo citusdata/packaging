@@ -7,7 +7,7 @@ RUN [[ %%os%% != centos ]] || [[ %%release%% != 8 ]] || ( \
 
 RUN yum -y update
 
-RUN  [[ %%release%% != 8 ]] || ( \
+RUN  [[ %%os%% != centos ]] || [[ %%release%% != 8 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf repolist && \
@@ -15,6 +15,11 @@ RUN  [[ %%release%% != 8 ]] || ( \
     dnf config-manager --set-enabled powertools && \
     dnf install epel-release -y && \
     dnf --enablerepo=powertools install -y perl-IPC-Run \
+    )
+
+RUN  [[ %%os%% != oraclelinux ]] || [[ %%release%% != 8 ]] || ( \
+    dnf install perl-App-cpanminus -y && \
+    cpanm IPC::Run \
     )
 
 RUN  [[ %%os%% != almalinux ]] || [[ %%release%% != 9 ]] || ( \
