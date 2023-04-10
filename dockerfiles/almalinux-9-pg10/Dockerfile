@@ -17,7 +17,7 @@ RUN  [[ 9 != 8 ]] || ( \
     dnf --enablerepo=powertools install -y perl-IPC-Run \
     )
 
-RUN  [[ almalinux != almalinux ]] || [[ 9 != 9 ]] || ( \
+RUN  [[ almalinux != almalinux ]] [[ 9 != 9 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf config-manager --enable epel && \
