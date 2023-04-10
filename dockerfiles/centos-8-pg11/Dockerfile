@@ -10,14 +10,16 @@ RUN [[ centos != centos ]] || [[ 8 != 8 ]] || ( \
 RUN yum -y update
 
 RUN  [[ 8 != 8 ]] || ( \
+    dnf config-manager --add-repo=https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
     dnf install epel-release -y && \
     dnf --enablerepo=crb install -y \
         perl-IPC-Run \
     )
 
 RUN  [[ 8 != 9 ]] || ( \
+
     dnf install epel-release -y && \
-    dnf --enablerepo=crb install -y \
+    dnf install -y \
         perl-IPC-Run \
     )
 
