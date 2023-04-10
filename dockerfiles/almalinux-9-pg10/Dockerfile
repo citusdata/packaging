@@ -11,7 +11,6 @@ RUN  [[ 9 != 8 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf repolist && \
-    dnf config-manager --enable epel && \
     dnf config-manager --set-enabled powertools && \
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install epel-release -y && \
