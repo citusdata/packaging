@@ -78,7 +78,6 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
         tar \
         libzstd \
         libzstd-devel \
-        perl-IPC-Run \
         llvm-toolset-7-clang llvm5.0 spectool curl \
     && ( [[ 7 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql15-server postgresql15-devel \

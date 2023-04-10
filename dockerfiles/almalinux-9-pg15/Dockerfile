@@ -78,7 +78,6 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9
         tar \
         libzstd \
         libzstd-devel \
-        perl-IPC-Run \
         llvm-toolset ccache rpmdevtools krb5-devel \
     && ( [[ 9 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql15-server postgresql15-devel \

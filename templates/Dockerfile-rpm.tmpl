@@ -78,7 +78,6 @@ RUN ( yum install -y https://%%rpm_url%%  \
         tar \
         libzstd \
         libzstd-devel \
-        perl-IPC-Run \
         %%extra-packages%% \
     && ( [[ %%release%% != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql%%pgshort%%-server postgresql%%pgshort%%-devel \
