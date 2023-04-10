@@ -17,7 +17,7 @@ RUN  [[ 9 != 8 ]] || ( \
     )
 
 RUN  [[ 9 != 9 ]] || ( \
-    dnf install -y gcc make perl-devel && \
+    dnf install -y gcc make perl-devel perl-App-cpanminus && \
     cpan IPC::Run \
     )
 
