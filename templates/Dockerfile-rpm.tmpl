@@ -24,6 +24,7 @@ RUN  [[ %%release%% != 9 ]] || ( \
     dnf config-manager --enable epel && \
     dnf install yum-utils -y && \
     dnf install 'dnf-command(config-manager)' && \
+    dnf repolist && \
     dnf config-manager --set-enabled powertools && \
     dnf install -y perl-IPC-Run \
 
