@@ -74,6 +74,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' > /etc/
         wget \
         zlib1g-dev \
         python3-pip \
+        python3-sphinx \
         python3-setuptools \
         liblz4-dev \
         liblz4-1 \
@@ -92,7 +93,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' > /etc/
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install python3-sphinx
 
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
