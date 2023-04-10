@@ -2,7 +2,7 @@
 FROM oraclelinux:7
 RUN [[ oraclelinux != centos ]] || [[ 7 != 8 ]] || ( \
     cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
-    && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-* \
+    && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://histor|g' /etc/yum.repos.d/CentOS-* \
     )
 
 RUN yum -y update
@@ -18,7 +18,15 @@ RUN  [[ oraclelinux != centos ]] || [[ 7 != 8 ]] || ( \
     )
 
 RUN  [[ oraclelinux != oraclelinux ]] || [[ 7 != 8 ]] || ( \
-    dnf install perl-App-cpanminus -y && \
+    curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
+    dnf install perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm \
+    rm -f perl-IPC-Run-0.99-1.el8.noarch.rpm && \
+    rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
+    )
+
+
     cpanm IPC::Run \
     )
 
