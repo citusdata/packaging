@@ -144,6 +144,7 @@ detect_os ()
         dist=`cut --delimiter='/' -f1 /etc/debian_version`
       else
         echo "Detected /etc/debian_version3..."
+        cat /etc/debian_version
         dist=`cut --delimiter='.' -f1 /etc/debian_version`
       fi
 
