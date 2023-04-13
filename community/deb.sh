@@ -111,31 +111,39 @@ detect_os ()
     # some systems dont have lsb-release yet have the lsb_release binary and
     # vice-versa
     if [ -e /etc/lsb-release ]; then
+       echo "Detected /etc/lsb-release..."
       . /etc/lsb-release
 
       if [ "${ID}" = "raspbian" ]; then
+         echo "Detected Raspbian..."
         os=${ID}
         dist=`cut --delimiter='.' -f1 /etc/debian_version`
       else
+        echo "Detected lsb-release distrib"
         os=${DISTRIB_ID}
         dist=${DISTRIB_CODENAME}
 
         if [ -z "$dist" ]; then
+        echo "Detected lsb-release distrib2"
           dist=${DISTRIB_RELEASE}
         fi
       fi
 
     elif [ `which lsb_release 2>/dev/null` ]; then
+        echo "Detected lsb-release lsb-release 2"
       dist=`lsb_release -c | cut -f2`
       os=`lsb_release -i | cut -f2 | awk '{ print tolower($1) }'`
 
     elif [ -e /etc/debian_version ]; then
+      echo "Detected /etc/debian_version..."
       # some Debians have jessie/sid in their /etc/debian_version
       # while others have '6.0.7'
       os=`cat /etc/issue | head -1 | awk '{ print tolower($1) }'`
       if grep -q '/' /etc/debian_version; then
+        echo "Detected /etc/debian_version2..."
         dist=`cut --delimiter='/' -f1 /etc/debian_version`
       else
+        echo "Detected /etc/debian_version3..."
         dist=`cut --delimiter='.' -f1 /etc/debian_version`
       fi
 
