@@ -217,6 +217,15 @@ detect_codename ()
       11)
         codename='bullseye'
         ;;
+      12)
+        codename='bookworm'
+        ;;
+      13)
+        codename='trixie'
+        ;;
+      14)
+        codename='forky'
+        ;;
       wheezy)
         codename="${dist}"
         ;;
@@ -301,6 +310,16 @@ main ()
   # create an apt config file for this repository
   curl -sSf "${apt_config_url}" > $apt_source_path
   curl_exit_code=$?
+
+  # Packagecloud uses both the codename and the version_id in their scripts. However, in some cases
+  # version_id does not work. Since both can be used in /etc/version file, we need to try both in case of missing
+  # definition of version_id in PackageCloud system.
+  if [ "${os}" = "debian" ] && [ "$curl_exit_code" -ne "0" ]; then
+    apt_config_url_with_code_name="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${codename}&source=script"
+    curl -sSf "${apt_config_url_with_code_name}" > "$apt_source_path"
+    echo "Using fallback url: ${apt_config_url_with_code_name}"
+    curl_exit_code=$?
+  fi
 
   if [ "$curl_exit_code" = "22" ]; then
     echo

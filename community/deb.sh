@@ -266,8 +266,9 @@ main ()
   # version_id does not work. Since both can be used in /etc/version file, we need to try both in case of missing
   # definition of version_id in PackageCloud system.
   if [ "${os}" = "debian" ] && [ "$curl_exit_code" -ne "0" ]; then
-    apt_config_url_with_code_name=("https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${codename}&source=script"
-    curl -sSf "${apt_config_url_with_code_name}" > "$apt_source_path"
+    apt_config_url_with_code_name="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${codename}&source=script"
+    echo "${apt_config_url_with_code_name}"
+    curl -sSf "${apt_config_url_with_code_name}" > "${apt_source_path}"
     echo "Using fallback url: ${apt_config_url_with_code_name}"
     curl_exit_code=$?
   fi
