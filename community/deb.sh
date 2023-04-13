@@ -187,6 +187,15 @@ detect_codename ()
       11)
         codename='bullseye'
         ;;
+      12)
+        codename='bookworm'
+        ;;
+      13)
+        codename='trixie'
+        ;;
+      14)
+        codename='forky'
+        ;;
       wheezy)
         codename="${dist}"
         ;;
