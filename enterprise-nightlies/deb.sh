@@ -293,7 +293,7 @@ main ()
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
   repo_name="enterprise-nightlies"
   gpg_key_install_url="https://repos.citusdata.com/${repo_name}/gpg_key_url.list?os=${os}&dist=${dist}"
-  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/enterprise-nightlies/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
+  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`
   if [ "${gpg_key_url}" = "" ]; then
@@ -316,7 +316,7 @@ main ()
   # version_id does not work. Since both can be used in /etc/version file, we need to try both in case of missing
   # definition of version_id in PackageCloud system.
   if [ "${os}" = "debian" ] && [ "$curl_exit_code" -ne "0" ]; then
-    apt_config_url_with_code_name="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${codename}&source=script"
+    apt_config_url_with_code_name="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${codename}&name=${CITUS_REPO_HOST_ID}&source=script"
     curl -sSf "${apt_config_url_with_code_name}" > "$apt_source_path"
     echo "Using fallback url: ${apt_config_url_with_code_name}"
     curl_exit_code=$?
