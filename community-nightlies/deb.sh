@@ -211,6 +211,15 @@ detect_codename ()
       bullseye)
         codename="${dist}"
         ;;
+      bookworm)
+        codename="${dist}"
+        ;;
+      trixy)
+        codename="${dist}"
+        ;;
+      forky)
+        codename="${dist}"
+        ;;
       *)
         unknown_os
         ;;
