@@ -217,6 +217,15 @@ detect_codename ()
       11)
         codename='bullseye'
         ;;
+      12)
+        codename='bookworm'
+        ;;
+      13)
+        codename='trixie'
+        ;;
+      14)
+        codename='forky'
+        ;;
       wheezy)
         codename="${dist}"
         ;;
@@ -230,6 +239,15 @@ detect_codename ()
         codename="${dist}"
         ;;
       bullseye)
+        codename="${dist}"
+        ;;
+      bookworm)
+        codename="${dist}"
+        ;;
+      trixy)
+        codename="${dist}"
+        ;;
+      forky)
         codename="${dist}"
         ;;
       *)
@@ -282,8 +300,9 @@ main ()
   CITUS_REPO_TOKEN="${CITUS_REPO_TOKEN//:/%3A}"
 
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
-  gpg_key_install_url="https://repos.citusdata.com/enterprise-nightlies/gpg_key_url.list?os=${os}&dist=${dist}"
-  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/enterprise-nightlies/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
+  repo_name="enterprise-nightlies"
+  gpg_key_install_url="https://repos.citusdata.com/${repo_name}/gpg_key_url.list?os=${os}&dist=${dist}"
+  apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`
   if [ "${gpg_key_url}" = "" ]; then
@@ -301,6 +320,16 @@ main ()
   # create an apt config file for this repository
   curl -sSf "${apt_config_url}" > $apt_source_path
   curl_exit_code=$?
+
+  # Packagecloud uses both the codename and the version_id in their scripts. However, in some cases
+  # version_id does not work. Since both can be used in /etc/version file, we need to try both in case of missing
+  # definition of version_id in PackageCloud system.
+  if [ "${os}" = "debian" ] && [ "$curl_exit_code" -ne "0" ]; then
+    apt_config_url_with_code_name="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${codename}&name=${CITUS_REPO_HOST_ID}&source=script"
+    curl -sSf "${apt_config_url_with_code_name}" > "$apt_source_path"
+    echo "Using fallback url: ${apt_config_url_with_code_name}"
+    curl_exit_code=$?
+  fi
 
   if [ "$curl_exit_code" = "22" ]; then
     echo
