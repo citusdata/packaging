@@ -48,8 +48,6 @@ export CI=1
 %{pginstdir}/share/extension/%{sname}.control
 %{pginstdir}/bin/azure_storage_cli
 %{pginstdir}/share/extension/azure_storage-*.sql
-%{pginstdir}/.crates.toml
-%{pginstdir}/.crates2.json
 %ifarch ppc64 ppc64le
   %else
   %if 0%{?rhel} && 0%{?rhel} <= 6
