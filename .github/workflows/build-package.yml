@@ -26,8 +26,6 @@ jobs:
       matrix:
         platform:
           - el/7
-#          - el/8
-          - debian/stretch
           - debian/buster
           - debian/bullseye
           - ubuntu/bionic

@@ -29,7 +29,6 @@ jobs:
       matrix:
         platform:
           - el/7
-          - debian/stretch
           - debian/buster
           - debian/bullseye
           - ubuntu/bionic
@@ -84,4 +83,4 @@ jobs:
           --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
-          --main_branch "${GITHUB_REF##*/}"
+          --main_branch "${MAIN_BRANCH}"
