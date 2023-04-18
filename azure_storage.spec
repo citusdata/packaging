@@ -1,17 +1,19 @@
-%global pgmajorversion 14
-%global pgpackageversion 14
+%global pgmajorversion 15
+%global pgpackageversion 15
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname azure_storage
+%global INSTALL_RUST 1
+%global CI 1
 
 Summary:	Pg Azure storage
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	1.1.0.citus
+Version:	1.2.1.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pgazure/archive/v1.1.0.tar.gz
+Source0:	https://github.com/citusdata/pgazure/archive/v1.2.1.tar.gz
 URL:		https://github.com/citusdata/pgazure
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel libxml2-devel libxslt-devel openssl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -32,6 +34,8 @@ make %{?_smp_mflags}
 # make %{?_smp_mflags}
 
 %install
+export INSTALL_RUST=1
+export CI=1
 %make_install PG_CONFIG=%{pginstdir}/bin/pg_config
 %clean
 %{__rm} -rf %{buildroot}
@@ -41,7 +45,6 @@ make %{?_smp_mflags}
 %{pginstdir}/lib/%{sname}.so
 %{pginstdir}/share/extension/%{sname}.control
 %{pginstdir}/bin/azure_storage_cli
-%{pginstdir}/bin/mock_azure_storage_cli
 %{pginstdir}/share/extension/azure_storage-*.sql
 %ifarch ppc64 ppc64le
   %else
@@ -53,6 +56,9 @@ make %{?_smp_mflags}
 %endif
 
 %changelog
+* Tue Apr 18 2023 - Gurkan Indibay <gindibay@microsoft> 1.2.1.citus-1
+- Official 1.2.1 release of Pg Azure Storage
+
 * Thu Dec 22 2022 - Gledis Zeneli <glediszeneli@microsoft> 1.1.0.citus-1
 - Official 1.1.0 release of Pg Azure Storage
 
