@@ -1,5 +1,5 @@
-%global pgmajorversion 14
-%global pgpackageversion 14
+%global pgmajorversion 15
+%global pgpackageversion 15
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname azure_storage
 %global INSTALL_RUST 1
@@ -26,8 +26,6 @@ PostgreSQL extension for Azure storage
 %setup -q -n %{sname}-%{version}
 
 %build
-
-
 # make %{?_smp_mflags}
 # PG_CONFIG=%{pginstdir}/bin/pg_config make %{?_smp_mflags}
 # export PATH=/usr/pgsql-11/bin/pg_config:$PATH
@@ -58,7 +56,7 @@ export CI=1
 %endif
 
 %changelog
-* Fri Apr 17 2023 - Gurkan Indibay <gindibay@microsoft> 1.2.1.citus-1
+* Tue Apr 18 2023 - Gurkan Indibay <gindibay@microsoft> 1.2.1.citus-1
 - Official 1.2.1 release of Pg Azure Storage
 
 * Thu Dec 22 2022 - Gledis Zeneli <glediszeneli@microsoft> 1.1.0.citus-1
