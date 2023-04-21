@@ -1,4 +1,10 @@
-azure-gdpr (2.1.citus-1) stable; urgency=low
+azure-gdpr (2.3.citus-1) stable; urgency=low
+
+  * fixes log_line_prefix memory leak
+
+ -- Philip Dube <phdub@microsoft.com>  Fri, 21 Apr 2023 19:44:00 +0000
+
+azure-gdpr (2.2.citus-1) stable; urgency=low
 
   * fixes to query count for 32 bit platforms and proper shmem exit handling
 
