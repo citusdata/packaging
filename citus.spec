@@ -13,7 +13,6 @@ Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
 Source0:	https://github.com/citusdata/citus/archive/v11.1.6.tar.gz
-
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
