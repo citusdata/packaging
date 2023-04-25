@@ -58,6 +58,10 @@ echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
 [[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_decoders/pgoutput.so ]] && echo %{pginstdir}/lib/citus_decoders/pgoutput.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_decoders/wal2json.so ]] && echo %{pginstdir}/lib/citus_decoders/wal2json.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_pgoutput.so ]] && echo %{pginstdir}/lib/citus_pgoutput.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_wal2json.so ]] && echo %{pginstdir}/lib/citus_wal2json.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 # Since files below may be non-existent in some versions, ignoring the error in case of file absence
@@ -87,6 +91,8 @@ fi
         [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
         [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
         [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_pgoutput ]] && echo %{pginstdir}/lib/bitcode/citus_pgoutput/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_wal2json ]] && echo %{pginstdir}/lib/bitcode/citus_wal2json/*.bc >> installation_files.list
     %endif
 %endif
 
