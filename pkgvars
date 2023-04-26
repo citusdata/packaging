@@ -1,5 +1,5 @@
 pkgname=citus
 pkgdesc='Citus (Open-Source)'
-pkglatest=11.1.6.citus-1
+pkglatest=11.0.8.citus-1
 nightlyref=main
 versioning=fancy
