@@ -14,6 +14,8 @@ env:
 on:
   push:
     branches: "**"
+  schedule:
+    - cron: "30 2 * * *"
 
   workflow_dispatch:
 
@@ -86,10 +88,3 @@ jobs:
         env:
           PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
 
-      - name: Push images
-        run: |
-            export CURRENT_BRANCH=${GITHUB_REF##*/}
-            ./ci/push_images
-        env:
-          TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
-          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
