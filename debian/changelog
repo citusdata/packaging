@@ -1,3 +1,9 @@
+citus (10.0.8.citus-1) stable; urgency=low
+
+  * Official 10.0.8 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 26 Apr 2023 13:44:04 +0000
+
 citus (10.2.9.citus-1) stable; urgency=low
 
   * Official 10.2.9 release of Citus
