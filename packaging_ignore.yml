@@ -36,3 +36,5 @@ rpm:
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus_decoders/citus_wal2json.so"
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus_pgoutput.so"
   - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus_wal2json.so"
+  - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus_decoders/wal2json.so"
+  - ".*: W: unstripped-binary-or-object /usr/pgsql-.*/lib/citus_decoders/pgoutput.so"
