@@ -1,7 +1,7 @@
 name: Build and publish citus community nightly packages
 
 env:
-  MAIN_BRANCH: "new_ignores"
+  MAIN_BRANCH: "develop"
   PACKAGE_CLOUD_REPO_NAME: "citusdata/community-nightlies"
   PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
