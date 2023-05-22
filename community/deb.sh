@@ -255,7 +255,7 @@ main ()
   echo "done."
 
   repo_name="community"
-  gpg_key_url="https://packagecloud.io/install/repositories/citusdata/${repo_name}/gpgkey"
+  gpg_key_url="https://packagecloud.io/citusdata/${repo_name}/gpgkey"
   apt_config_url="https://packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${dist}&source=script"
 
   apt_source_path="/etc/apt/sources.list.d/citusdata_${repo_name}.list"
