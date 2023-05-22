@@ -250,7 +250,6 @@ main ()
     [ -e $yum_repo_path ] && rm $yum_repo_path
     exit 1
   else
-    sed -i 's#packagecloud.io/citusdata#repos.citusdata.com#g' "${yum_repo_path}"
     echo "done."
   fi
 

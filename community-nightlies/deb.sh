@@ -313,7 +313,6 @@ main ()
     [ -e $apt_source_path ] && rm $apt_source_path
     exit 1
   else
-    sed -i 's#packagecloud.io/citusdata#repos.citusdata.com#g' "${apt_source_path}"
     echo "done."
   fi
 
