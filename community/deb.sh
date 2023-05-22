@@ -255,8 +255,8 @@ main ()
   echo "done."
 
   repo_name="community"
-  gpg_key_url="https://repos.citusdata.com/${repo_name}/gpgkey"
-  apt_config_url="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${dist}&source=script"
+  gpg_key_url="https://packagecloud.io/install/repositories/citusdata/${repo_name}/gpgkey"
+  apt_config_url="https://packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${dist}&source=script"
 
   apt_source_path="/etc/apt/sources.list.d/citusdata_${repo_name}.list"
   apt_keyrings_dir="/etc/apt/keyrings"
@@ -275,7 +275,7 @@ main ()
   # version_id does not work. Since both can be used in /etc/version file, we need to try both in case of missing
   # definition of version_id in PackageCloud system.
   if [ "${os}" = "debian" ] && [ "$curl_exit_code" -ne "0" ]; then
-    apt_config_url_with_code_name="https://repos.citusdata.com/${repo_name}/config_file.list?os=${os}&dist=${codename}&source=script"
+    apt_config_url_with_code_name="https://packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${codename}&source=script"
     echo "${apt_config_url_with_code_name}"
     curl -sSf "${apt_config_url_with_code_name}" > "${apt_source_path}"
     echo "Using fallback url: ${apt_config_url_with_code_name}"

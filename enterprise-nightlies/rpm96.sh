@@ -248,7 +248,7 @@ main ()
   # escape any colons in repo token (they separate it from empty password)
   CITUS_REPO_TOKEN="${CITUS_REPO_TOKEN//:/%3A}"
 
-  yum_repo_config_url="https://repos.citusdata.com/enterprise-nightlies/config_file.repo?os=${os}&dist=${dist}&source=script"
+  yum_repo_config_url="https://packagecloud.io/install/repositories/citusdata/enterprise-nightlies/config_file.repo?os=${os}&dist=${dist}&source=script"
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
 
   if [ "${os}" = "sles" ] || [ "${os}" = "opensuse" ]; then

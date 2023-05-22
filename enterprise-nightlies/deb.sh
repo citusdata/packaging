@@ -301,7 +301,7 @@ main ()
 
   echo "Found host ID: ${CITUS_REPO_HOST_ID}"
   repo_name="enterprise-nightlies"
-  gpg_key_install_url="https://repos.citusdata.com/${repo_name}/gpg_key_url.list?os=${os}&dist=${dist}"
+  gpg_key_install_url="https://packagecloud.io/install/repositories/citusdata/${repo_name}/gpg_key_url.list?os=${os}&dist=${dist}"
   apt_config_url="https://${CITUS_REPO_TOKEN}:@packagecloud.io/install/repositories/citusdata/${repo_name}/config_file.list?os=${os}&dist=${dist}&name=${CITUS_REPO_HOST_ID}&source=script"
 
   gpg_key_url=`curl -GL -u "${CITUS_REPO_TOKEN}:" --data-urlencode "name=${CITUS_REPO_HOST_ID}" "${gpg_key_install_url}"`

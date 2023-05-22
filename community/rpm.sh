@@ -224,7 +224,7 @@ main ()
   pgdg_check
   epel_check
 
-  yum_repo_config_url="https://repos.citusdata.com/community/config_file.repo?os=${os}&dist=${dist}&source=script"
+  yum_repo_config_url="https://packagecloud.io/install/repositories/citusdata/community/config_file.repo?os=${os}&dist=${dist}&source=script"
 
   if [ "${os}" = "sles" ] || [ "${os}" = "opensuse" ]; then
     yum_repo_path=/etc/zypp/repos.d/citusdata_community.repo

@@ -203,7 +203,7 @@ main ()
   curl_check
   pgdg_check
 
-  yum_repo_config_url="https://repos.citusdata.com/community-nightlies/config_file.repo?os=${os}&dist=${dist}&source=script"
+  yum_repo_config_url="https://packagecloud.io/install/repositories/citusdata/community-nightlies/config_file.repo?os=${os}&dist=${dist}&source=script"
 
   if [ "${os}" = "sles" ] || [ "${os}" = "opensuse" ]; then
     yum_repo_path=/etc/zypp/repos.d/citusdata_community-nightlies.repo
