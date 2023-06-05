@@ -1,3 +1,10 @@
+azure-gdpr (2.4.citus-1) stable; urgency=low
+
+  * login counts
+  * fix pg_stats_shmem_shutdown leaving dangling pointer
+
+ -- Philip Dube <phdub@microsoft.com>  Mon, 06 May 2023 16:35:00 +0000
+
 azure-gdpr (2.3.citus-1) stable; urgency=low
 
   * fixes log_line_prefix memory leak
