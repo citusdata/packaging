@@ -1,9 +1,15 @@
+azure-gdpr (2.5.citus-1) stable; urgency=low
+
+  * fix regression which broke all logging
+
+ -- Philip Dube <phdub@microsoft.com>  Wed, 07 Jun 2023 02:01:00 +0000
+
 azure-gdpr (2.4.citus-1) stable; urgency=low
 
   * login counts
   * fix pg_stats_shmem_shutdown leaving dangling pointer
 
- -- Philip Dube <phdub@microsoft.com>  Mon, 06 May 2023 16:35:00 +0000
+ -- Philip Dube <phdub@microsoft.com>  Mon, 05 Jun 2023 16:35:00 +0000
 
 azure-gdpr (2.3.citus-1) stable; urgency=low
 
