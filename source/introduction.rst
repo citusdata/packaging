@@ -1,8 +1,5 @@
-Packaging Process Documentation
-==============================
-
 Introduction
-------------
+===============================
 
 Welcome to the documentation outlining the packaging process for Citus and its associated projects. Packaging plays a crucial role in the distribution and deployment of software, ensuring that it can be easily installed and utilized across various operating systems and environments.
 
@@ -25,18 +22,18 @@ The supported operating systems and releases for packaging include:
 
 The packaging process will involve preparing packages for various projects, including:
 
-- `Citus <https://github.com/citusdata/packaging/tree/all-citus>`_
-- `Pgazure <https://github.com/citusdata/packaging/tree/all-pg-azure-storage>`_
-- Cron
-  - `Debian <https://github.com/citusdata/packaging/tree/debian-cron>`_
-  - `RPM <https://github.com/citusdata/packaging/tree/redhat-cron>`_
-- Hll
-  - `Debian <https://github.com/citusdata/packaging/tree/debian-hll>`_
-  - `RPM <https://github.com/citusdata/packaging/tree/redhat-hll>`_
-- Topn
-  - `Debian <https://github.com/citusdata/packaging/tree/debian-topn>`_
-  - `RPM <https://github.com/citusdata/packaging/tree/redhat-topn>`_
-- `Azure-gdpr <https://github.com/citusdata/packaging/tree/all-azure_gdpr>`_
+* `Citus <https://github.com/citusdata/packaging/tree/all-citus>`_
+* `Pgazure <https://github.com/citusdata/packaging/tree/all-pg-azure-storage>`_
+* Cron
+    * `Cron Debian <https://github.com/citusdata/packaging/tree/debian-cron>`_
+    * `Cron RPM <https://github.com/citusdata/packaging/tree/redhat-cron>`_
+* Hll
+    * `Hll Debian <https://github.com/citusdata/packaging/tree/debian-hll>`_
+    * `Hll RPM <https://github.com/citusdata/packaging/tree/redhat-hll>`_
+* Topn
+    * `Topn Debian <https://github.com/citusdata/packaging/tree/debian-topn>`_
+    * `Topn RPM <https://github.com/citusdata/packaging/tree/redhat-topn>`_
+* `Azure-gdpr <https://github.com/citusdata/packaging/tree/all-azure_gdpr>`_
 
 Once the packages are ready, we will push them to PackageCloud, a package management and distribution service. Additionally, we will create Docker images for each OS/release/PostgreSQL version combination, which will be published on Docker Hub.
 

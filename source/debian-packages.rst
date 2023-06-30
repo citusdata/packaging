@@ -1,11 +1,11 @@
 Package Preparation
-==================
+====================
 
 Debian Packages
----------------
+----------------
 
 Introduction to Debian packaging
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Debian packaging provides a standardized way to create software packages for Debian-based operating systems. It ensures easy installation, upgrade, and removal of software components. The packaging format used in Debian is known as the Debian package format or `.deb`.
 
@@ -25,7 +25,7 @@ Debian packaging relies on a set of tools and conventions to streamline the pack
 Other important Debian-specific tools and files include `debuild`, `lintian`, and `pbuilder`, which aid in building, linting, and testing packages respectively.
 
 Additional Debian Files
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 In addition to the core Debian packaging files, the packaging process may involve other files with specific purposes. Here are some of the additional Debian files commonly used:
 

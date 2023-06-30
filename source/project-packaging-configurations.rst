@@ -19,7 +19,6 @@ pkgdesc='Citus (Open-Source)'
 pkglatest=11.3.0.citus-1
 nightlyref=main
 versioning=fancy
-
 ```
 
 Parameters for the pkgvars file
@@ -27,39 +26,37 @@ Parameters for the pkgvars file
 1. pkgname: prefix of the package
 2. hubproj: name of the repository in the GitHub
 3. pkgdesc: description of the package. It is just for reference. It is not used by the packaging system
-4. pkglatest: latest version of the package. It is used by the packaging system to generate the package name and get the release number
-from the GitHub repository
+4. pkglatest: latest version of the package. It is used by the packaging system to generate the package name
+   and get the release number from the GitHub repository
 5. nightlyref: branch name of the nightly builds
-6. versioning: versioning scheme. It can be either `fancy` or `simple`. If it is `fancy`,fancy version numbers are added to the package name.
-By default, it is `simple`.
+6. versioning: versioning scheme. It can be either `fancy` or `simple`. If it is `fancy`,
+    fancy version numbers are added to the package name. By default, it is `simple`.
 
 Postgres-matrix.yml
--------
+-------------------
 Citus Postgres version matrix. Packaging system decides which postgres versions for the Citus version by referencing this file
 
 Below is a sample postgres-matrix.yml file:
 
-```
-name: Postgres Version Matrix
-project_name: citus
+.. code-block:: yaml
 
-version_matrix:
-  - 8.0:
-      postgres_versions: [10, 11]
-  - 9.0:
-      postgres_versions: [11, 12]
-  - 9.5:
-      postgres_versions: [11, 12, 13]
-  - 10.1:
-      postgres_versions: [12, 13]
-  - 10.2:
-      postgres_versions: [12, 13, 14]
-  - 11.0:
-      postgres_versions: [13, 14]
-  - 11.1:
-      postgres_versions: [ 13, 14, 15 ]
-
-```
+    name: Postgres Version Matrix
+    project_name: citus
+    version_matrix:
+      - 8.0:
+          postgres_versions: [10, 11]
+      - 9.0:
+          postgres_versions: [11, 12]
+      - 9.5:
+          postgres_versions: [11, 12, 13]
+      - 10.1:
+          postgres_versions: [12, 13]
+      - 10.2:
+          postgres_versions: [12, 13, 14]
+      - 11.0:
+          postgres_versions: [13, 14]
+      - 11.1:
+          postgres_versions: [ 13, 14, 15 ]
 
 In packaging system, version number is taken from pkgvars file and correct matrix entry is being found from this file by comparing the version number with the matrix entries.
 Then, the postgres versions are taken from the matrix entry and one package is generated for each postgres version.

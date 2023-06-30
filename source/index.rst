@@ -1,9 +1,5 @@
-.. Django Multi-tenant documentation master file, created by
-    sphinx-quickstart on Mon Feb 13 13:32:28 2023.
-    You can adapt this file completely to your liking, but it should at least
-    contain the root `toctree` directive.
 
-Welcome to ActiveRecord Multi-tenant's documentation!
+Welcome to Citus Data documentation!
 ======================================================
 
 |Build Status|  |Latest Documentation Status|
@@ -23,18 +19,47 @@ Citus Data Packaging Documentation
 
 Welcome to the official documentation for ``CitusData Packaging``.
 
+``CitusData Packaging`` is a collection of scripts and tools that are used to packaging Citus Data products.
+This documentation is intended to provide a detailed overview of the packaging process and the tools used to package Citus Data products.
+
+
+
+.Table of Contents
+===================
+
+Introduction
+------------
 .. toctree::
-   :maxdepth: 2
-   :caption: Table of Contents
+   :maxdepth: 1
 
    introduction
    package-build-environment
    repository-installation-scripts
+
+Tools and Packages
+------------------
+.. toctree::
+   :maxdepth: 1
+
+   tools-scripts
    debian-packages
    rpm-packages
-   tool-scripts
-   project-packaging-configurations
+
+Citus Related
+-------------
+.. toctree::
+   :maxdepth: 1
+
    citus-docker-images
    pgdg
    pgxn
+
+Project Packaging
+-----------------
+.. toctree::
+   :maxdepth: 1
+
+   project-packaging-configurations
+   packaging-process
+
 
