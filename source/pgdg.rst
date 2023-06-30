@@ -1,6 +1,8 @@
 Citus PGDG Packages
 ====================
 
-PGDG is a repository of PostgreSQL packages for several Linux distributions.
-Citus packages are available for RPM based distributions.
-We don't own the process, we open the issue and Devrim Gunduz (PGDG owner) is taking care of it.
+Citus packages for RPM-based distributions are made available through the PGDG (PostgreSQL Global Development Group) repository.
+PGDG is a repository that provides PostgreSQL packages for various Linux distributions.
+
+It is important to note that the packaging process for Citus packages in PGDG is not directly managed by us.
+Instead, we open an issue in the PGDG repository and Devrim Gunduz, the owner of PGDG, takes care of the packaging process.

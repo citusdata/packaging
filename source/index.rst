@@ -27,39 +27,44 @@ This documentation is intended to provide a detailed overview of the packaging p
 .Table of Contents
 ===================
 
-Introduction
-------------
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    introduction
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Repository Management
+
    package-build-environment
    repository-installation-scripts
 
-Tools and Packages
-------------------
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :caption: Tools and Configurations
 
    tools-scripts
+   project-packaging-configurations
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Artifacts
+
    debian-packages
    rpm-packages
-
-Citus Related
--------------
-.. toctree::
-   :maxdepth: 1
-
    citus-docker-images
    pgdg
    pgxn
 
-Project Packaging
------------------
-.. toctree::
-   :maxdepth: 1
 
-   project-packaging-configurations
+.. toctree::
+   :maxdepth: 2
+   :caption: Packaging Process
+
    packaging-process
 
 

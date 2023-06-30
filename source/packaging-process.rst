@@ -1,7 +1,7 @@
 Packaging Process
 =================
 
-Packaging process is done by the following steps:
+The packaging process consists of the following steps:
 
 1. Bake deb and rpm packages
 2. Bake docker images
@@ -11,140 +11,133 @@ Packaging process is done by the following steps:
 Bake deb and rpm packages
 ---------------------------
 
-In this phase, we need to edit packaging configuration files to bake the packages for the desired application version.
+In this phase, the packaging configuration files need to be edited to bake the packages for the desired application version.
 
 Editing Configuration Files by Pipeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Citus has its own automation to edit the packaging configuration scripts; `Update Package Properties <https://github.com/citusdata/packaging/actions/workflows/update_package_properties.yml>`_ workflow.
-After executing this workflow on all-citus branch, you will see a new PR to the packaging repository. This PR will update the packaging configuration files to the desired version.
-After seeing all the checks are passed, you can request a review from the packaging team.
-After the review is done, you can merge the PR.
-After all jobs are done, you can see the new packages in the `Citusdata Package Repository <https://packagecloud.io/>`_.
-You need to make sure that the new packages are available for all distros we support in the repository before proceeding to the next step.
+Citus has an automation process to edit the packaging configuration scripts called the  `Update Package Properties <https://github.com/citusdata/packaging/actions/workflows/update_package_properties.yml>`_ workflow.
+
+By executing this workflow on the all-citus branch, a new pull request (PR) will be generated in the packaging repository.
+
+This PR will update the packaging configuration files to the desired version.
+
+Once the necessary checks have passed, a review can be requested from the packaging team.
+
+After the review is completed, the PR can be merged.
+
+Once all the jobs are finished, the new packages can be found in the `Citusdata Package Repository <https://packagecloud.io/>`_.
+
+It is important to ensure that the new packages are available for all supported distributions in the repository before proceeding to the next step.
 
 Editing Configuration Files Manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Other projects such as pg_azure_storage, topn does not have automation pipelines, so we need to edit the configuration files manually.
-There are two categories of projects that we need to edit the configuration files manually.
+For projects like pg_azure_storage and azure-gdpr that do not have automation pipelines, the configuration files need to be edited manually.
+There are two categories of projects that require manual configuration file editing:
 
-1. Projects that deb and rpm configuration files are in the same branch
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+1. Projects with deb and rpm configuration files in the same branch:
+    - For projects in this category, such as pg_azure_storage and azure-gdpr, the following steps can be followed:
+        - Create a new branch from the latest commit on the master branch.
+        - Edit the configuration files to the desired version:
+            - Add a new entry to the `debian/changelog` file.
+            - Update the version in the pkgvars file.
+            - Update the version in the rpm spec file.
+            - Add a new changelog entry to the rpm spec file.
+        - Create a pull request (PR) from the new branch to the master branch.
+        - After the PR is merged, the new packages can be found in the `Citusdata Package Repository <https://packagecloud.io/>`_. It is important to ensure that the new packages are available for all supported distributions in the repository before proceeding to the next step.
 
-``pg_azure_storage``, ``azure-gdpr`` is in this category.
-Below are the steps to edit the configuration files manually:
+2. Projects with deb and rpm configuration files in different branches:
+   - For projects like topn, hll, and cron that have deb and rpm configuration files in different branches, the following steps can be followed:
 
-1. Create a new branch from the latest commit on the master branch.
-2. Edit the configuration files to the desired version.
-    * Add a new entry to the ``debian/changelog`` file.
-    * Update the version in the pkgvars file
-    * Update the version in the rpm spec file
-    * Add a new changelog entry to the rpm spec file
-3. Create a PR from the new branch to the master branch.
-4. After the PR is merged, you can see the new packages in the `Citusdata Package Repository <https://packagecloud.io/>`_. You need to make sure that the new packages are available for all distros we support in the repository before proceeding to the next step.
+     **Debian Configuration Files:**
+     - Checkout the debian-<project_name> branch.
+     - Create a new branch from the latest commit on the debian-<project_name> branch.
+     - Edit the configuration files to the desired version:
 
-2. Projects that deb and rpm configuration files are in different branches
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+       - Add a new entry to the `debian/changelog` file.
+       - Update the version in the pkgvars file.
 
-``topn``, ``hll`` and ``cron``  is in this category.
-Below are the steps to edit the configuration files manually:
+     - Create a PR from the new branch to the debian-<project_name> branch.
+     - After the PR is merged, the new packages can be found in the `Citusdata Package Repository <https://packagecloud.io/>`_.
+       It is important to ensure that the new packages are available for all supported distributions in the repository before proceeding to the next step.
 
-Debian Configuration Files
-'''''''''''''''''''''''''''
+     **Redhat Configuration Files:**
+     - Checkout the rpm-<project_name> branch.
+     - Create a new branch from the latest commit on the rpm-<project_name> branch.
+     - Edit the configuration files to the desired version:
 
-1. Checkout the debian-<project_name> branch.
-2. Create a new branch from the latest commit on the debian-<project_name> branch.
-3. Edit the configuration files to the desired version.
-    * Add a new entry to the ``debian/changelog`` file.
-    * Update the version in the pkgvars file
-4. Create a PR from the new branch to the debian-<project_name> branch.
-5. After the PR is merged, you can see the new packages in the `Citusdata Package Repository <https://packagecloud.io/>`_. You need to make sure that the new packages are available for all distros we support in the repository before proceeding to the next step.
+       - Update the version in the rpm spec file.
+       - Add a new changelog entry to the rpm spec file.
 
-Redhat Configuration Files
-'''''''''''''''''''''''''''
-
-1. Checkout the rpm-<project_name> branch.
-2. Create a new branch from the latest commit on the rpm-<project_name> branch.
-3. Edit the configuration files to the desired version.
-    * Update the version in the rpm spec file
-    * Add a new changelog entry to the rpm spec file
-4. Create a PR from the new branch to the rpm-<project_name> branch.
-5. After the PR is merged, you can see the new packages in the `Citusdata Package Repository <https://packagecloud.io/>`_. You need to make sure that the new packages are available for all distros we support in the repository before proceeding to the next step.
+     - Create a PR from the new branch to the rpm-<project_name> branch.
+     - After the PR is merged, the new packages can be found in the `Citusdata Package Repository <https://packagecloud.io/>`_. It is important to ensure that the new packages are available for all supported distributions in the repository before proceeding to the next step.
 
 Bake docker images
 ------------------
-This step is applicable just for Citus Community.
+
+This step is applicable only for Citus Community.
 
 Baking Main versions
 ~~~~~~~~~~~~~~~~~~~~
-In this phase, we need to edit the docker image configuration files to bake the docker images for the desired application version.
-To edit the docker image configuration files, you can use the `Update Version on Docker Files <https://github.com/citusdata/docker/blob/master/.github/workflows/update_version.yml>`_ workflow.
-After executing this workflow on master branch, you will see a new PR to the docker repository. This PR will update the docker image configuration files to the desired version.
-After seeing all the checks are passed, you can request a review from the packaging team.
-After the review is done, you can merge the PR.
-After all jobs are done, you can see the new docker images in the `Citusdata Docker Repository <https://hub.docker.com/r/citusdata/citus>`_.
-Versions that needs to be in the docker repository are:
-1. latest
-2. alpine
-3. postgres_xx (all supported postgres versions before latest)
+
+In this phase, the docker image configuration files need to be edited to bake the docker images for the desired application version.
+
+The `Update Version on Docker Files <https://github.com/citusdata/docker/blob/master/.github/workflows/update_version.yml>`_  workflow can be used to edit the docker image configuration files.
+
+By executing this workflow on the master branch, a new pull request (PR) will be generated in the docker repository.
+
+This PR will update the docker image configuration files to the desired version.
+
+Once all the necessary checks have passed, a review can be requested from the packaging team.
+
+After the review is completed, the PR can be merged.
+
+Once all the jobs are finished, the new docker images can be found in the `Citusdata Docker Repository <https://hub.docker.com/r/citusdata/citus>`_.
+
+The versioned images should appear in the docker repository for all supported postgres versions and alpine.
 
 Create Images for Patch Releases
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this phase, we need to create docker images for patch releases. For example, if we have a patch release for 10.1.1, we need to create a docker image for 10, 10.1 and 10.1.1.
+In this phase, docker images need to be created for patch releases.
+For example, if there is a patch release for version 10.1.1, docker images need to be created for versions 10, 10.1, and 10.1.1.
 
-To create docker images for patch releases, you just need to add a tag to the latest commit on master branch and push it
-`The tag pipeline <https://github.com/citusdata/docker/blob/master/.github/workflows/publish_docker_images_on_tag.yml>`_ will create the docker images for the tag and push them to the docker repository.
-After all jobs are done, you can see the new docker images in the `Citusdata Docker Repository <https://hub.docker.com/r/citusdata/citus>`_.
+To create docker images for patch releases, a tag needs to be added to the latest commit on the master branch and pushed.
+
+The `The tag pipeline <https://github.com/citusdata/docker/blob/master/.github/workflows/publish_docker_images_on_tag.yml>`_  pipeline will create the docker images for the tag and push them to the docker repository.
+
+Once all the jobs are finished, the new docker images can be found in the `Citusdata Docker Repository <https://hub.docker.com/r/citusdata/citus>`_.
+
 The versioned images should appear in the docker repository for all supported postgres versions and alpine.
-For example for 10.1.1 for postgres 13,14,15;  we need to see the following images in the docker repository:
 
-1. 10.1.1 (latest i.e. 15)
-2. 10.1   (latest i.e. 15)
-3. 10   (latest i.e. 15)
-4. 10.1.1-alpine
-5. 10.1-alpine
-6. 10-alpine
-7. 10.1.1-pg13
-8. 10.1-pg13
-9. 10-pg13
-10. 10.1.1-pg14
-11. 10.1-pg14
-12. 10-pg14
+Bake pgxn package
+-----------------
 
-Bake pgxn packages
---------------------------------------------
-When we build the pgxn extension for citus, we need to go through the following steps.
+When building the pgxn extension for Citus, the following steps need to be followed:
 
-1. Execute the pipeline `Update Version on PGXN Config Files <https://github.com/citusdata/packaging/actions/workflows/update-pgxn-version.yml>`_ to update the version in the pgxn configuration files. This pipeline will create a PR with the updated version.
+1. Execute the `Update Version on PGXN Config Files <https://github.com/citusdata/packaging/actions/workflows/update-pgxn-version.yml>`_ pipeline to update the version in the pgxn configuration files. This pipeline will create a pull request (PR) with the updated version.
+2. Check for the minimum postgres version and update it if necessary.
+3. Check that all the tests pass and notify the PR reviewer to review the PR.
+4. Once the PR is reviewed, merge the PR and ensure that the Citus PGXN is updated with the new version.
 
-2. Check for the minimum postgres version. If it is different from the one that citus has, it should be changed to the one that citus has.
+Opening an issue for PGDG packaging
+-----------------------------------
 
-3. Check for the tests and if they all pass, notify the PR reviewer to review the PR.
+After all the packages are baked, an issue needs to be opened for PGDG packaging. PGDG is a repository of PostgreSQL packages for several Linux distributions.
 
-4. Once the PR is reviewed, merge the PR and make sure that the `Citus PGXN <https://pgxn.org/dist/citus/>`_ is updated with the new version.
+Citus packages are available for RPM-based distributions.
+To request a new release for Citus, an issue needs to be opened in the `Postgres Redmine <https://redmine.postgresql.org/projects/postgresql/wiki/BugReportingGuidelines>`_.
 
-Open issue for PGDG packaging
---------------------------------------------
+The required fields for the issue are as follows:
 
-After all the packages are baked, we need to open an issue for PGDG packaging.
-PGDG is a repository of PostgreSQL packages for several Linux distributions.
-Citus packages are available for RPM based distributions.
-When releasing Citus, we open an issue in Postgres Redmine to request a new release from the link below
-https://redmine.postgresql.org/projects/pgrpms/issues/new
-We select the fields as below:
+- Tracker: Bug
+- Subject: New release of Citus <version>
+- Description: Provide a detailed description of the new release, including any notable changes or improvements.
+- Category: Packaging
+- Priority: Normal
+- Target version: <appropriate version>
+- Assignee: Leave blank unless specified
 
-* Tracker: Bug
+Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the Postgres Redmine.
 
-* Subject: https://redmine.postgresql.org/projects/pgrpms/issues/new
-
-* Description: Kindly release the following version of Citus: xx.x.
-
-* Category: New Package
-
-* Priority: Normal
-
-* Target version: <The version of PostgreSQL that Citus is compatible with>
-
-* Assignee: Devrim Gündüz

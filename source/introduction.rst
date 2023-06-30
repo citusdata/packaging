@@ -1,5 +1,5 @@
 Introduction
-===============================
+============
 
 Welcome to the documentation outlining the packaging process for Citus and its associated projects. Packaging plays a crucial role in the distribution and deployment of software, ensuring that it can be easily installed and utilized across various operating systems and environments.
 
