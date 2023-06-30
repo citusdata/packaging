@@ -2,15 +2,19 @@
 Welcome to Citus Data documentation!
 ======================================================
 
-|Build Status|  |Latest Documentation Status|
+|Citus Linux Packages Nightly Status| |Citus Docker Image Nightly Status|  |Latest Documentation Status|
 
-.. |Build Status| image:: https://github.com/citusdata/activerecord-multi-tenant/actions/workflows/active-record-multi-tenant-tests.yml/badge.svg
-   :target: https://github.com/citusdata/activerecord-multi-tenant/actions/workflows/active-record-multi-tenant-tests.yml
-   :alt: Build Status
+.. |Citus Linux Packages Nightly Status| image:: https://github.com/citusdata/packaging/actions/workflows/build-citus-community-nightlies.yml/badge.svg
+   :target: https://github.com/citusdata/packaging/actions/workflows/build-citus-community-nightlies.yml
+   :alt: Citus Linux Packages Nightly Status
+
+.. |Citus Docker Image Nightly Status| image:: https://github.com/citusdata/docker/actions/workflows/publish_docker_images_cron.yml/badge.svg
+   :target: https://github.com/citusdata/docker/actions/workflows/publish_docker_images_cron.yml
+   :alt: Citus Docker Image Nightly Status
 
 
 .. |Latest Documentation Status| image:: https://readthedocs.org/projects/django-multitenant/badge/?version=latest
-   :target: https://activerecord-multi-tenant.readthedocs.io/en/latest/?badge=latest
+   :target: https://citusdata-packaging.readthedocs.io/en/latest//?badge=latest
    :alt: Documentation Status
 
 
