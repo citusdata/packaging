@@ -4,6 +4,7 @@ Citus Docker images
 General Structure
 ------------------
 Docker images are part of the Citus release process. They are built and pushed after every release. Dockerfiles are stored in the `citusdata/docker <https://github.com/citusdata/docker>`_ repository. In each release, we change the below Dockerfiles to point to the new Citus release.
+Citus Docker images are published in DockerHub `citusdata/citus <https://hub.docker.com/repository/docker/citusdata/citus/>`_ 
 
 1. `Main Dockerfile <https://github.com/citusdata/docker/blob/master/Dockerfile>`_: Used to build the latest regular Citus image for the latest Postgres version.
 2. `alpine Dockerfile <https://github.com/citusdata/docker/tree/master/alpine>`_: Used to build the latest regular Citus image for the latest Postgres version with the alpine base Docker image.
