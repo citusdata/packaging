@@ -7,7 +7,7 @@ Docker images are part of the Citus release process. They are built and pushed a
 
 1. `Main Dockerfile <https://github.com/citusdata/docker/blob/master/Dockerfile>`_: Used to build the latest regular Citus image for the latest Postgres version.
 2. `alpine Dockerfile <https://github.com/citusdata/docker/tree/master/alpine>`_: Used to build the latest regular Citus image for the latest Postgres version with the alpine base Docker image.
-3. `postgres-xx` Dockerfiles (where `xx` represents the major Postgres versions>`_: Used to build the Citus images for the older Postgres versions. We normally support the last 3 major Postgres versions. For example, if the latest Postgres version is 15, we support 13, 14, and 15. Therefore, we have 2 Dockerfiles in total for supported Postgres major versions other than the latest one.
+3. `postgres-xx` Dockerfiles (where `xx` represents the major Postgres versions) : Used to build the Citus images for the older Postgres versions. We normally support the last 3 major Postgres versions. For example, if the latest Postgres version is 15, we support 13, 14, and 15. Therefore, we have 2 Dockerfiles in total for supported Postgres major versions other than the latest one.
 
 Build Process
 ------------------
