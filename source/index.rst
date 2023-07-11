@@ -1,5 +1,5 @@
 
-Welcome to Citus Data documentation!
+Welcome to Citus Data Packaging documentation!
 ======================================================
 
 |Citus Linux Packages Nightly Status| |Citus Docker Image Nightly Status|  |Latest Documentation Status|
@@ -44,6 +44,7 @@ This documentation is intended to provide a detailed overview of the packaging p
 
    package-build-environment
    repository-installation-scripts
+   repository
 
 
 .. toctree::
