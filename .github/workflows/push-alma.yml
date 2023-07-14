@@ -21,6 +21,12 @@ jobs:
   build_package:
     name: Build package
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - almalinux-8-pg14
+          - almalinux-8-pg15
 
     steps:
       - name: Checkout repository
@@ -33,8 +39,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER_NAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Clone tools branch
+      - name: Build and Publish Alma images
         run: |
-          docker build -t citus/packaging:almalinux-8-pg15 -f dockerfiles/almalinux-8-pg15/Dockerfile .
-          docker push citus/packaging:almalinux-8-pg15
+          docker build -t citus/${{ matrix.image }} -f dockerfiles/${{ matrix.image }}/Dockerfile .
+          docker push citus/packaging:${{ matrix.image }}
 
