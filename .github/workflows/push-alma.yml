@@ -25,6 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         image:
+          - almalinux-8-pg12
+          - almalinux-8-pg13
           - almalinux-8-pg14
           - almalinux-8-pg15
 
