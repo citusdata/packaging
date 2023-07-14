@@ -1,0 +1,40 @@
+name: Build and publish citus community nightly packages
+
+env:
+  MAIN_BRANCH: "all-citus"
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/community-nightlies"
+  PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
+  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+on:
+  push:
+    branches:
+      - "**"
+  schedule:
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  build_package:
+    name: Build package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # This step is to fetch the images unanonymously to have higher bandwidth
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Clone tools branch
+        run: |
+          docker build -t citus/packaging:almalinux-8-pg15 -f dockerfiles/almalinux-8-pg15/Dockerfile .
+          docker push citus/packaging:almalinux-8-pg15
+
