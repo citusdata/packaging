@@ -41,6 +41,6 @@ jobs:
 
       - name: Build and Publish Alma images
         run: |
-          docker build -t citus/${{ matrix.image }} -f dockerfiles/${{ matrix.image }}/Dockerfile .
+          docker build -t citus/packaging:${{ matrix.image }} -f dockerfiles/${{ matrix.image }}/Dockerfile .
           docker push citus/packaging:${{ matrix.image }}
 
