@@ -1,4 +1,4 @@
-name: Build and publish citus community nightly packages
+name: Push Alma images
 
 env:
   MAIN_BRANCH: "all-citus"
