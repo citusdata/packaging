@@ -180,10 +180,15 @@ sed -i -E -e "\\|^Source0:|s|https:.*|${tarballurl}|" \
     "${builddir}/${pkgname}.spec"
 
 os_name=$(awk '{print $1}' /etc/system-release)
-os_release=$(awk '{print $4}' /etc/system-release)
+if [ "${os_name}" == 'AlmaLinux' ]; then
+  os_release=$(awk '{print $3}' /etc/system-release)
+else
+  os_release=$(awk '{print $4}' /etc/system-release)
+fi
+
 if [ "${os_name}" == 'Oracle' ]; then
     locale='C'
-elif [ "${os_name}" == 'Fedora' ] || [[ "${os_name}" == 'CentOS'  && "${os_release}" == 8* ]]; then
+elif [ "${os_name}" == 'Fedora' ] || [[ ( "${os_name}" == 'CentOS' || "${os_name}" == 'AlmaLinux' )  && "${os_release}" == 8* ]]; then
     locale='C.utf8'
 else
     locale='en_US.utf8'
