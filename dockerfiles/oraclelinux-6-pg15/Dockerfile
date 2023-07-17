@@ -15,6 +15,14 @@ RUN  [[ oraclelinux != centos ]] || [[ 6 != 8 ]] || ( \
     dnf install -y perl-IPC-Run \
     )
 
+RUN  [[ oraclelinux != almalinux ]] || [[ 6 != 8 ]] || ( \
+    dnf install epel-release -y && \
+    dnf install dnf-plugins-core -y && \
+    dnf install epel-release -y && \
+    dnf config-manager --set-enabled powertools && \
+    dnf install -y perl-IPC-Run \
+    )
+
 RUN  [[ oraclelinux != oraclelinux ]] || [[ 6 != 8 ]] || ( \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \

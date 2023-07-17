@@ -23,7 +23,7 @@ function update_extra_repositories_and_packages {
             extra_repositories='epel-release centos-release-scl-rh'
             extra_packages='llvm-toolset-7-clang llvm5.0 spectool curl'
             ;;
-        centos+8)
+        centos+8|almalinux+8)
             extra_repositories='epel-release'
             extra_packages='llvm-toolset ccache spectool curl'
             ;;

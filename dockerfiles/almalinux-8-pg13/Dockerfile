@@ -66,7 +66,7 @@ RUN [[ almalinux != oraclelinux ]] || [[ 8 != 7 ]] || ( \
 RUN if [[ almalinux   == oraclelinux ]] && [[ 8 == 7 ]]; then yum install -y wget \
         && wget http://mirror.centos.org/centos/7/os/x86_64/Packages/lz4-devel-1.8.3-1.el7.x86_64.rpm \
         && rpm -ivh lz4-devel-1.8.3-1.el7.x86_64.rpm ; \
-        elif [[ centos   == oraclelinux ]] && [[ 8 == 6 ]]; then yum install -y wget \
+        elif [[ almalinux   == oraclelinux ]] && [[ 8 == 6 ]]; then yum install -y wget \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-r131-1.el6.x86_64.rpm \
         && rpm -ivh lz4-r131-1.el6.x86_64.rpm \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-devel-r131-1.el6.x86_64.rpm \
