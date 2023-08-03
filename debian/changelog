@@ -1,3 +1,9 @@
+azure-gdpr (2.6.citus-1) stable; urgency=low
+
+  * add azure_gdpr.enable_pii_logs guc, & log to PiiInternalPGLogs
+
+ -- Philip Dube <phdub@microsoft.com>  Thu, 03 Aug 2023 16:30:00 +0000
+
 azure-gdpr (2.5.citus-1) stable; urgency=low
 
   * fix regression which broke all logging

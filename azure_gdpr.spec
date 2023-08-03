@@ -7,11 +7,11 @@ Summary:	GDPR compliant logging for Azure
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	2.5.citus
+Version:	2.6.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/azure_gdpr/archive/v2.5.tar.gz
+Source0:	https://github.com/citusdata/azure_gdpr/archive/v2.6.tar.gz
 URL:		https://github.com/citusdata/azure_gdpr
 BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -49,6 +49,9 @@ PostgreSQL extension for GDPR compliant logging for Azure
 %endif
 
 %changelog
+* Thu Aug 03 2023 - Philip Dubé <phdub@microsoft.com> 2.6.citus-1
+- add azure_gdpr.enable_pii_logs guc, & log to PiiInternalPGLogs
+
 * Wed Jun 07 2023 - Philip Dubé <phdub@microsoft.com> 2.5.citus-1
 - fix regression which broke all logging
 
@@ -62,7 +65,7 @@ PostgreSQL extension for GDPR compliant logging for Azure
 * Thu Apr 13 2023 - Philip Dubé <phdub@microsoft.com> 2.2.citus-1
 - fixes to query count for 32 bit platforms and proper shmem exit handling
 
-* Sun Mar 11 2023 - Philip Dubé <phdub@microsoft.com> 2.1.citus-1
+* Sun Mar 12 2023 - Philip Dubé <phdub@microsoft.com> 2.1.citus-1
 - separate logged query counts into internal & external counts
 
 * Sun Feb 12 2023 - Philip Dubé <phdub@microsoft.com> 2.0.citus-1
