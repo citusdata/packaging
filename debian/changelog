@@ -1,3 +1,9 @@
+azure-gdpr (2.7.citus-1) stable; urgency=low
+
+  * fix segfault regression
+
+ -- Philip Dube <phdub@microsoft.com>  Tue, 08 Aug 2023 17:43:00 +0000
+
 azure-gdpr (2.6.citus-1) stable; urgency=low
 
   * add azure_gdpr.enable_pii_logs guc, & log to PiiInternalPGLogs
