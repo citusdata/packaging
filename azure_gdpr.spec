@@ -7,11 +7,11 @@ Summary:	GDPR compliant logging for Azure
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	2.8.citus
+Version:	2.9.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/azure_gdpr/archive/v2.8.tar.gz
+Source0:	https://github.com/citusdata/azure_gdpr/archive/v2.9.tar.gz
 URL:		https://github.com/citusdata/azure_gdpr
 BuildRequires:	postgresql%{pgmajorversion}-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -49,6 +49,9 @@ PostgreSQL extension for GDPR compliant logging for Azure
 %endif
 
 %changelog
+* Fri Aug 11 2023 - Philip Dubé <phdub@microsoft.com> 2.9.citus-1
+- correct 2.8's fix
+
 * Fri Aug 11 2023 - Philip Dubé <phdub@microsoft.com> 2.8.citus-1
 - fix boolean logic mixup
 

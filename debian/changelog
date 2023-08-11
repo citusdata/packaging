@@ -1,3 +1,9 @@
+azure-gdpr (2.9.citus-1) stable; urgency=low
+
+  * correct 2.8's fix
+
+ -- Philip Dube <phdub@microsoft.com>  Fri, 11 Aug 2023 15:16:00 +0000
+
 azure-gdpr (2.8.citus-1) stable; urgency=low
 
   * fix boolean logic mixup

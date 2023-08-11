@@ -2,6 +2,6 @@ pkgname=azure_gdpr
 hubproj=azure_gdpr
 deb_pkgname=azure-gdpr
 pkgdesc='Azure_gdpr'
-pkglatest=2.8.citus-1
+pkglatest=2.9.citus-1
 versioning=fancy
 nightlyref=main
