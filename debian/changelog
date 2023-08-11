@@ -1,3 +1,9 @@
+azure-gdpr (2.8.citus-1) stable; urgency=low
+
+  * fix boolean logic mixup
+
+ -- Philip Dube <phdub@microsoft.com>  Fri, 11 Aug 2023 15:03:00 +0000
+
 azure-gdpr (2.7.citus-1) stable; urgency=low
 
   * fix segfault regression
