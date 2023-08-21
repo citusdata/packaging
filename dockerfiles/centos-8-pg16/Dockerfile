@@ -1,13 +1,13 @@
 # vim:set ft=dockerfile:
-FROM centos:7
-RUN [[ centos != centos ]] || [[ 7 != 8 ]] || ( \
+FROM centos:8
+RUN [[ centos != centos ]] || [[ 8 != 8 ]] || ( \
     cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
     && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-* \
     )
 
 RUN yum -y update
 
-RUN  [[ centos != centos ]] || [[ 7 != 8 ]] || ( \
+RUN  [[ centos != centos ]] || [[ 8 != 8 ]] || ( \
     dnf install epel-release -y && \
     dnf install dnf-plugins-core -y && \
     dnf install epel-release -y && \
@@ -15,7 +15,7 @@ RUN  [[ centos != centos ]] || [[ 7 != 8 ]] || ( \
     dnf install -y perl-IPC-Run \
     )
 
-RUN  [[ centos != almalinux ]] || [[ 7 != 8 ]] || ( \
+RUN  [[ centos != almalinux ]] || [[ 8 != 8 ]] || ( \
     dnf install epel-release -y && \
     dnf install dnf-plugins-core -y && \
     dnf install epel-release -y && \
@@ -23,7 +23,7 @@ RUN  [[ centos != almalinux ]] || [[ 7 != 8 ]] || ( \
     dnf install -y perl-IPC-Run \
     )
 
-RUN  [[ centos != oraclelinux ]] || [[ 7 != 8 ]] || ( \
+RUN  [[ centos != oraclelinux ]] || [[ 8 != 8 ]] || ( \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IO-Tty-1.12-11.el8.x86_64.rpm && \
     curl -sO  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/perl-IPC-Run-0.99-1.el8.noarch.rpm && \
     dnf install perl-IO-Tty-1.12-11.el8.x86_64.rpm -y  && \
@@ -32,7 +32,7 @@ RUN  [[ centos != oraclelinux ]] || [[ 7 != 8 ]] || ( \
     rm -f perl-IO-Tty-1.12-11.el8.x86_64.rpm \
     )
 
-RUN  [[ centos != almalinux ]] || [[ 7 != 9 ]] || ( \
+RUN  [[ centos != almalinux ]] || [[ 8 != 9 ]] || ( \
     dnf install epel-release -y && \
     dnf -y install dnf-plugins-core && \
     dnf config-manager --enable epel && \
@@ -46,7 +46,7 @@ RUN ( yum install -y yum-plugin-ovl || yum install -y yum-plugin-ovl || touch /v
 
 # Enable some other repos for some dependencies in OL/7 
 # see https://yum.oracle.com/getting-started.html#installing-from-oracle-linux-yum-server
-RUN [[ centos != oraclelinux ]] || [[ 7 != 7 ]] || ( \
+RUN [[ centos != oraclelinux ]] || [[ 8 != 7 ]] || ( \
        yum install -y oraclelinux-release-el7 oracle-softwarecollection-release-el7 oracle-epel-release-el7  oraclelinux-developer-release-el7 \
        && yum-config-manager --enable \
             ol7_software_collections \
@@ -63,10 +63,10 @@ RUN [[ centos != oraclelinux ]] || [[ 7 != 7 ]] || ( \
 # in oracle 7 repos. So package from centos repo was used
 # There is no package in oracle repos for lz4. Also it is not preloaded. So both lz4 and lz4-devel packages
 # were downloaded from centos el/6 repos
-RUN if [[ centos   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
+RUN if [[ centos   == oraclelinux ]] && [[ 8 == 7 ]]; then yum install -y wget \
         && wget http://mirror.centos.org/centos/7/os/x86_64/Packages/lz4-devel-1.8.3-1.el7.x86_64.rpm \
         && rpm -ivh lz4-devel-1.8.3-1.el7.x86_64.rpm ; \
-        elif [[ centos   == oraclelinux ]] && [[ 7 == 6 ]]; then yum install -y wget \
+        elif [[ centos   == oraclelinux ]] && [[ 8 == 6 ]]; then yum install -y wget \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-r131-1.el6.x86_64.rpm \
         && rpm -ivh lz4-r131-1.el6.x86_64.rpm \
         && wget https://cbs.centos.org/kojifiles/packages/lz4/r131/1.el6/x86_64/lz4-devel-r131-1.el6.x86_64.rpm \
@@ -74,9 +74,9 @@ RUN if [[ centos   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
         else yum install -y lz4 lz4-devel; fi
 
 # install build tools and PostgreSQL development files
-RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
+RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
     && ( [[ 16 != 16 ]] || sed -i '/\[pgdg16-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
-    && [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
+    && [[ -z "epel-release" ]] || yum install -y epel-release) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
         bzip2-devel \
@@ -98,9 +98,9 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
         tar \
         libzstd \
         libzstd-devel \
-        llvm-toolset-7-clang llvm5.0 spectool curl \
-    && ( [[ 7 != 8 ]] || dnf -qy module disable postgresql ) \
-    && yum install -y postgresql12-server postgresql12-devel \
+        llvm-toolset ccache spectool curl \
+    && ( [[ 8 != 8 ]] || dnf -qy module disable postgresql ) \
+    && yum install -y postgresql16-server postgresql16-devel \
     && yum clean all
 
 # install jq to process JSON API responses
@@ -133,7 +133,7 @@ RUN yum -y install  perl-IPC-Cmd libuuid-devel cmake3
 # Git 2.7.1 is minimum requirement for cmake so we remove and reinstall latests git from an up-to-date repo
 # Symbolic link is not being created for cmake from cmake3 by default. Therefore, we need to create the link as well.
 # devtoolset-8-gcc-c++ is required to compile azure sdk in pg azure storage project
-RUN [[ centos != centos ]] || [[ 7 != 7 ]] || ( \
+RUN [[ centos != centos ]] || [[ 8 != 7 ]] || ( \
     yum -y install  perl-IPC-Cmd libuuid-devel cmake3 && \
     ln -s /usr/bin/cmake3 /usr/bin/cmake  && \
     yum -y remove git && \
@@ -166,7 +166,7 @@ RUN touch /rpmlintrc \
     && echo '%_build_pkgcheck %{_bindir}/rpmlint -f /rpmlintrc' >> /etc/rpm/macros
 
 # set PostgreSQL version, place scripts on path, and declare output volume
-ENV PGVERSION=12 \
+ENV PGVERSION=16 \
     PATH=/scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages
