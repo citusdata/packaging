@@ -31,7 +31,8 @@ jobs:
           - debian/buster
           - debian/bullseye
           - debian/bookworm
-          - ubuntu/bionic
+          # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
+          # - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
           - ubuntu/kinetic

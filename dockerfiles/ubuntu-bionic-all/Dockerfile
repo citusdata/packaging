@@ -70,7 +70,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main 16' > /e
         libxslt-dev \
         lintian \
         postgresql-server-dev-all \
-        postgresql-server-dev-16 \
         wget \
         zlib1g-dev \
         python3-pip \
