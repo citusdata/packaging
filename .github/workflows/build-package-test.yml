@@ -46,6 +46,7 @@ jobs:
           - 13
           - 14
           - 15
+          - 16
         include:
           - TARGET_PLATFORM: debian,buster
           - TARGET_PLATFORM: debian,bullseye
