@@ -15,11 +15,12 @@ on:
       - "**"
   schedule:
     - cron: "30 1 * * *"
+  workflow_dispatch:
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-  workflow_dispatch:
 
 jobs:
   build_package:

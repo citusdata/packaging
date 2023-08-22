@@ -10,7 +10,6 @@ env:
   DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 on:
-
   schedule:
     - cron: "30 1 * * *"
   workflow_dispatch:
