@@ -39,10 +39,10 @@ jobs:
       fail-fast: false
       matrix:
         TARGET_PLATFORM:
-          - centos,8
           - centos,7
           - oraclelinux,8
           - oraclelinux,7
+          - almalinux,8
           - almalinux,9
         POSTGRES_VERSION:
           - 11

@@ -37,7 +37,6 @@ jobs:
       fail-fast: false
       matrix:
         TARGET_PLATFORM:
-          - centos,8
           - centos,7
           - oraclelinux,8
           - oraclelinux,7
