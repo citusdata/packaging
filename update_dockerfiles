@@ -4,7 +4,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-pgversions='11 12 13 14 15'
+pgversions='11 12 13 14 15 16'
 topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dockerfiles_dir="${topdir}/dockerfiles"
 templates_dir="${topdir}"/templates

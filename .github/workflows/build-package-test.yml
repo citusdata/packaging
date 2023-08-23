@@ -16,6 +16,10 @@ on:
     branches: "**"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check_docker_files_integrity:
     name: Check if docker files are compliant with templates
@@ -39,6 +43,7 @@ jobs:
           - centos,7
           - oraclelinux,8
           - oraclelinux,7
+          - almalinux,8
           - almalinux,9
         POSTGRES_VERSION:
           - 11
@@ -46,11 +51,13 @@ jobs:
           - 13
           - 14
           - 15
+          - 16
         include:
           - TARGET_PLATFORM: debian,buster
           - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,bookworm
-          - TARGET_PLATFORM: ubuntu,bionic
+          # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
+          # - TARGET_PLATFORM: ubuntu,bionic
           - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: ubuntu,kinetic

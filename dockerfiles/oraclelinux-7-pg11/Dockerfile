@@ -75,6 +75,7 @@ RUN if [[ oraclelinux   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y w
 
 # install build tools and PostgreSQL development files
 RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
+    && ( [[ 11  != 16 ]] || sed -i '/\[pgdg16-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
     && [[ -z "" ]] || yum install -y ) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \

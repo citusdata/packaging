@@ -75,6 +75,7 @@ RUN if [[ centos   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
 
 # install build tools and PostgreSQL development files
 RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
+    && ( [[ 14  != 16 ]] || sed -i '/\[pgdg16-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
     && [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
