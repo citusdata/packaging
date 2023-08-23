@@ -75,7 +75,7 @@ RUN if [[ almalinux   == oraclelinux ]] && [[ 8 == 7 ]]; then yum install -y wge
 
 # install build tools and PostgreSQL development files
 RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
-    && ( [[ 16 != 16 ]] || sed -i '/\[pgdg16-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
+    && ( [[ 15  != 16 ]] || sed -i '/\[pgdg16-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
     && [[ -z "epel-release" ]] || yum install -y epel-release) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
