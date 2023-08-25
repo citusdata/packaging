@@ -6,3 +6,5 @@ version_matrix:
       postgres_versions: [11,12,13,14]
   - 1.9:
       postgres_versions: [11,12,13,14,15]
+  - 2.9:
+      postgres_versions: [11,12,13,14,15,16]
