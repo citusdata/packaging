@@ -1,3 +1,9 @@
+azure-gdpr (2.10.citus-1) stable; urgency=low
+
+  * fix count_logins segfaulting when invoked before shared memory initialized
+
+ -- Philip Dube <phdub@microsoft.com>  Sun, 27 Aug 2023 22:03:00 +0000
+
 azure-gdpr (2.9.citus-1) stable; urgency=low
 
   * correct 2.8's fix

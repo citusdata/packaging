@@ -23,13 +23,7 @@ jobs:
       matrix:
         platform:
           - el/7
-          - el/8
-          - debian/stretch
-          - debian/buster
-          - debian/bullseye
-          - ubuntu/bionic
           - ubuntu/focal
-          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
