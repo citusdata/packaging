@@ -1,3 +1,10 @@
+pgcron (1.6.0.citus-1) stable; urgency=low
+
+  * Official 1.6.0 release of PG Cron
+  * Adds support for PostgreSQL 16
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 29 Aug 2023 17:55:45 +0000
+
 pgcron (1.5.2.citus-1) stable; urgency=low
 
   * Official 1.5.2 release of PG Cron
