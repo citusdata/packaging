@@ -5,11 +5,11 @@
 
 Summary:	Periodic job scheduler for PostgreSQL
 Name:		%{sname}_%{pgmajorversion}
-Version:	1.5.2
+Version:	1.6.0
 Release:	1%{dist}
 License:	PostgreSQL
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/pg_cron/archive/v1.5.2.tar.gz
+Source0:	https://github.com/citusdata/pg_cron/archive/v1.6.0.tar.gz
 URL:		https://github.com/citusdata/pg_cron
 BuildRequires:	postgresql%{pgmajorversion}-devel libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -56,6 +56,9 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
+* Tue Aug 29 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.2-1
+- Official 1.6.0 release of PG Cron
+- Adds support for PostgreSQL 16
 * Fri Apr 7 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.2-1
 - Official 1.5.2 release of PG Cron
 * Tue Apr 4 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.1-1
