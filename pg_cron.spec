@@ -56,7 +56,7 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
-* Tue Aug 29 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.2-1
+* Tue Aug 29 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.6.0-1
 - Official 1.6.0 release of PG Cron
 - Adds support for PostgreSQL 16
 * Fri Apr 7 2023 - Gurkan Indibay <gindibay@microsoft.com> 1.5.2-1
