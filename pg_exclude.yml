@@ -5,3 +5,4 @@ exclude:
   release:
     ol/7: [15]
     el/8: [10]
+    ol/8: [10]
