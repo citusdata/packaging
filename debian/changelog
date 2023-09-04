@@ -1,3 +1,9 @@
+hll (2.18.citus-1) stable; urgency=low
+
+  * Support for PostgreSQL 16
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 01 Sep 2023 16:36:00 +0300
+
 hll (2.17.citus-1) stable; urgency=low
 
   * Support for PostgreSQL 15
