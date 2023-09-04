@@ -9,6 +9,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  CRATES_IO_MIRROR_FEED_TOKEN: ${{ secrets.CRATES_IO_MIRROR_FEED_TOKEN }}
 on:
   schedule:
     - cron: "30 1 * * *"
