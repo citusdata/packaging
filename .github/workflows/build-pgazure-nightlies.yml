@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # This step is to fetch the images unanonymously to have higher bandwidth
       - name: Login to Docker Hub
@@ -46,7 +46,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.25 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b pg_azure_repo_change --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update -y && sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
