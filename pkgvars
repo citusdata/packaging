@@ -1,4 +1,4 @@
 pkgname=hll
 hubproj=postgresql-hll
 pkgdesc=HyperLogLog
-pkglatest=2.17.citus-1
+pkglatest=2.18.citus-1
