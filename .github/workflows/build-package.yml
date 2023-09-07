@@ -9,8 +9,7 @@ env:
   PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
   PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
   MSRUSTUP_PAT: ${{ secrets.MSRUSTUP_PAT }}
-  MSCODEHUB_USERNAME: ${{ secrets.MSCODEHUB_USERNAME }}
-  MSCODEHUB_PASSWORD: ${{ secrets.MSCODEHUB_PASSWORD }}
+  CRATES_IO_MIRROR_FEED_TOKEN: ${{ secrets.CRATES_IO_MIRROR_FEED_TOKEN }}
 on:
   push:
     branches:
@@ -28,7 +27,6 @@ jobs:
           - el/7
           - debian/buster
           - debian/bullseye
-          - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
 
@@ -44,7 +42,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.25 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.28 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update -y && sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources

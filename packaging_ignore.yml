@@ -18,6 +18,11 @@ base:
   - ".* cc1plus: warning: command-line option .*"
   - ".* warning: no previous prototype for .*"
   - "CMake Warning at .*"
+  - "WARNING: Existing msrustup installation detected."
+  - "WARNING: To update existing tools, use CTRL+C to exit and use `msrustup update` instead."
+  - "WARNING: To OVERWRITE existing configuration, press ENTER."
+  - "warning: Updating existing toolchain, profile choice will be ignored"
+  - "warning: be sure to add .*"
 
 
 debian:
