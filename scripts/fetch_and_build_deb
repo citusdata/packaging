@@ -217,6 +217,7 @@ DEB_BUILD_OPTIONS="parallel=${mjobs}" debuild \
                   --preserve-envvar MSRUSTUP_PAT \
                   --preserve-envvar MSCODEHUB_USERNAME \
                   --preserve-envvar MSCODEHUB_PASSWORD \
+                  --preserve-envvar CRATES_IO_MIRROR_FEED_TOKEN \
                   -uc -us -B --lintian-opts --profile debian --allow-root
 
 ## Rename all *.ddeb files to *.deb since we upload debug packages with .deb suffix
