@@ -56,9 +56,9 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for postgresql-15..."
-  if apt-cache show postgresql-15 &> /dev/null; then
-    echo "Detected postgresql-15..."
+  echo "Checking for postgresql-16..."
+  if apt-cache show postgresql-16 &> /dev/null; then
+    echo "Detected postgresql-16..."
   else
     pgdg_list='/etc/apt/sources.list.d/pgdg.list'
     pgdg_source_path="deb http://apt.postgresql.org/pub/repos/apt/ ${codename}-pgdg main"
@@ -87,8 +87,8 @@ pgdg_check ()
     apt-get update &> /dev/null
     echo "done."
 
-    if ! apt-cache show postgresql-15 &> /dev/null; then
-      echo "PGDG repositories don't have postgresql-15 package for your operating system"
+    if ! apt-cache show postgresql-16 &> /dev/null; then
+      echo "PGDG repositories don't have postgresql-16 package for your operating system"
       echo "Cannot install Citus, exiting."
       exit 1
     fi
