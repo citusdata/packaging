@@ -23,6 +23,8 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+          - el/7
+          - ol/7
           - el/8
           - debian/buster
           - debian/bullseye
