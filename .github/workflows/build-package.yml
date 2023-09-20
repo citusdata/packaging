@@ -31,8 +31,6 @@ jobs:
           - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
-          - ubuntu/kinetic
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
