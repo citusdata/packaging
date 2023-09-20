@@ -44,12 +44,6 @@ pgdg_check ()
 
     yum install -d0 -e0 -y "${repo_url}"
 
-    if ! yum info -q -y postgresql16-server &> /dev/null; then
-      echo "PGDG repositories don't have postgresql16-server package for your operating system"
-      echo "Cannot install Citus, exiting."
-      exit 1
-    fi
-
     echo "done."
   fi
 }

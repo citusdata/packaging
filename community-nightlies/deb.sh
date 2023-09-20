@@ -86,12 +86,6 @@ pgdg_check ()
     echo -n "Running apt-get update... "
     apt-get update &> /dev/null
     echo "done."
-
-    if ! apt-cache show postgresql-16 &> /dev/null; then
-      echo "PGDG repositories don't have postgresql-16 package for your operating system"
-      echo "Cannot install Citus, exiting."
-      exit 1
-    fi
   fi
 }
 
