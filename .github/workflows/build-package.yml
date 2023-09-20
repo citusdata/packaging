@@ -23,9 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - el/7
           - el/8
-          - ol/7
           - ol/8
           - debian/buster
           - debian/bullseye
@@ -33,8 +31,6 @@ jobs:
           - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
-          - ubuntu/kinetic
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
