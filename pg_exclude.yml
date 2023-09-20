@@ -1,0 +1,7 @@
+exclude:
+  nightly:
+    el/7: [16]
+    ol/7: [16]
+  release:
+    el/7: [16]
+    ol/7: [16]
