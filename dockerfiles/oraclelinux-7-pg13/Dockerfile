@@ -98,6 +98,8 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
         tar \
         libzstd \
         libzstd-devel \
+        python3-pip \
+        python3-devel \
         llvm-toolset-7-clang llvm5.0 spectool curl \
     && ( [[ 7 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql13-server postgresql13-devel \

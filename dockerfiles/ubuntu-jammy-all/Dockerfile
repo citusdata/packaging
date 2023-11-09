@@ -73,6 +73,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 16' > /et
         postgresql-server-dev-16 \
         wget \
         zlib1g-dev \
+        python3-dev \
         python3-pip \
         python3-sphinx \
         python3-setuptools \

@@ -98,6 +98,8 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8
         tar \
         libzstd \
         libzstd-devel \
+        python3-pip \
+        python3-devel \
         llvm-toolset ccache spectool curl \
     && ( [[ 8 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql11-server postgresql11-devel \

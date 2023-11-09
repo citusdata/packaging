@@ -73,6 +73,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main 16' > 
         postgresql-server-dev-16 \
         wget \
         zlib1g-dev \
+        python3-dev \
         python3-pip \
         python3-sphinx \
         python3-setuptools \
