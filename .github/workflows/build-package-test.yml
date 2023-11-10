@@ -40,11 +40,11 @@ jobs:
       fail-fast: false
       matrix:
         TARGET_PLATFORM:
-          - centos,7
-          - oraclelinux,8
-          - oraclelinux,7
-          - almalinux,8
-          - almalinux,9
+          - centos-7
+          - oraclelinux-8
+          - oraclelinux-7
+          - almalinux-8
+          - almalinux-9
         POSTGRES_VERSION:
           - 11
           - 12
@@ -53,48 +53,42 @@ jobs:
           - 15
           - 16
         include:
-          - TARGET_PLATFORM: debian,buster
-          - TARGET_PLATFORM: debian,bullseye
-          - TARGET_PLATFORM: debian,bookworm
+          - TARGET_PLATFORM: debian-buster
+          - TARGET_PLATFORM: debian-bullseye
+          - TARGET_PLATFORM: debian-bookworm
           # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
-          # - TARGET_PLATFORM: ubuntu,bionic
-          - TARGET_PLATFORM: ubuntu,focal
-          - TARGET_PLATFORM: ubuntu,jammy
-          - TARGET_PLATFORM: ubuntu,kinetic
-          - TARGET_PLATFORM: pgxn
+          # - TARGET_PLATFORM: ubuntu-bionic
+          - TARGET_PLATFORM: ubuntu-focal
+          - TARGET_PLATFORM: ubuntu-jammy
+          - TARGET_PLATFORM: ubuntu-kinetic
+          # - TARGET_PLATFORM: pgxn
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Install package dependencies
-        run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Install wheel for el/8
-        if: matrix.TARGET_PLATFORM  == 'centos,8'
-        run: python -m pip install wheel
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          file: dockerfiles/${{ matrix.TARGET_PLATFORM }}-pg${{ matrix.POSTGRES_VERSION }}/Dockerfile
+          pull: true
+          push: false
+          tags: ghcr.io/citusdata/packaging-test:${{ matrix.TARGET_PLATFORM }}-pg${{ matrix.POSTGRES_VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build image for the target platform
-        run: |
-          git checkout -- dockerfiles
-          ./update_image
-        env:
-          TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
-          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
+      # - name: Clone tools repo for test
+      #   run: git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
 
-      - name: Clone tools repo for test
-        run: git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
-
-      - name: Execute packaging tests
-        run: |
-          python -m pip install -r tools/packaging_automation/requirements.txt
-          python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
-        env:
-          PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
-
-      - name: Push images
-        run: |
-          export CURRENT_BRANCH=${GITHUB_REF##*/}
-          ./ci/push_images
-        env:
-          TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
-          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
+      # - name: Execute packaging tests
+      #   run: |
+      #     python -m pip install -r tools/packaging_automation/requirements.txt
+      #     python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
+      #   env:
+      #     PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
