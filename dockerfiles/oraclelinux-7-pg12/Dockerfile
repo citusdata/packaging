@@ -104,6 +104,8 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
     && yum install -y postgresql12-server postgresql12-devel \
     && yum clean all
 
+RUN python3 -m pip install wheel
+
 # install jq to process JSON API responses
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
          -o /usr/bin/jq \
