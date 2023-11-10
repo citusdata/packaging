@@ -140,4 +140,8 @@ ENV PATH /scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages
 
+# add citus tools
+RUN git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
+RUN python3 -m pip install -r tools/packaging_automation/requirements.txt
+
 ENTRYPOINT ["/scripts/fetch_and_build_deb"]
