@@ -40,17 +40,17 @@ jobs:
       fail-fast: false
       matrix:
         TARGET_PLATFORM:
-          - centos-7
-          - oraclelinux-8
-          - oraclelinux-7
-          - almalinux-8
+          # - centos-7
+          # - oraclelinux-8
+          # - oraclelinux-7
+          # - almalinux-8
           - almalinux-9
         POSTGRES_VERSION:
-          - pg11
-          - pg12
-          - pg13
-          - pg14
-          - pg15
+          # - pg11
+          # - pg12
+          # - pg13
+          # - pg14
+          # - pg15
           - pg16
         exclude:
           - TARGET_PLATFORM: centos-7
@@ -58,35 +58,35 @@ jobs:
           - TARGET_PLATFORM: oraclelinux-7
             POSTGRES_VERSION: pg16
         include:
-          - TARGET_PLATFORM: debian-buster
-            POSTGRES_VERSION: all
-          - TARGET_PLATFORM: debian-bullseye
-            POSTGRES_VERSION: all
-          - TARGET_PLATFORM: debian-bookworm
-            POSTGRES_VERSION: all
-          # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
+          # - TARGET_PLATFORM: debian-buster
+          #   POSTGRES_VERSION: all
+          # - TARGET_PLATFORM: debian-bullseye
+          #   POSTGRES_VERSION: all
+          # - TARGET_PLATFORM: debian-bookworm
+          #   POSTGRES_VERSION: all
           # - TARGET_PLATFORM: ubuntu-bionic
-          - TARGET_PLATFORM: ubuntu-focal
-            POSTGRES_VERSION: all
+          #   POSTGRES_VERSION: all
+          # - TARGET_PLATFORM: ubuntu-focal
+          #   POSTGRES_VERSION: all
           - TARGET_PLATFORM: ubuntu-jammy
             POSTGRES_VERSION: all
-          - TARGET_PLATFORM: ubuntu-kinetic
-            POSTGRES_VERSION: all
-          - TARGET_PLATFORM: pgxn
-            POSTGRES_VERSION: all
+          # - TARGET_PLATFORM: ubuntu-kinetic
+          #   POSTGRES_VERSION: all
+          # - TARGET_PLATFORM: pgxn
+          #   POSTGRES_VERSION: all
     steps:
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: 'Login to GitHub Container Registry'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build and push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           file: dockerfiles/${{ matrix.TARGET_PLATFORM }}-${{ matrix.POSTGRES_VERSION }}/Dockerfile
           pull: true
