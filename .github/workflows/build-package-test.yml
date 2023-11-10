@@ -39,25 +39,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TARGET_PLATFORM:
+        TARGET_PLATFORM:
         #   - centos-7
         #   - oraclelinux-8
-        #   - oraclelinux-7
+          - oraclelinux-7
         #   - almalinux-8
         #   - almalinux-9
-        # POSTGRES_VERSION:
-        #   - pg11
+        POSTGRES_VERSION:
+          # - pg11
         #   - pg12
         #   - pg13
         #   - pg14
-        #   - pg15
+          - pg15
         #   - pg16
         # exclude:
         #   - TARGET_PLATFORM: centos-7
         #     POSTGRES_VERSION: pg16
         #   - TARGET_PLATFORM: oraclelinux-7
         #     POSTGRES_VERSION: pg16
-        include:
+        # include:
           # - TARGET_PLATFORM: debian-buster
           #   POSTGRES_VERSION: all
           # - TARGET_PLATFORM: debian-bullseye
@@ -68,8 +68,8 @@ jobs:
           #   POSTGRES_VERSION: all
           # - TARGET_PLATFORM: ubuntu-focal
           #   POSTGRES_VERSION: all
-          - TARGET_PLATFORM: ubuntu-jammy
-            POSTGRES_VERSION: all
+          # - TARGET_PLATFORM: ubuntu-jammy
+          #   POSTGRES_VERSION: all
           # - TARGET_PLATFORM: ubuntu-kinetic
           #   POSTGRES_VERSION: all
           # - TARGET_PLATFORM: pgxn
