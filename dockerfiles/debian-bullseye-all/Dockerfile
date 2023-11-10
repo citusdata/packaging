@@ -142,6 +142,7 @@ VOLUME /packages
 
 # add citus tools
 RUN git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
-RUN bash -l -c 'pip install -r tools/packaging_automation/requirements.txt'
+RUN export PATH="$HOME/.pyenv/bin:$PATH" \
+    && bash -l -c "$(pyenv init -) && pyenv virtualenv ${PYTHON_VERSION} packaging_env && pyenv activate packaging_env && pip install -r tools/packaging_automation/requirements.txt"
 
 ENTRYPOINT ["/scripts/fetch_and_build_deb"]
