@@ -12,8 +12,8 @@ env:
   CURRENT_BRANCH: ${GITHUB_REF##*/}
   TEST: true
 on:
-  push:
-    branches: "**"
+  pull_request:
+    types: [opened, reopened,synchronize]
   workflow_dispatch:
 
 concurrency:
