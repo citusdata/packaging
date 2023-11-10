@@ -90,7 +90,7 @@ jobs:
         with:
           file: dockerfiles/${{ matrix.TARGET_PLATFORM }}-${{ matrix.POSTGRES_VERSION }}/Dockerfile
           pull: true
-          push: false
+          push: true
           tags: ghcr.io/citusdata/packaging-test:${{ matrix.TARGET_PLATFORM }}-${{ matrix.POSTGRES_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
