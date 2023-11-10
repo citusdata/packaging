@@ -73,6 +73,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main 16' > /e
         postgresql-server-dev-16 \
         wget \
         zlib1g-dev \
+        python3-dev \
         python3-pip \
         python3-sphinx \
         python3-setuptools \
@@ -112,8 +113,8 @@ RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2.tar.gz && \
     tar -zxvf cmake-3.22.2.tar.gz && \
     cd cmake-3.22.2 && ./bootstrap && \
-    make && \
-    make install && \
+    MAKEFLAGS="-j $(nproc)" make && \
+    MAKEFLAGS="-j $(nproc)" make install && \
     rm -f cmake-3.22.2.tar.gz && \
     rm -rf cmake-3.22.2
 
@@ -138,5 +139,10 @@ ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16"
 ENV PATH /scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages
+
+# add citus tools
+RUN git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
+RUN export PATH="$HOME/.pyenv/bin:$PATH" \
+    && bash -l -c "$(pyenv init -) && pyenv virtualenv ${PYTHON_VERSION} packaging_env && pyenv activate packaging_env && pip install -r tools/packaging_automation/requirements.txt"
 
 ENTRYPOINT ["/scripts/fetch_and_build_deb"]

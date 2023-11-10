@@ -13,7 +13,7 @@ env:
   TEST: false
 on:
   push:
-    branches: "**"
+    branches: "develop"
   workflow_dispatch:
 
 concurrency:

@@ -75,7 +75,6 @@ RUN if [[ centos   == oraclelinux ]] && [[ 7 == 7 ]]; then yum install -y wget \
 
 # install build tools and PostgreSQL development files
 RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm  \
-    && ( [[ 16  != 16 ]] || sed -i '/\[pgdg16-updates-testing\]/{n;n;n;s/.*/enabled=1/}' /etc/yum.repos.d/pgdg-redhat-all.repo ) \
     && [[ -z "epel-release centos-release-scl-rh" ]] || yum install -y epel-release centos-release-scl-rh) \
     && yum groupinstall -y 'Development Tools' \
     && yum install -y \
@@ -98,6 +97,8 @@ RUN ( yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7
         tar \
         libzstd \
         libzstd-devel \
+        python3-pip \
+        python3-devel \
         llvm-toolset-7-clang llvm5.0 spectool curl \
     && ( [[ 7 != 8 ]] || dnf -qy module disable postgresql ) \
     && yum install -y postgresql16-server postgresql16-devel \
@@ -170,5 +171,11 @@ ENV PGVERSION=16 \
     PATH=/scripts:$PATH
 COPY scripts /scripts
 VOLUME /packages
+
+# add citus tools
+RUN git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
+RUN export PATH="$HOME/.pyenv/bin:$PATH" \
+    && bash -l -c "$(pyenv init -) && pyenv virtualenv ${PYTHON_VERSION} packaging_env && pyenv activate packaging_env && pip install -r tools/packaging_automation/requirements.txt" \
+    && ([[ 7 != 7 ]] || bash -l -c "$(pyenv init -) && pyenv activate packaging_env && pip uninstall -y urllib3 && pip install 'urllib3<2'")
 
 ENTRYPOINT ["/scripts/fetch_and_build_rpm"]
