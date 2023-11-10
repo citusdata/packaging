@@ -113,8 +113,8 @@ RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2.tar.gz && \
     tar -zxvf cmake-3.22.2.tar.gz && \
     cd cmake-3.22.2 && ./bootstrap && \
-    make && \
-    make install && \
+    MAKEFLAGS="-j $(nproc)" make && \
+    MAKEFLAGS="-j $(nproc)" make install && \
     rm -f cmake-3.22.2.tar.gz && \
     rm -rf cmake-3.22.2
 
