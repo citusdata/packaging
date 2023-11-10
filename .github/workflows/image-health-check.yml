@@ -12,8 +12,6 @@ env:
   CURRENT_BRANCH: "${GITHUB_REF##*/}"
   TEST: false
 on:
-  push:
-    branches: "**"
   schedule:
     - cron: "30 2 * * *"
   workflow_dispatch:
