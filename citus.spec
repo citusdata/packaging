@@ -8,11 +8,11 @@ Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	12.1.1.citus
+Version:	11.1.7.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v12.1.1.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v11.1.7.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -112,6 +112,9 @@ fi
 %doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
+* Wed Feb 14 2024 - Gurkan Indibay <gindibay@microsoft.com> 11.1.7.citus-1
+- Official 11.1.7 release of Citus
+
 * Tue Nov 14 2023 - Gurkan Indibay <gindibay@microsoft.com> 12.1.1.citus-1
 - Official 12.1.1 release of Citus
 
