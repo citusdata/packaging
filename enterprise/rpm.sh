@@ -233,7 +233,7 @@ detect_repo_url ()
   pkg_dist="${dist}"
 
   case "${os}" in
-    ol|centos|rhel|redhatenterpriseserver)
+    ol|centos|rhel|redhatenterpriseserver|almalinux)
       ;;
     *)
       unknown_os
