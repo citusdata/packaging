@@ -3,7 +3,9 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname topn
 
-
+# Spell checking directive
+%define _unpackaged_files_terminate_build 0
+%spellout topn
 
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
@@ -31,7 +33,6 @@ PATH=%{pginstdir}/bin:$PATH
 make %{?_smp_mflags}
 
 %install
-rm -rf %{buildroot}
 PATH=%{pginstdir}/bin:$PATH
 %make_install
 # Install documentation with a better name:
