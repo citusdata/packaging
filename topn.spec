@@ -31,6 +31,7 @@ PATH=%{pginstdir}/bin:$PATH
 make %{?_smp_mflags}
 
 %install
+rm -rf %{buildroot}
 PATH=%{pginstdir}/bin:$PATH
 %make_install
 # Install documentation with a better name:
