@@ -3,6 +3,12 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname topn
 
+# Spell checking directive
+%define _unpackaged_files_terminate_build 0
+%global __provides_exclude_from ^%{pginstdir}/lib/.*\\.so$
+%global __requires_exclude_from ^%{pginstdir}/lib/.*\\.so$
+%spellout topn
+
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
 Version:	2.6.0.citus
