@@ -9,6 +9,7 @@
 %global __requires_exclude_from ^%{pginstdir}/lib/.*\\.so$
 %spellout topn
 
+
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
 Version:	2.6.0.citus
