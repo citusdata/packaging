@@ -4,8 +4,9 @@
 %global sname topn
 
 # Spell checking directive
-%global __provides_exclude_from ^%{pginstdir}/lib/.*\\.so$
-%global __requires_exclude_from ^%{pginstdir}/lib/.*\\.so$
+%define _unpackaged_files_terminate_build 0
+%spellout topn
+
 
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
