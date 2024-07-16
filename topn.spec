@@ -3,7 +3,6 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname topn
 
-
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
 Version:	2.6.0.citus
