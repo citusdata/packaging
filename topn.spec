@@ -3,11 +3,9 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname topn
 
-%global _rpmlint_filters %(cat <<'EOF'
-addFilter("spelling-error.*topn")
-EOF
-)
-
+# Spell checking directive
+%global __provides_exclude_from ^%{pginstdir}/lib/.*\\.so$
+%global __requires_exclude_from ^%{pginstdir}/lib/.*\\.so$
 
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
