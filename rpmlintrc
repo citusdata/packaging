@@ -8,13 +8,13 @@ addFilter("W: shared-lib-calls-exit .*");
 addFilter("W: spelling-error .*(top-n)");
 addFilter("\w*-debuginfo[^:]*: W: only-non-binary-in-usr-lib");
 
-addFilter("W: spelling-error Summary\\(en_US\\) topn")
-addFilter("W: spelling-error %description -l en_US topn")
+// addFilter("W: spelling-error Summary\\(en_US\\) topn")
+// addFilter("W: spelling-error %description -l en_US topn")
 
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.1.0--2.2.0.sql")
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.0--2.2.1.sql")
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.1--2.2.2.sql")
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.2--2.3.0.sql")
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.3.1--2.4.0.sql")
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.4.0--2.5.0.sql")
-addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.5.0--2.6.0.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.1.0--2.2.0.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.0--2.2.1.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.1--2.2.2.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.2--2.3.0.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.3.1--2.4.0.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.4.0--2.5.0.sql")
+// addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.5.0--2.6.0.sql")
