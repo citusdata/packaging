@@ -9,8 +9,6 @@ base:
   - "gpg: WARNING: options in `/root/.gnupg/gpg.conf' are not yet active during this run"
   - ".* warning: overriding recipe for target 'check'"
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/.*"
-  - "Wrote: /citus-rpm-build/x86_64/topn_11-.*.rpm"  
-  - "1 packages and 0 specfiles checked; 0 errors, 0 warnings."
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
@@ -18,5 +16,3 @@ rpm:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/topn.*"
-  - ".*: W: spelling-error Summary(en_US) topn"
-  - ".*: W: spelling-error %description -l en_US topn"
