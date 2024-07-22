@@ -20,5 +20,3 @@ rpm:
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/topn.*"
   - ".*: W: spelling-error Summary(en_US) topn"
   - ".*: W: spelling-error %description -l en_US topn"
-
-  - ".*: Wrote: /citus-rpm-build/x86_64/topn_11-.*.rpm"
