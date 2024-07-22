@@ -11,6 +11,7 @@ base:
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/.*"
   - ".*: Wrote: /citus-rpm-build/x86_64/topn_11-.*.rpm"
   - ".*: Wrote: /citus-rpm-build/x86_64/topn_11-debuginfo-.*.rpm"
+  - ".*: 1 packages and 0 specfiles checked; 0 errors, 0 warnings."
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"

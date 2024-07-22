@@ -18,3 +18,7 @@ addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.2.2--2.3.0.sql")
 addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.3.1--2.4.0.sql")
 addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.4.0--2.5.0.sql")
 addFilter("E: zero-length /usr/pgsql-11/share/extension/topn--2.5.0--2.6.0.sql")
+
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_11-.*.rpm")
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_11-debuginfo-.*.rpm")
+addFilter("1 packages and 0 specfiles checked; 0 errors, 0 warnings.")
