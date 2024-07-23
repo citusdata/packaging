@@ -12,6 +12,9 @@ base:
   - "Wrote: /citus-rpm-build/x86_64/topn_11-.*.rpm"
   - "Wrote: /citus-rpm-build/x86_64/topn_11-debuginfo-.*.rpm"
   - "1 packages and 0 specfiles checked; 0 errors, 0 warnings."
+  - "Wrote: /citus-rpm-build/x86_64/topn_12-debugsource-.*\\.rpm"
+  - "Wrote: /citus-rpm-build/x86_64/topn_12-debuginfo-.*\\.rpm"
+  - "Wrote: /citus-rpm-build/x86_64/topn_12-.*.rpm"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
