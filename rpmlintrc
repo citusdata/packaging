@@ -20,4 +20,3 @@ addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_\\d+-.*\\.rpm")
 addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_\\d+-debuginfo-.*\\.rpm")
 addFilter(".*: 1 packages and 0 specfiles checked; 0 errors, 0 warnings.")
 addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-debugsource-.*\\.rpm")
-
