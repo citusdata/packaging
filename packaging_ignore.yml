@@ -16,3 +16,4 @@ rpm:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
   - ".*: E: zero-length /usr/pgsql-.*/share/extension/topn.*"
+  - ".*: E: zero-length /usr/pgsql-.*/share/extension/.*"

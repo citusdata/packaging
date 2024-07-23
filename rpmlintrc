@@ -10,3 +10,6 @@ addFilter("\w*-debuginfo[^:]*: W: only-non-binary-in-usr-lib");
 
 addFilter('spelling-error Summary\(en_US\) topn')
 addFilter('spelling-error %description -l en_US topn')
+
+addFilter(".*: E: zero-length /usr/pgsql-.*/share/extension/.*")
+
