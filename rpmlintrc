@@ -13,13 +13,11 @@ addFilter('spelling-error %description -l en_US topn')
 
 addFilter(".*: E: zero-length /usr/pgsql-.*/share/extension/.*")
 
-addFilter("Wrote: /citus-rpm-build/x86_64/topn_11-.*\\.rpm")
-addFilter("Wrote: /citus-rpm-build/x86_64/topn_11-debuginfo-.*\\.rpm")
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-.*\\.rpm")
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-debuginfo-.*\\.rpm")
 addFilter("1 packages and 0 specfiles checked; 0 errors, 0 warnings.")
-addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_11-.*\\.rpm")
-addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_11-debuginfo-.*\\.rpm")
+addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_\\d+-.*\\.rpm")
+addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_\\d+-debuginfo-.*\\.rpm")
 addFilter(".*: 1 packages and 0 specfiles checked; 0 errors, 0 warnings.")
-
-addFilter("Wrote: /citus-rpm-build/x86_64/topn_12-debugsource-.*\\.rpm")
-addFilter("Wrote: /citus-rpm-build/x86_64/topn_12-debuginfo-.*\\.rpm")
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-debugsource-.*\\.rpm")
 
