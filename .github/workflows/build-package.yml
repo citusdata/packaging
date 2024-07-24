@@ -63,3 +63,6 @@ jobs:
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
           --main_branch "${MAIN_BRANCH}"
+
+      - name: Prune unused Docker images
+        run: docker image prune -f
