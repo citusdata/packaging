@@ -33,6 +33,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Clean up Docker system at start
+        run: |
+          docker system prune -af
+          docker volume prune -f
+
+
       - name: Clone tools branch
         run: git clone -b v0.8.27 --depth=1  https://github.com/citusdata/tools.git tools
 
