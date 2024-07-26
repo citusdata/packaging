@@ -7,3 +7,16 @@ addFilter("W: non-standard-dir-in-usr .*");
 addFilter("W: shared-lib-calls-exit .*");
 addFilter("W: spelling-error .*(top-n)");
 addFilter("\w*-debuginfo[^:]*: W: only-non-binary-in-usr-lib");
+
+addFilter('spelling-error Summary\(en_US\) topn')
+addFilter('spelling-error %description -l en_US topn')
+
+addFilter(".*: E: zero-length /usr/pgsql-.*/share/extension/.*")
+
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-.*\\.rpm")
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-debuginfo-.*\\.rpm")
+addFilter("1 packages and 0 specfiles checked; 0 errors, 0 warnings.")
+addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_\\d+-.*\\.rpm")
+addFilter(".*: Wrote: /citus-rpm-build/x86_64/topn_\\d+-debuginfo-.*\\.rpm")
+addFilter(".*: 1 packages and 0 specfiles checked; 0 errors, 0 warnings.")
+addFilter("Wrote: /citus-rpm-build/x86_64/topn_\\d+-debugsource-.*\\.rpm")
