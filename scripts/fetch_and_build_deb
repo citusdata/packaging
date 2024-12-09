@@ -66,6 +66,7 @@ source /buildfiles/pkgvars
 declare pkglatest # to make shellcheck happy
 pkgname="${deb_pkgname:-${pkgname}}"
 hubproj="${hubproj:-${pkgname}}"
+orgname="${orgname:-citusdata}" # Default to citusdata if not set in pkgvars
 nightlyref="${nightlyref:-master}"
 versioning="${versioning:-simple}"
 if [[ "${pkglatest}" == *"beta"* ]]; then
@@ -97,7 +98,8 @@ export EMAIL
 EMAIL=$(determine_email)
 
 cp -R /buildfiles/debian "${builddir}"
-repopath="citusdata/${hubproj}"
+repopath="${orgname}/${hubproj}"
+echo "Repository path: ${repopath}" # to see whether correct or not
 
 case "${1}" in
     release)
