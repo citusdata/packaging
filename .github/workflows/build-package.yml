@@ -33,6 +33,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Clean up disk space
+        run: |
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+
       - name: Clone tools branch
         run: git clone -b v0.8.30 --depth=1 https://github.com/citusdata/tools.git tools
 
