@@ -44,7 +44,7 @@ RUN ( [ ubuntu != debian ] || [ jammy != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 16' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 17' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -70,7 +70,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 16' > /et
         libxslt-dev \
         lintian \
         postgresql-server-dev-all \
-        postgresql-server-dev-16 \
+        postgresql-server-dev-17 \
         wget \
         zlib1g-dev \
         python3-pip \
@@ -131,8 +131,8 @@ RUN set -ex \
     && echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 
 
-# Added for pg16 beta package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16"
+# Added for pg17 beta package support.
+ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH
