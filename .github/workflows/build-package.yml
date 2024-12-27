@@ -24,15 +24,26 @@ jobs:
         platform:
           - el/7
           - el/8
+          - el/9
           - ol/7
           - ol/8
+          - ol/9
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Clean up disk space
+        run: |
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+
       - name: Clone tools branch
-        run: git clone -b v0.8.27 --depth=1 https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.30 --depth=1 https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
