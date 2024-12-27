@@ -54,7 +54,8 @@ jobs:
           - 16
           - 17
         include:
-          - TARGET_PLATFORM: debian,buster
+          # - TARGET_PLATFORM: debian,buster
+          # removing due to EOL of debian buster
           - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,bookworm
           # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
