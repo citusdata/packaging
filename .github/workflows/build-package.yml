@@ -40,9 +40,11 @@ jobs:
       fail-fast: false
       matrix:
         TARGET_PLATFORM:
-          - centos,7
+          # - centos,7
+          # removing due to EOL
           - oraclelinux,8
-          - oraclelinux,7
+          # - oraclelinux,7
+          # removing due to EOL
           - almalinux,8
           - almalinux,9
         POSTGRES_VERSION:
@@ -62,7 +64,8 @@ jobs:
           # - TARGET_PLATFORM: ubuntu,bionic
           - TARGET_PLATFORM: ubuntu,focal
           - TARGET_PLATFORM: ubuntu,jammy
-          - TARGET_PLATFORM: ubuntu,kinetic
+          # - TARGET_PLATFORM: ubuntu,kinetic
+          # removing due to EOL of ubuntu kinetic
           - TARGET_PLATFORM: pgxn
     steps:
       - name: Checkout repository
