@@ -29,21 +29,13 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          # - el/7
-          # removing due to EOL of centos 7
           - el/8
-          #- ol/7
-          # removing due to EOL of oraclelinux,7
-          # - debian/buster
-          # removing due to EOL of debian buster
           - debian/bullseye
           - debian/bookworm
           # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
           # - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
-          # - ubuntu/kinetic
-          # removing due to EOL of ubuntu kinetic
 
     steps:
       - name: Checkout repository
