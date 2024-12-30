@@ -132,7 +132,7 @@ RUN set -ex \
 
 
 # Added for pg17 beta package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 17"
+ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH
