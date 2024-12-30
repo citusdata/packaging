@@ -50,7 +50,8 @@ jobs:
           - almalinux,8
           - almalinux,9
         POSTGRES_VERSION:
-          - 11
+          # - 11
+          # removing Postgres 11 support due to EOL
           - 12
           - 13
           - 14
