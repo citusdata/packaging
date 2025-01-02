@@ -1,6 +1,5 @@
 almalinux,8
 almalinux,9
-debian,buster
 debian,bullseye
 debian,bookworm
 oraclelinux,8
@@ -8,4 +7,5 @@ oraclelinux,6
 ubuntu,focal
 ubuntu,bionic
 ubuntu,jammy
+ubuntu, noble
 pgxn
