@@ -36,6 +36,7 @@ jobs:
           # - ubuntu/bionic
           - ubuntu/focal
           - ubuntu/jammy
+          - ubuntu/noble
 
     steps:
       - name: Checkout repository
