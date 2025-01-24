@@ -10,7 +10,7 @@ env:
   ACR_PASSWORD: "${{ secrets.ACR_PASSWORD }}"
   ACR_SERVICE_PRINCIPAL_ID: "${{ secrets.ACR_SERVICE_PRINCIPAL_ID }}"
   CURRENT_BRANCH: "${GITHUB_REF##*/}"
-  TEST: true
+  TEST: false
 on:
   push:
     branches: "**"
@@ -81,16 +81,16 @@ jobs:
       - name: Clone tools repo for test
         run: git clone -b ubuntu_noble_support --depth=1  https://github.com/citusdata/tools.git tools
 
-      # - name: Execute packaging tests
-      #   run: |
-      #     python -m pip install -r tools/packaging_automation/requirements.txt
-      #     python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
-      #   env:
-      #     PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
+      - name: Execute packaging tests
+        run: |
+          python -m pip install -r tools/packaging_automation/requirements.txt
+          python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
+        env:
+          PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
 
       - name: Push images
         run: |
-            export CURRENT_BRANCH=develop
+            export CURRENT_BRANCH=${GITHUB_REF##*/}
             ./ci/push_images
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
