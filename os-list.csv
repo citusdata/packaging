@@ -5,7 +5,6 @@ debian,bookworm
 oraclelinux,8
 oraclelinux,6
 ubuntu,focal
-ubuntu,bionic
 ubuntu,jammy
 ubuntu,noble
 pgxn
