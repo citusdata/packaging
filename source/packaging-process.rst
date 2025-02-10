@@ -18,7 +18,7 @@ Editing Configuration Files by Pipeline
 
 Citus has an automation process to edit the packaging configuration scripts called the  `Update Package Properties <https://github.com/citusdata/packaging/actions/workflows/update_package_properties.yml>`_ workflow.
 
-By executing this workflow on the all-citus branch, a new pull request (PR) will be generated in the packaging repository.
+By executing this workflow on the all-citus branch, a new pull request (PR) will be generated in the packaging repository. To do this, click the "Run Workflow" button, select all-citus as the branch for "Use workflow from," enter the tag name for the project repository to be released, and fill in any other necessary details.
 
 This PR will update the packaging configuration files to the desired version.
 
