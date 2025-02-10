@@ -10,8 +10,10 @@ The packaging process consists of the following steps:
 
 Bake deb and rpm packages
 ---------------------------
-
+        
 In this phase, the packaging configuration files need to be edited to bake the packages for the desired application version.
+
+Since this step relies on tools from the `citusdata/tools <https://github.com/citusdata/tools>`_ repository, some adjustments may be required before proceeding. For instance, if support for a new PostgreSQL version is needed, the package automation script must be updated accordingly.
 
 Editing Configuration Files by Pipeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,15 +22,14 @@ Citus has an automation process to edit the packaging configuration scripts call
 
 By executing this workflow on the all-citus branch, a new pull request (PR) will be generated in the packaging repository. To do this, click the "Run Workflow" button, select all-citus as the branch for "Use workflow from," enter the tag name for the project repository to be released, and fill in any other necessary details.
 
-This PR will update the packaging configuration files to the desired version.
+This PR will update the packaging configuration files to the desired version. The tools version used in the workflow may need to be updated. Here you can find an example PR: `PR #1121 <https://github.com/citusdata/packaging/pull/1121/files>`_.
+
 
 Once the necessary checks have passed, a review can be requested from the packaging team.
 
-After the review is completed, the PR can be merged.
+After the review is completed and the PR is merged, the workflow will execute all necessary jobs. Once finished, the updated packages will be available in the `Citusdata Package Repository <https://packagecloud.io/>`_.
 
-Once all the jobs are finished, the new packages can be found in the `Citusdata Package Repository <https://packagecloud.io/>`_.
-
-It is important to ensure that the new packages are available for all supported distributions in the repository before proceeding to the next step.
+Before moving to the next step, it is crucial to verify that the new packages are available for all supported distributions in the repository.
 
 Editing Configuration Files Manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,6 +74,12 @@ There are two categories of projects that require manual configuration file edit
      - Create a PR from the new branch to the rpm-<project_name> branch.
      - After the PR is merged, the new packages can be found in the `Citusdata Package Repository <https://packagecloud.io/>`_. It is important to ensure that the new packages are available for all supported distributions in the repository before proceeding to the next step.
 
+    Example PRs to generate TopN packages can be found:
+    
+    - `PR #1123 <https://github.com/citusdata/packaging/pull/1123/files>`_
+    - `PR #1122 <https://github.com/citusdata/packaging/pull/1122/files>`_
+
+
 Bake docker images
 ------------------
 
@@ -83,11 +90,12 @@ Baking Main versions
 
 In this phase, the docker image configuration files need to be edited to bake the docker images for the desired application version.
 
-The `Update Version on Docker Files <https://github.com/citusdata/docker/blob/master/.github/workflows/update_version.yml>`_  workflow can be used to edit the docker image configuration files.
+The `Update Version on Docker Files <https://github.com/citusdata/docker/blob/master/.github/workflows/update_version.yml>`_ workflow can be used to edit the docker image configuration files.  
+By executing this workflow on the master branch, a new pull request (PR) will be generated in the docker repository.  
 
-By executing this workflow on the master branch, a new pull request (PR) will be generated in the docker repository.
+To do this, click the **"Run Workflow"** button, select `master` as the branch for **"Use workflow from,"** enter the version number to be released, and fill in any other necessary details.
 
-This PR will update the docker image configuration files to the desired version.
+This PR will update the docker image configuration files to the desired version. Here you can find an example PR: `PR #354 <https://github.com/citusdata/docker/pull/354/files>`_.
 
 Once all the necessary checks have passed, a review can be requested from the packaging team.
 
