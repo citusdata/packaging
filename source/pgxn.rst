@@ -15,7 +15,7 @@ Citus has an automation process to edit the packaging configuration scripts call
 By executing this workflow on the `pgxn-citus` branch, a new pull request (PR) will be generated in the packaging repository.  
 To do this, click the **"Run Workflow"** button, select `pgxn-citus` as the branch for **"Use workflow from,"** enter the version number to be released, and fill in any other necessary details.
 
-An example PR can be found here: `PR #1128 <https://github.com/citusdata/packaging/pull/112
+An example PR can be found here: `PR #1128 <https://github.com/citusdata/packaging/pull/1128/files>`_.
 
 
 Citus PGXN Configuration
