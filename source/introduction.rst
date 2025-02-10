@@ -7,18 +7,14 @@ In this document, we will explore the steps and best practices involved in prepa
 
 The supported operating systems and releases for packaging include:
 
-- CentOS 8
-- CentOS 7
+- Oracle Linux 9
 - Oracle Linux 8
-- Oracle Linux 7
-- AlmaLinux 9
-- Debian Buster
+- RHEL 9
+- RHEL 8
 - Debian Bullseye
 - Debian Bookworm
-- Ubuntu Bionic
 - Ubuntu Focal
 - Ubuntu Jammy
-- Ubuntu Kinetic
 
 The packaging process will involve preparing packages for various projects, including:
 
