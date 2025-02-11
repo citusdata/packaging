@@ -153,6 +153,8 @@ The required fields for the issue are as follows:
 Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the PostgreSQL YUM Repository.
 An example issue record can be found here: `Issue #8092 <https://redmine.postgresql.org/issues/8092>`_.
 
+See the `Citus PGDG Packages <https://citusdata-packaging.readthedocs.io/en/latest/pgdg.html>`_ for more details.
+
 
 Update: Repository Installation Scripts
 ---------------------------------------
