@@ -143,12 +143,14 @@ The required fields for the issue are as follows:
 - Tracker: Bug
 - Subject: New release of Citus <version>
 - Description: Provide a detailed description of the new release, including any notable changes or improvements.
-- Category: Packaging
+- Category: Package update
 - Priority: Normal
 - Target version: <appropriate version>
-- Assignee: Leave blank unless specified
+- Assignee: Leave blank unless specified example: PostgreSQL 15 and above
 
-Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the Postgres Redmine.
+Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the PostgreSQL YUM Repository.
+An example issue record can be found here: `Issue #8092 <https://redmine.postgresql.org/issues/8092>`_.
+
 
 Update: Repository Installation Scripts
 ---------------------------------------
