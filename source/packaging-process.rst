@@ -86,7 +86,7 @@ Bake docker images
 
 This step is applicable only for Citus Community.
 
-See the Citus Docker images <https://citusdata-packaging.readthedocs.io/en/latest/citus-docker-images.html>`_ for more details.
+See the `Citus Docker images <https://citusdata-packaging.readthedocs.io/en/latest/citus-docker-images.html>`_ for more details.
 
 Baking Main versions
 ~~~~~~~~~~~~~~~~~~~~
