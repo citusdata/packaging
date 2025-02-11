@@ -136,7 +136,7 @@ Opening an issue for PGDG packaging
 After all the packages are baked, an issue needs to be opened for PGDG packaging. PGDG is a repository of PostgreSQL packages for several Linux distributions.
 
 Citus packages are available for RPM-based distributions.
-To request a new release for Citus, an issue needs to be opened in the `Postgres Redmine <https://redmine.postgresql.org/projects/postgresql/wiki/BugReportingGuidelines>`_.
+To request a new release for Citus, an issue needs to be opened in the `PostgreSQL YUM Repository Issues <https://redmine.postgresql.org/projects/pgrpms/issues>`_.
 
 The required fields for the issue are as follows:
 
