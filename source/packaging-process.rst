@@ -130,7 +130,7 @@ When building the pgxn extension for Citus, the following steps need to be follo
 3. Check that all the tests pass and notify the PR reviewer to review the PR.
 4. Once the PR is reviewed, merge the PR and ensure that the Citus PGXN is updated with the new version.
 
-See the :doc:`pgdg` page for more details.
+See the `PGXN documentation <https://citusdata-packaging.readthedocs.io/en/latest/pgxn.html>`_ for more details.
 
 Opening an issue for PGDG packaging
 -----------------------------------
