@@ -9,6 +9,15 @@ In the package build environment, we have Docker images, specifically Dockerfile
 The `Docker image <https://github.com/citusdata/packaging/blob/develop/dockerfiles/pgxn-all/Dockerfile>`_ serves as the base image for all pgxn extensions. It contains all the dependencies required for building pgxn extensions.
 Within this docker image, there is a script called `fetch_and_build_pgxn <https://github.com/citusdata/packaging/blob/develop/scripts/fetch_and_build_pgxn>`_ which is used to build pgxn extensions.
 
+Citus has an automation process to edit the packaging configuration scripts called  
+`Update Version on PGXN Config Files <https://github.com/citusdata/packaging/actions/workflows/update-pgxn-version.yml>`_ workflow.
+
+By executing this workflow on the `pgxn-citus` branch, a new pull request (PR) will be generated in the packaging repository.  
+To do this, click the **"Run Workflow"** button, select `pgxn-citus` as the branch for **"Use workflow from,"** enter the version number to be released, and fill in any other necessary details.
+
+An example PR can be found here: `PR #1128 <https://github.com/citusdata/packaging/pull/1128/files>`_.
+
+
 Citus PGXN Configuration
 ------------------------
 
