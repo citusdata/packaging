@@ -56,9 +56,9 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for postgresql-16..."
-  if apt-cache show postgresql-16 &> /dev/null; then
-    echo "Detected postgresql-16..."
+  echo "Checking for postgresql-17..."
+  if apt-cache show postgresql-17 &> /dev/null; then
+    echo "Detected postgresql-17..."
   else
     pgdg_list='/etc/apt/sources.list.d/pgdg.list'
     pgdg_source_path="deb http://apt.postgresql.org/pub/repos/apt/ ${codename}-pgdg main"
