@@ -7,6 +7,7 @@ The packaging process consists of the following steps:
 2. Bake docker images
 3. Bake pgxn package
 4. Open issue for PGDG packaging
+5. Update: Repository Installation Scripts
 
 Bake deb and rpm packages
 ---------------------------
@@ -149,3 +150,9 @@ The required fields for the issue are as follows:
 
 Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the Postgres Redmine.
 
+Update: Repository Installation Scripts
+---------------------------------------
+
+The repository installation scripts have been updated to support the new PostgreSQL version. This ensures compatibility with the latest PostgreSQL releases.
+
+For complete details on the script changes and usage instructions, please refer to `Repository Installation Scripts <https://citusdata-packaging.readthedocs.io/en/latest/repository-installation-scripts.html>`_
