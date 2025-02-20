@@ -32,9 +32,9 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for postgresql-17..."
-  if apt-cache show postgresql-17 &> /dev/null; then
-    echo "Detected postgresql-17..."
+  echo "Checking for postgresql17-server..."
+  if yum list -q postgresql17-server &> /dev/null; then
+    echo "Detected postgresql17-server..."
   else
     echo -n "Installing pgdg repo... "
 
