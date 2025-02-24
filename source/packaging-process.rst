@@ -86,6 +86,8 @@ Bake docker images
 
 This step is applicable only for Citus Community.
 
+See the `Citus Docker images <https://citusdata-packaging.readthedocs.io/en/latest/citus-docker-images.html>`_ for more details.
+
 Baking Main versions
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -130,25 +132,31 @@ When building the pgxn extension for Citus, the following steps need to be follo
 3. Check that all the tests pass and notify the PR reviewer to review the PR.
 4. Once the PR is reviewed, merge the PR and ensure that the Citus PGXN is updated with the new version.
 
+See the `PGXN documentation <https://citusdata-packaging.readthedocs.io/en/latest/pgxn.html>`_ for more details.
+
 Opening an issue for PGDG packaging
 -----------------------------------
 
 After all the packages are baked, an issue needs to be opened for PGDG packaging. PGDG is a repository of PostgreSQL packages for several Linux distributions.
 
 Citus packages are available for RPM-based distributions.
-To request a new release for Citus, an issue needs to be opened in the `Postgres Redmine <https://redmine.postgresql.org/projects/postgresql/wiki/BugReportingGuidelines>`_.
+To request a new release for Citus, an issue needs to be opened in the `PostgreSQL YUM Repository Issues <https://redmine.postgresql.org/projects/pgrpms/issues>`_.
 
 The required fields for the issue are as follows:
 
 - Tracker: Bug
 - Subject: New release of Citus <version>
 - Description: Provide a detailed description of the new release, including any notable changes or improvements.
-- Category: Packaging
+- Category: Package update
 - Priority: Normal
 - Target version: <appropriate version>
-- Assignee: Leave blank unless specified
+- Assignee: Leave blank unless specified example: PostgreSQL 15 and above
 
-Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the Postgres Redmine.
+Please make sure to include all the necessary information and follow the bug reporting guidelines provided by the PostgreSQL YUM Repository.
+An example issue record can be found here: `Issue #8092 <https://redmine.postgresql.org/issues/8092>`_.
+
+See the `Citus PGDG Packages <https://citusdata-packaging.readthedocs.io/en/latest/pgdg.html>`_ for more details.
+
 
 Update: Repository Installation Scripts
 ---------------------------------------
