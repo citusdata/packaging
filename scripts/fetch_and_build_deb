@@ -107,6 +107,8 @@ case "${1}" in
         releasetag="v${packageversion/'~'/-}"
         releasetag="${releasetag%.citus}"
 
+        echo "release tag: ${releasetag}" # to see whether correct or not
+
         gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
                  jq -r '.object.sha')
         if [ "${gitsha}" == 'null' ]; then
