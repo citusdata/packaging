@@ -106,7 +106,7 @@ case "${1}" in
         packageversion=${pkglatest%-*}
         releasetag="v${packageversion/'~'/-}"
         releasetag="${releasetag%.citus}"
-        
+
         echo "release tag: ${releasetag}" # to see whether correct or not
 
         gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
