@@ -104,8 +104,18 @@ echo "Repository path: ${repopath}" # to see whether correct or not
 case "${1}" in
     release)
         packageversion=${pkglatest%-*}
-        releasetag="v${packageversion/'~'/-}"
+
+        if [[ "${orgname}" == "microsoft" ]]; then
+            releasetag="m${packageversion/'~'/-}"
+        else
+            releasetag="v${packageversion/'~'/-}"
+        fi
         releasetag="${releasetag%.citus}"
+
+        echo "pkglatest: ${pkglatest}"
+        echo "packageversion: ${packageversion}"
+        echo "repopath: ${repopath}"
+
 
         gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
                  jq -r '.object.sha')
