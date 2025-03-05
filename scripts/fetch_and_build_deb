@@ -115,6 +115,7 @@ case "${1}" in
         echo "pkglatest: ${pkglatest}"
         echo "packageversion: ${packageversion}"
         echo "repopath: ${repopath}"
+        echo "Using release tag: ${releasetag}"
 
 
         gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
