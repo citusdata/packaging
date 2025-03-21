@@ -1,6 +1,6 @@
 citus (13.0.3.citus-1) stable; urgency=low
 
-  * Official 13.0.3 release of Citus (adresing a version bump issue on v13.0.2)
+  * Official 13.0.3 release of Citus
 
  -- Ibrahim Halatci <ihalatci@microsoft.com>  Fri, 21 Mar 2025 10:00:22 +0000
 
@@ -281,316 +281,316 @@ citus (10.2.2.citus-1) stable; urgency=low
  -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 14 Oct 2021 13:00:27 +0000
 
 citus (10.2.1.citus-1) stable; urgency=low
-  
+
   * Adds missing version-mismatch checks for columnar tables
-  
+
   * Adds missing version-mismatch checks for internal functions
-  
+
   * Fixes a bug that could cause partition shards being not co-located with
     parent shards
-  
+
   * Fixes a bug that prevents pushing down boolean expressions when using
     columnar custom scan
-  
+
   * Fixes a clog lookup failure that could occur when writing to a columnar
     table
-  
+
   * Fixes an issue that could cause unexpected errors when there is an
     in-progress write to a columnar table
-  
+
   * Revokes read access to `columnar.chunk` from unprivileged user
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 24 Sep 2021 12:03:35 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 24 Sep 2021 12:03:35 +0000
+
 citus (10.1.3.citus-1) stable; urgency=low
 
   * Official 10.1.3 release of Citus
 
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 17 Sep 2021 17:23:05 +0000  
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 17 Sep 2021 17:23:05 +0000
 
 citus (10.2.0.citus-1) stable; urgency=low
-  
+
   * Adds PostgreSQL 14 support
-  
+
   * Adds hash & btree index support for columnar tables
-  
+
   * Adds helper UDFs for easy time partition management:
     `get_missing_time_partition_ranges`, `create_time_partitions`, and
     `drop_old_time_partitions`
-  
+
   * Adds propagation of ALTER SEQUENCE
-  
+
   * Adds support for ALTER INDEX ATTACH PARTITION
-  
+
   * Adds support for CREATE INDEX ON ONLY
-  
+
   * Allows more graceful failovers when replication factor > 1
-  
+
   * Enables chunk group filtering to work with Params for columnar tables
-  
+
   * Enables qual push down for joins including columnar tables
-  
+
   * Enables transferring of data using binary encoding by default on PG14
-  
+
   * Improves `master_update_table_statistics` and provides distributed deadlock
     detection
-  
+
   * Includes `data_type` and `cache` in sequence definition on worker
-  
+
   * Makes start/stop_metadata_sync_to_node() transactional
-  
+
   * Makes sure that table exists before updating table statistics
-  
+
   * Prevents errors with concurrent `citus_update_table_statistics` and DROP table
-  
+
   * Reduces memory usage of columnar table scans by freeing the memory used for
     last stripe read
-  
+
   * Shows projected columns for columnar tables in EXPLAIN output
-  
+
   * Speeds up dropping partitioned tables
-  
+
   * Synchronizes hasmetadata flag on mx workers
-  
+
   * Uses current user while syncing metadata
-  
+
   * Adds a parameter to cleanup metadata when metadata syncing is stopped
-  
+
   * Fixes a bug about int and smallint sequences on MX
-  
+
   * Fixes a bug that cause partitions to have wrong distribution key after
     DROP COLUMN
-  
+
   * Fixes a bug that caused `worker_append_table_to_shard` to write as superuser
-  
+
   * Fixes a bug that caused `worker_create_or_alter_role` to crash with NULL input
-  
+
   * Fixes a bug that causes pruning incorrect shard of a range distributed table
-  
+
   * Fixes a bug that may cause crash while aborting transaction
-  
+
   * Fixes a bug that prevents attaching partitions when colocated foreign key
     exists
-  
+
   * Fixes a bug with `nextval('seq_name'::text)`
-  
+
   * Fixes a crash in shard rebalancer when no distributed tables exist
-  
+
   * Fixes a segfault caused by use after free in when using a cached connection
-  
+
   * Fixes a UNION pushdown issue
-  
+
   * Fixes a use after free issue that could happen when altering a distributed
     table
-  
+
   * Fixes showing target shard size in the rebalance progress monitor
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 16 Sep 2021 08:45:17 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 16 Sep 2021 08:45:17 +0000
+
 citus (10.1.2.citus-1) stable; urgency=low
-  
+
   * Allows more graceful failovers when replication factor > 1
-  
+
   * Fixes a bug that causes partitions to have wrong distribution key after
     `DROP COLUMN`
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 16:25:14 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 16:25:14 +0000
+
 citus (10.0.5.citus-1) stable; urgency=low
-  
+
   * Allows more graceful failovers when replication factor > 1
-  
+
   * Fixes a bug that causes partitions to have wrong distribution key after
     `DROP COLUMN`
-  
+
   * Improves citus_update_table_statistics and provides distributed deadlock
     detection
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 14:42:54 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 14:42:54 +0000
+
 citus (9.5.7.citus-1) stable; urgency=low
-  
+
   * Allows more graceful failovers when replication factor > 1
-  
+
   * Fixes a bug that causes partitions to have wrong distribution key after
     `DROP COLUMN`
-  
+
   * Improves master_update_table_statistics and provides distributed deadlock
     detection
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 13:18:11 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 17 Aug 2021 13:18:11 +0000
+
 citus (9.4.6.citus-1) stable; urgency=low
-  
+
   * Allows more graceful failovers when replication factor > 1
-  
+
   * Improves master_update_table_statistics and provides distributed deadlock
     detection
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 11 Aug 2021 08:57:04 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 11 Aug 2021 08:57:04 +0000
+
 citus (10.1.1.citus-1) stable; urgency=low
-  
+
   * Improves citus_update_table_statistics and provides distributed deadlock
     detection
-  
+
   * Fixes showing target shard size in the rebalance progress monitor
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 06 Aug 2021 08:38:37 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 06 Aug 2021 08:38:37 +0000
+
 citus (10.1.0.citus-1) stable; urgency=low
-  
+
   * Drops support for PostgreSQL 11
-  
+
   * Adds `shard_count` parameter to `create_distributed_table` function
-  
+
   * Adds support for `ALTER DATABASE OWNER`
-  
+
   * Adds support for temporary columnar tables
-  
+
   * Adds support for using sequences as column default values when syncing
     metadata
-  
+
   * `alter_columnar_table_set` enforces columnar table option constraints
-  
+
   * Continues to remove shards after failure in `DropMarkedShards`
-  
+
   * Deprecates the `citus.replication_model` GUC
-  
+
   * Enables `citus.defer_drop_after_shard_move` by default
-  
+
   * Ensures free disk space before moving a shard
-  
+
   * Fetches shard size on the fly for the rebalance monitor
-  
+
   * Ignores old placements when disabling or removing a node
-  
+
   * Implements `improvement_threshold` at shard rebalancer moves
-  
+
   * Improves orphaned shard cleanup logic
-  
+
   * Improves performance of `citus_shards`
-  
+
   * Introduces `citus.local_hostname` GUC for connections to the current node
-  
+
   * Makes sure connection is closed after each shard move
-  
+
   * Makes sure that target node in shard moves is eligible for shard move
-  
+
   * Optimizes partitioned disk size calculation for shard rebalancer
-  
+
   * Prevents connection errors by properly terminating connections
-  
+
   * Prevents inheriting a distributed table
-  
+
   * Prevents users from dropping & truncating known shards
-  
+
   * Pushes down `VALUES` clause as long as not in outer part of a `JOIN`
-  
+
   * Reduces memory usage for multi-row inserts
-  
+
   * Reduces memory usage while rebalancing shards
-  
+
   * Removes length limits around partition names
-  
+
   * Removes dependencies on the existence of public schema
-  
+
   * Executor avoids opening extra connections
-  
+
   * Excludes orphaned shards while finding shard placements
-  
+
   * Preserves access method of materialized views when undistributing
     or altering distributed tables
-  
+
   * Fixes a bug that allowed moving of shards belonging to a reference table
-  
+
   * Fixes a bug that can cause a crash when DEBUG4 logging is enabled
-  
+
   * Fixes a bug that causes pruning incorrect shard of a range distributed table
-  
+
   * Fixes a bug that causes worker_create_or_alter_role to crash with NULL input
-  
+
   * Fixes a bug where foreign key to reference table was disallowed
-  
+
   * Fixes a bug with local cached plans on tables with dropped columns
-  
+
   * Fixes data race in `get_rebalance_progress`
-  
+
   * Fixes `FROM ONLY` queries on partitioned tables
-  
+
   * Fixes an issue that could cause citus_finish_pg_upgrade to fail
-  
+
   * Fixes error message for local table joins
-  
+
   * Fixes issues caused by omitting public schema in queries
-  
+
   * Fixes nested `SELECT` query with `UNION` bug
-  
+
   * Fixes null relationName bug at parallel execution
-  
+
   * Fixes possible segfaults when using Citus in the middle of an upgrade
-  
+
   * Fixes problems with concurrent calls of `DropMarkedShards`
-  
+
   * Fixes shared dependencies that are not resident in a database
-  
+
   * Fixes stale hostnames bug in prepared statements after `master_update_node`
-  
+
   * Fixes the relation size bug during rebalancing
-  
+
   * Fixes two race conditions in the get_rebalance_progress
-  
+
   * Fixes using 2PC when it might be necessary
-  
- -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Jul 2021 15:37:21 +0000  
- 
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Jul 2021 15:37:21 +0000
+
 citus (10.0.4.citus-1) stable; urgency=low
-  
+
   * Introduces `citus.local_hostname` GUC for connections to the current node
-  
+
   * Removes dependencies on the existence of public schema
-  
+
   * Removes limits around long partition names
-  
+
   * Fixes a bug that can cause a crash when DEBUG4 logging is enabled
-  
+
   * Fixes a bug that causes pruning incorrect shard of a range distributed table
-  
+
   * Fixes an issue that could cause citus_finish_pg_upgrade to fail
-  
+
   * Fixes FROM ONLY queries on partitioned tables
-  
+
   * Fixes issues caused by public schema being omitted in queries
-  
+
   * Fixes problems with concurrent calls of DropMarkedShards
-  
+
   * Fixes relname null bug when using parallel execution
-  
+
   * Fixes two race conditions in the get_rebalance_progress
-  
+
  -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Jul 2021 10:58:55 +0000
- 
+
 citus (9.5.6.citus-1) stable; urgency=low
-  
+
   * Fixes minor bug in `citus_prepare_pg_upgrade` that caused it to lose its
     idempotency
-  
- -- Gurkan <gindibay@microsoft.com>  Fri, 09 Jul 2021 13:30:42 +0000  
- 
+
+ -- Gurkan <gindibay@microsoft.com>  Fri, 09 Jul 2021 13:30:42 +0000
+
 citus (9.4.5.citus-1) stable; urgency=low
-  
+
   * Adds a configure flag to enforce security
-  
+
   * Avoids re-using connections for intermediate results
-  
+
   * Fixes a bug that causes pruning incorrect shard of a range distributed table
-  
+
   * Fixes a bug that might cause self-deadlocks when COPY used in TX block
-  
+
   * Fixes an issue that could cause citus_finish_pg_upgrade to fail
-  
- -- Gurkan <gindibay@microsoft.com>  Thu, 08 Jul 2021 10:15:23 +0000  
- 
+
+ -- Gurkan <gindibay@microsoft.com>  Thu, 08 Jul 2021 10:15:23 +0000
+
 citus (10.0.3.citus-1) stable; urgency=low
 
   * Prevents infinite recursion for queries that involve UNION ALL

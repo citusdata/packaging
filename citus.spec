@@ -113,7 +113,7 @@ fi
 
 %changelog
 * Fri Mar 21 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.3.citus-1
-- Official 13.0.3 release of Citus (adresing a version bump issue on v13.0.2)
+- Official 13.0.3 release of Citus
 
 * Thu Mar 13 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.2.citus-1
 - Official 13.0.2 release of Citus
