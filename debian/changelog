@@ -1,3 +1,9 @@
+citus (13.0.3.citus-1) stable; urgency=low
+
+  * Official 13.0.3 release of Citus (adresing a version bump issue on v13.0.2)
+
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Fri, 21 Mar 2025 10:00:22 +0000
+
 citus (13.0.2.citus-1) stable; urgency=low
 
   * Official 13.0.2 release of Citus
