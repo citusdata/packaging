@@ -1,3 +1,9 @@
+citus (12.1.8.citus-1) stable; urgency=low
+
+  * Citus 12.1.8 release
+
+ -- Alper Kocatas <alperkocatas@microsoft.com>  Fri, 20 May 2025 14:51:00 +0000
+
 citus (13.0.3.citus-1) stable; urgency=low
 
   * Citus 13.0.3 release
