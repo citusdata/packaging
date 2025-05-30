@@ -1,3 +1,9 @@
+citus (12.1.8.citus-1) stable; urgency=low
+
+  * Official 12.1.8 release of Citus
+
+ -- Mehmet YILMAZ <mehmetyilmaz@microsoft.com>  Fri, 30 May 2025 16:23:07 +0000
+
 citus (13.0.3.citus-1) stable; urgency=low
 
   * Citus 13.0.3 release
