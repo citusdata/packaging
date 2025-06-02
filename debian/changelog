@@ -1,3 +1,9 @@
+citus (13.1.0.citus-1) stable; urgency=low
+
+  * Official 13.1.0 release of Citus
+
+ -- Alper Kocatas <alperkocatas@gmail.com>  Mon, 02 Jun 2025 08:55:55 +0000
+
 citus (13.0.4.citus-1) stable; urgency=low
 
   * Official 13.0.4 release of Citus
