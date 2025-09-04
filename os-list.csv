@@ -2,6 +2,7 @@ almalinux,8
 almalinux,9
 debian,bullseye
 debian,bookworm
+debian,trixie
 oraclelinux,8
 oraclelinux,6
 ubuntu,focal
