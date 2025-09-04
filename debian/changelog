@@ -1,3 +1,9 @@
+citus (12.1.9.citus-1) stable; urgency=low
+
+  * Official 12.1.9 release of Citus
+
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Thu, 04 Sep 2025 08:09:18 +0000
+
 citus (13.2.0.citus-1) stable; urgency=low
 
   * Official 13.2.0 release of Citus
