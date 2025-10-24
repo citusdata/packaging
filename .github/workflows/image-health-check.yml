@@ -55,6 +55,7 @@ jobs:
         include:
           - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,bookworm
+          - TARGET_PLATFORM: debian,trixie
           # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
           # - TARGET_PLATFORM: ubuntu,bionic
           - TARGET_PLATFORM: ubuntu,focal
