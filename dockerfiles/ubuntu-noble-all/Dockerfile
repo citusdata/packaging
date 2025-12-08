@@ -104,8 +104,8 @@ RUN curl https://install.citusdata.com/community/deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
 # patch pg_buildext to use multiple processors
-COPY make_pg_buildext_parallel.patch /
-RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+# COPY make_pg_buildext_parallel.patch /
+# RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 
 
 # install cmake from source

@@ -35,7 +35,7 @@ RUN set -ex; \
     gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/postgres.gpg; \
     command -v gpgconf > /dev/null && gpgconf --kill all; \
     rm -rf "$GNUPGHOME"; \
-    apt-key list
+    apt-key list || true
 
 # add buster backports repo to be able to download missing packages in buster main repo
 RUN ( [ debian != debian ] || [ trixie != buster ] ) || ( \
@@ -44,7 +44,7 @@ RUN ( [ debian != debian ] || [ trixie != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main 17' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main 18' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -70,7 +70,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main 17' > /e
         libxslt-dev \
         lintian \
         postgresql-server-dev-all \
-        postgresql-server-dev-17 \
+        postgresql-server-dev-18 \
         wget \
         zlib1g-dev \
         python3-pip \
@@ -104,8 +104,8 @@ RUN curl https://install.citusdata.com/community/deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
 # patch pg_buildext to use multiple processors
-COPY make_pg_buildext_parallel.patch /
-RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+# COPY make_pg_buildext_parallel.patch /
+# RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 
 
 # install cmake from source
@@ -131,8 +131,8 @@ RUN set -ex \
     && echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 
 
-# Added for pg17 beta package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17"
+# Added for pg18  package support.
+ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17 18"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH
