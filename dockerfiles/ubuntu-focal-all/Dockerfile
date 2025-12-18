@@ -44,7 +44,7 @@ RUN ( [ ubuntu != debian ] || [ focal != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main 17' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main 18' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -70,7 +70,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main 17' > /et
         libxslt-dev \
         lintian \
         postgresql-server-dev-all \
-        postgresql-server-dev-17 \
+        postgresql-server-dev-18 \
         wget \
         zlib1g-dev \
         python3-pip \
@@ -104,8 +104,8 @@ RUN curl https://install.citusdata.com/community/deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
 # patch pg_buildext to use multiple processors
-COPY make_pg_buildext_parallel.patch /
-RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+# COPY make_pg_buildext_parallel.patch /
+#RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 
 
 # install cmake from source
