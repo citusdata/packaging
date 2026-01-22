@@ -208,7 +208,7 @@ detect_codename ()
       bookworm)
         codename="${dist}"
         ;;
-      trixy)
+      trixie)
         codename="${dist}"
         ;;
       forky)
