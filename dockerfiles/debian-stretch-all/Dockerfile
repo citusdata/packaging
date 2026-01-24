@@ -118,7 +118,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
 
 
 # Added for pg15 beta package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15"
+ENV DEB_PG_SUPPORTED_VERSIONS="14 15"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH

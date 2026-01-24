@@ -104,8 +104,8 @@ RUN curl https://install.citusdata.com/community/deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
 # patch pg_buildext to use multiple processors
-# COPY make_pg_buildext_parallel.patch /
-#RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
+COPY make_pg_buildext_parallel.patch /
+RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 
 
 # install cmake from source
@@ -131,8 +131,8 @@ RUN set -ex \
     && echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 
 
-# Added for pg17 beta package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17"
+# Added for pg18  package support.
+ENV DEB_PG_SUPPORTED_VERSIONS="14 15 16 17 18"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH
