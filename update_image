@@ -9,7 +9,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-pgversions='11 12 13 14 15 16 17 18'
+pgversions='14 15 16 17 18'
 topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dockerfiles_dir="${topdir}/dockerfiles"
 
@@ -26,6 +26,11 @@ else
 fi
 
 IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
+
+if [[ "${os},${release}" =~ ^ubuntu,(focal|bionic)$ ]]; then
+    echo "${TARGET_PLATFORM} unsupported: PGDG apt repo for ${release} is no longer available" >&2
+    exit 1
+fi
 
 if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
     tag="${os}-${release}-all"

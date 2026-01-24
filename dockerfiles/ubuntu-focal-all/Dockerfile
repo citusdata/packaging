@@ -1,4 +1,5 @@
 # vim:set ft=dockerfile:
+# NOTE: PGDG apt repo for focal removed (2026); this image is retained for reference but not buildable.
 FROM ubuntu:focal
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -44,7 +45,7 @@ RUN ( [ ubuntu != debian ] || [ focal != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main 18' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \

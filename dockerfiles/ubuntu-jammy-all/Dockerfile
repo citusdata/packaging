@@ -44,7 +44,7 @@ RUN ( [ ubuntu != debian ] || [ jammy != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main 18' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -102,10 +102,6 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 
 # install packagecloud repos for pg_auto_failover
 RUN curl https://install.citusdata.com/community/deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
-
-# patch pg_buildext to use multiple processors
-COPY make_pg_buildext_parallel.patch /
-RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
 
 
 # install cmake from source
