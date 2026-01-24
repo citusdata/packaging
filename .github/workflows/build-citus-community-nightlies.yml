@@ -30,12 +30,8 @@ jobs:
       matrix:
         platform:
           - el/8
-          - debian/bullseye
           - debian/bookworm
           - debian/trixie
-          # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
-          # - ubuntu/bionic
-          - ubuntu/focal
           - ubuntu/jammy
           - ubuntu/noble
 

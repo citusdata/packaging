@@ -44,20 +44,17 @@ jobs:
           - almalinux,8
           - almalinux,9
         POSTGRES_VERSION:
-          - 12
-          - 13
           - 14
           - 15
           - 16
           - 17
           - 18
         include:
-          - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,bookworm
           - TARGET_PLATFORM: debian,trixie
-          # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
-          # - TARGET_PLATFORM: ubuntu,bionic
-          - TARGET_PLATFORM: ubuntu,focal
+            POSTGRES_VERSION: 17
+          - TARGET_PLATFORM: debian,trixie
+            POSTGRES_VERSION: 18
           - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: ubuntu,noble
           - TARGET_PLATFORM: pgxn
