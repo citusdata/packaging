@@ -35,8 +35,7 @@ RUN set -ex; \
     gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/postgres.gpg; \
     command -v gpgconf > /dev/null && gpgconf --kill all; \
     rm -rf "$GNUPGHOME"; \
-# deprecation and removal of apt-key from newer Debian/Ubuntu-based images.  So, ignore errors from apt-key list.
-    apt-key list || true
+    gpg --batch --no-default-keyring --keyring /etc/apt/trusted.gpg.d/postgres.gpg --list-keys || true
 
 # add buster backports repo to be able to download missing packages in buster main repo
 RUN ( [ debian != debian ] || [ trixie != buster ] ) || ( \

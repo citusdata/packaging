@@ -35,7 +35,7 @@ RUN set -ex; \
     gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/postgres.gpg; \
     command -v gpgconf > /dev/null && gpgconf --kill all; \
     rm -rf "$GNUPGHOME"; \
-    apt-key list
+    gpg --batch --no-default-keyring --keyring /etc/apt/trusted.gpg.d/postgres.gpg --list-keys || true
 
 # add buster backports repo to be able to download missing packages in buster main repo
 RUN ( [ ubuntu != debian ] || [ noble != buster ] ) || ( \
