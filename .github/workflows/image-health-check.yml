@@ -54,6 +54,11 @@ jobs:
         include:
           - TARGET_PLATFORM: debian,bookworm
           - TARGET_PLATFORM: debian,trixie
+            POSTGRES_VERSION: 16
+          - TARGET_PLATFORM: debian,trixie
+            POSTGRES_VERSION: 17
+          - TARGET_PLATFORM: debian,trixie
+            POSTGRES_VERSION: 18
           - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: ubuntu,noble
           - TARGET_PLATFORM: pgxn
