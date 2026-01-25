@@ -187,6 +187,9 @@ detect_codename ()
       13)
         codename='trixie'
         ;;
+      13)
+        codename='trixie'
+        ;;
       14)
         codename='forky'
         ;;
@@ -208,7 +211,7 @@ detect_codename ()
       bookworm)
         codename="${dist}"
         ;;
-      trixy)
+      trixie)
         codename="${dist}"
         ;;
       forky)
