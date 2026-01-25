@@ -217,9 +217,6 @@ detect_codename ()
       13)
         codename='trixie'
         ;;
-      13)
-        codename='trixie'
-        ;;
       14)
         codename='forky'
         ;;
