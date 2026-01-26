@@ -27,7 +27,8 @@ jobs:
           - debian/buster
           - debian/bullseye
           - debian/bookworm
-          - ubuntu/focal
+          - debian/trixie
+          - ubuntu/noble
           - ubuntu/jammy
 
     steps:

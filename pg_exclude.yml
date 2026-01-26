@@ -1,5 +1,5 @@
 exclude:
   nightly:
     all: [15]
-  release:
+  release: {}
 
