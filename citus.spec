@@ -2,6 +2,7 @@
 %global pgpackageversion 11
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus
+%global debug_package %{nil}
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
@@ -35,7 +36,15 @@ commands.
 %setup -q -n %{sname}-%{version}
 
 %build
-%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags
+
+currentgccver="$(gcc -dumpversion)"
+requiredgccver="4.8.2"
+if [ "$(printf '%s\n' "$requiredgccver" "$currentgccver" | sort -V | head -n1)" != "$requiredgccver" ]; then
+    echo ERROR: At least GCC version "$requiredgccver" is needed to build with security flags
+    exit 1
+fi
+
+%configure PG_CONFIG=%{pginstdir}/bin/pg_config --with-extra-version="%{?conf_extra_version}" --with-security-flags CC=$(command -v gcc)
 make %{?_smp_mflags}
 
 %install
@@ -44,32 +53,54 @@ make %{?_smp_mflags}
 %{__mkdir} -p %{buildroot}%{pginstdir}/doc/extension
 %{__cp} README.md %{buildroot}%{pginstdir}/doc/extension/README-%{sname}.md
 %{__cp} NOTICE %{buildroot}%{pginstdir}/doc/extension/NOTICE-%{sname}
-
 # Set paths to be packaged other than LICENSE, README & CHANGELOG.md
 echo %{pginstdir}/include/server/citus_*.h >> installation_files.list
 echo %{pginstdir}/include/server/distributed/*.h >> installation_files.list
 echo %{pginstdir}/lib/%{sname}.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_columnar.so ]] && echo %{pginstdir}/lib/citus_columnar.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_decoders/pgoutput.so ]] && echo %{pginstdir}/lib/citus_decoders/pgoutput.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_decoders/wal2json.so ]] && echo %{pginstdir}/lib/citus_decoders/wal2json.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_pgoutput.so ]] && echo %{pginstdir}/lib/citus_pgoutput.so >> installation_files.list
+[[ -f %{buildroot}%{pginstdir}/lib/citus_wal2json.so ]] && echo %{pginstdir}/lib/citus_wal2json.so >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}-*.sql >> installation_files.list
 echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
+# Since files below may be non-existent in some versions, ignoring the error in case of file absence
+[[ -f %{buildroot}%{pginstdir}/share/extension/citus_columnar.control ]] && echo %{pginstdir}/share/extension/citus_columnar.control >> installation_files.list
+columnar_sql_files=(`find %{buildroot}%{pginstdir}/share/extension -maxdepth 1 -name "columnar-*.sql"`)
+if [ ${#columnar_sql_files[@]} -gt 0 ]; then
+    echo %{pginstdir}/share/extension/columnar-*.sql >> installation_files.list
+fi
+
+citus_columnar_sql_files=(`find %{buildroot}%{pginstdir}/share/extension -maxdepth 1 -name "citus_columnar-*.sql"`)
+if [ ${#citus_columnar_sql_files[@]} -gt 0 ]; then
+    echo %{pginstdir}/share/extension/citus_columnar-*.sql >> installation_files.list
+fi
+
+[[ -f %{buildroot}%{pginstdir}/bin/pg_send_cancellation ]] && echo %{pginstdir}/bin/pg_send_cancellation >> installation_files.list
 %ifarch ppc64 ppc64le
-  %else
-  %if 0%{?rhel} && 0%{?rhel} <= 6
-  %else
-    echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
-    echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
-    echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
-    
-    # Columnar does not exist in Citus versions < 10.0
-    # At this point, we don't have %{pginstdir},
-    # so first check build directory for columnar.
-    [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
-  %endif
+%else
+    %if 0%{?rhel} && 0%{?rhel} <= 6
+    %else
+        echo %{pginstdir}/lib/bitcode/%{sname}/*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}*.bc >> installation_files.list
+        echo %{pginstdir}/lib/bitcode/%{sname}/*/*.bc >> installation_files.list
+
+        # Columnar does not exist in Citus versions < 10.0
+        # At this point, we don't have %{pginstdir},
+        # so first check build directory for columnar.
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/columnar/ ]] && echo %{pginstdir}/lib/bitcode/columnar/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/ ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_columnar/safeclib ]] && echo %{pginstdir}/lib/bitcode/citus_columnar/safeclib/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_pgoutput ]] && echo %{pginstdir}/lib/bitcode/citus_pgoutput/*.bc >> installation_files.list
+        [[ -d %{buildroot}%{pginstdir}/lib/bitcode/citus_wal2json ]] && echo %{pginstdir}/lib/bitcode/citus_wal2json/*.bc >> installation_files.list
+    %endif
 %endif
 
 %clean
 %{__rm} -rf %{buildroot}
 
 %files -f installation_files.list
+%files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
 %if 0%{?rhel} && 0%{?rhel} <= 6
@@ -81,6 +112,146 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
+* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.1.1.citus-1
+- Official 13.1.1 release of Citus
+
+* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.5.citus-1
+- Official 13.0.5 release of Citus
+* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 12.1.10.citus-1
+- Official 12.1.10 release of Citus
+
+* Thu Sep 04 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 12.1.9.citus-1
+- Official 12.1.9 release of Citus
+
+* Fri Aug 29 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.2.0.citus-1
+- Official 13.2.0 release of Citus
+
+* Mon Jun 02 2025 - Alper Kocatas <alperkocatas@gmail.com> 13.1.0.citus-1
+- Official 13.1.0 release of Citus
+
+* Fri May 30 2025 - Mehmet YILMAZ <mehmetyilmaz@microsoft.com> 13.0.4.citus-1
+- Official 13.0.4 release of Citus
+
+* Fri May 30 2025 - Mehmet YILMAZ <mehmetyilmaz@microsoft.com> 12.1.8.citus-1
+- Official 12.1.8 release of Citus
+
+* Fri Mar 21 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.3.citus-1
+- Citus 13.0.3 release
+
+* Thu Mar 13 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.2.citus-1
+- Official 13.0.2 release of Citus
+
+* Tue Feb 04 2025 - Mehmet Yilmaz <mehmetyilmaz@microsoft.com> 13.0.1.citus-1
+- Official 13.0.1 release of Citus
+
+* Thu Jan 23 2025 - Mehmet Yilmaz <mehmetyilmaz@microsoft.com> 13.0.0.citus-1
+- Official 13.0.0 release of Citus
+
+* Tue Nov 26 2024 - Gurkan Indibay <gindibay@microsoft.com> 12.1.6.citus-1
+- Official 12.1.6 release of Citus
+
+* Thu Jul 18 2024 - Gurkan Indibay <gindibay@microsoft.com> 12.1.5.citus-1
+- Official 12.1.5 release of Citus
+
+* Thu Jun 06 2024 - Gurkan Indibay <gindibay@microsoft.com> 12.1.4.citus-1
+- Official 12.1.4 release of Citus
+
+* Wed Apr 24 2024 - Gurkan Indibay <gindibay@microsoft.com> 12.1.3.citus-1
+- Official 12.1.3 release of Citus
+
+* Fri Feb 16 2024 - Gurkan Indibay <gindibay@microsoft.com> 11.0.10.citus-1
+- Official 11.0.10 release of Citus
+
+* Wed Feb 14 2024 - Gurkan Indibay <gindibay@microsoft.com> 12.1.2.citus-1
+- Official 12.1.2 release of Citus
+
+* Wed Feb 14 2024 - Gurkan Indibay <gindibay@microsoft.com> 12.0.1.citus-1
+- Official 12.0.1 release of Citus
+
+* Wed Feb 14 2024 - Gurkan Indibay <gindibay@microsoft.com> 11.3.1.citus-1
+- Official 11.3.1 release of Citus
+
+* Wed Feb 14 2024 - Gurkan Indibay <gindibay@microsoft.com> 11.2.2.citus-1
+- Official 11.2.2 release of Citus
+
+* Wed Feb 14 2024 - Gurkan Indibay <gindibay@microsoft.com> 11.1.7.citus-1
+- Official 11.1.7 release of Citus
+
+* Tue Nov 14 2023 - Gurkan Indibay <gindibay@microsoft.com> 12.1.1.citus-1
+- Official 12.1.1 release of Citus
+
+* Wed Sep 20 2023 - Gurkan Indibay <gindibay@microsoft.com> 12.1.0.citus-1
+- Official 12.1.0 release of Citus
+
+* Mon Jul 17 2023 - Gurkan Indibay <gindibay@microsoft.com> 12.0.0.citus-1
+- Official 12.0.0 release of Citus
+
+* Tue May 02 2023 - Gurkan Indibay <gindibay@microsoft.com> 11.3.0.citus-1
+- Official 11.3.0 release of Citus
+
+* Wed Apr 26 2023 - Gurkan Indibay <gindibay@microsoft.com> 10.1.6.citus-1
+- Official 10.1.6 release of Citus
+
+* Wed Apr 26 2023 - Gurkan Indibay <gindibay@microsoft.com> 9.5.12.citus-1
+- Official 9.5.12 release of Citus
+
+* Wed Apr 26 2023 - Gurkan Indibay <gindibay@microsoft.com> 10.0.8.citus-1
+- Official 10.0.8 release of Citus
+
+* Wed Apr 26 2023 - Gurkan Indibay <gindibay@microsoft.com> 10.2.9.citus-1
+- Official 10.2.9 release of Citus
+
+* Wed Apr 26 2023 - Gurkan Indibay <gindibay@microsoft.com> 11.0.8.citus-1
+- Official 11.0.8 release of Citus
+
+* Tue Apr 25 2023 - Gurkan Indibay <gindibay@microsoft.com> 11.1.6.citus-1
+- Official 11.1.6 release of Citus
+
+* Tue Apr 25 2023 - Gurkan Indibay <gindibay@microsoft.com> 11.2.1.citus-1
+- Official 11.2.1 release of Citus
+
+* Fri Feb 03 2023 - Gurkan Indibay <gindibay@microsoft.com> 11.2.0.citus-1
+- Official 11.2.0 release of Citus
+
+* Tue Dec 20 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.5.citus-1
+- Official 11.1.5 release of Citus
+
+* Tue Nov 08 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.7.citus-1
+- Official 11.0.7 release of Citus
+
+* Mon Oct 24 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.4.citus-1
+- Official 11.1.4 release of Citus
+
+* Fri Oct 14 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.3.citus-1
+- Official 11.1.3 release of Citus
+
+* Fri Sep 30 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.2.citus-1
+- Official 11.1.2 release of Citus
+
+* Fri Sep 16 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.1.1.citus-1
+- Official 11.1.1 release of Citus
+
+* Fri Aug 19 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.8.citus-1
+- Official 10.2.8 release of Citus
+
+* Fri Aug 19 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.6.citus-1
+- Official 11.0.6 release of Citus
+
+* Mon Aug 01 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.5.citus-1
+- Official 11.0.5 release of Citus
+
+* Wed Jul 13 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.4.citus-1
+- Official 11.0.4 release of Citus
+
+* Tue Jul 05 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.3.citus-1
+- Official 11.0.3 release of Citus
+
+* Thu Jun 16 2022 - Gurkan Indibay <gindibay@microsoft.com> 11.0.2.citus-1
+- Official 11.0.2 release of Citus
+
+* Thu Mar 17 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.5.citus-1
+- Official 10.2.5 release of Citus
+
 * Tue Feb 01 2022 - Gurkan Indibay <gindibay@microsoft.com> 10.2.4.citus-1
 - Official 10.2.4 release of Citus
 
