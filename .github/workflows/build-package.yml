@@ -27,10 +27,10 @@ jobs:
           - el/9
           - ol/8
           - ol/9
-          - debian/buster
+          - debian/trixie
           - debian/bullseye
           - debian/bookworm
-          - ubuntu/focal
+          - ubuntu/noble
           - ubuntu/jammy
 
     steps:
