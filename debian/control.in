@@ -10,7 +10,7 @@ XS-Testsuite: autopkgtest
 
 Package: postgresql-PGVERSION-citus
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
+Depends: ${shlibs:Depends}, postgresql-PGVERSION
 Provides: postgresql-PGVERSION-citus
 Conflicts: postgresql-PGVERSION-citus
 Description: sharding and distributed joins for PostgreSQL
