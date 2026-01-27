@@ -112,17 +112,6 @@ fi
 %doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
-* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.1.1.citus-1
-- Official 13.1.1 release of Citus
-
-* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.5.citus-1
-- Official 13.0.5 release of Citus
-* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 12.1.10.citus-1
-- Official 12.1.10 release of Citus
-
-* Thu Sep 04 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 12.1.9.citus-1
-- Official 12.1.9 release of Citus
-
 * Fri Aug 29 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.2.0.citus-1
 - Official 13.2.0 release of Citus
 
