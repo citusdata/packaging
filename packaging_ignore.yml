@@ -20,6 +20,7 @@ base:
   - ".*: warning: 'RSA_new' is deprecated \\[-Wdeprecated-declarations\\]"
   - ".*: warning: 'RSA_generate_key_ex' is deprecated \\[-Wdeprecated-declarations\\]"
   - ".*: warning: 'EVP_PKEY_assign' is deprecated.*"
+  - "^cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead$"
   - "\\d+ warnings generated."
 
 debian:
