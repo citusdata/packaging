@@ -3,6 +3,9 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus
 %global debug_package %{nil}
+%global __strip /bin/true
+%global __objdump /usr/bin/objdump
+%global _find_debuginfo_opts --strict-build-id
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
