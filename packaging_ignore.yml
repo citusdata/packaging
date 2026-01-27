@@ -13,6 +13,8 @@ base:
   - ".* unused substitution variable \\$\\{misc:Depends\\}.*"
   - ".*: substitution variable \\$\\{postgresql:Depends\\} unused, but is defined.*"
   - ".* unused substitution variable \\$\\{postgresql:Depends\\}.*"
+  - ".*: substitution variable \\$\\{postgresql:Breaks\\} unused, but is defined.*"
+  - ".* unused substitution variable \\$\\{postgresql:Breaks\\}.*"
   - "autoreconf: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
   - "autoheader: warning: autoconf input should be named 'configure.ac', not 'configure.in'"
   - ".*: warning: 'RSA_new' is deprecated: Since OpenSSL 3.0 \\[-Wdeprecated-declarations\\]"
