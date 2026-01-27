@@ -70,7 +70,6 @@ echo %{pginstdir}/share/extension/%{sname}.control >> installation_files.list
 %{__rm} -rf %{buildroot}
 
 %files -f installation_files.list
-%files
 %defattr(-,root,root,-)
 %doc CHANGELOG.md
 %if 0%{?rhel} && 0%{?rhel} <= 6
