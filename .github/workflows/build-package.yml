@@ -23,22 +23,21 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - el/7
           - el/8
-          - ol/7
+          - el/9
           - ol/8
-          - debian/stretch
-          - debian/buster
+          - ol/9
           - debian/bullseye
-          - ubuntu/bionic
-          - ubuntu/focal
+          - debian/bookworm
+          - ubuntu/noble
+          - ubuntu/jammy
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Clone tools branch
-        run: git clone -b v0.8.10 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.33-dev2 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources

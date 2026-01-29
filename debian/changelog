@@ -1,3 +1,261 @@
+citus (13.2.0.citus-1) stable; urgency=low
+
+  * Official 13.2.0 release of Citus
+
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Fri, 29 Aug 2025 10:58:33 +0000
+
+citus (13.1.0.citus-1) stable; urgency=low
+
+  * Official 13.1.0 release of Citus
+
+ -- Alper Kocatas <alperkocatas@gmail.com>  Mon, 02 Jun 2025 08:55:55 +0000
+
+citus (13.0.4.citus-1) stable; urgency=low
+
+  * Official 13.0.4 release of Citus
+
+ -- Mehmet YILMAZ <mehmetyilmaz@microsoft.com>  Fri, 30 May 2025 16:50:20 +0000
+
+citus (12.1.8.citus-1) stable; urgency=low
+
+  * Official 12.1.8 release of Citus
+
+ -- Mehmet YILMAZ <mehmetyilmaz@microsoft.com>  Fri, 30 May 2025 16:23:07 +0000
+
+citus (13.0.3.citus-1) stable; urgency=low
+
+  * Citus 13.0.3 release
+
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Fri, 21 Mar 2025 10:34:00 +0000
+
+citus (13.0.2.citus-1) stable; urgency=low
+
+  * Official 13.0.2 release of Citus
+
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Thu, 13 Mar 2025 08:05:57 +0000
+
+citus (13.0.1.citus-1) stable; urgency=low
+
+  * Official 13.0.1 release of Citus
+
+ -- Mehmet Yilmaz <mehmetyilmaz@microsoft.com>  Tue, 04 Feb 2025 13:27:27 +0000
+
+citus (13.0.0.citus-1) stable; urgency=low
+
+  * Official 13.0.0 release of Citus
+
+ -- Mehmet Yilmaz <mehmetyilmaz@microsoft.com>  Thu, 23 Jan 2025 07:27:39 +0000
+
+citus (12.1.6.citus-1) stable; urgency=low
+
+  * Official 12.1.6 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 26 Nov 2024 07:26:20 +0000
+
+citus (12.1.5.citus-1) stable; urgency=low
+
+  * Official 12.1.5 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 18 Jul 2024 06:35:31 +0000
+
+citus (12.1.4.citus-1) stable; urgency=low
+
+  * Official 12.1.4 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 06 Jun 2024 08:00:25 +0000
+
+citus (12.1.3.citus-1) stable; urgency=low
+
+  * Official 12.1.3 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 24 Apr 2024 11:17:35 +0000
+
+citus (11.0.10.citus-1) stable; urgency=low
+
+  * Official 11.0.10 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Feb 2024 11:17:35 +0000
+
+citus (12.1.2.citus-1) stable; urgency=low
+
+  * Official 12.1.2 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 14 Feb 2024 08:29:10 +0000
+
+citus (12.0.1.citus-1) stable; urgency=low
+
+  * Official 12.0.1 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 14 Feb 2024 08:17:28 +0000
+
+citus (11.3.1.citus-1) stable; urgency=low
+
+  * Official 11.3.1 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 14 Feb 2024 07:57:45 +0000
+
+citus (11.2.2.citus-1) stable; urgency=low
+
+  * Official 11.2.2 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 14 Feb 2024 07:45:23 +0000
+
+citus (11.1.7.citus-1) stable; urgency=low
+
+  * Official 11.1.7 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 14 Feb 2024 07:30:55 +0000
+
+citus (12.1.1.citus-1) stable; urgency=low
+
+  * Official 12.1.1 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 14 Nov 2023 05:34:43 +0000
+
+citus (12.1.0.citus-1) stable; urgency=low
+
+  * Official 12.1.0 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 20 Sep 2023 14:17:44 +0000
+
+citus (12.0.0.citus-1) stable; urgency=low
+
+  * Official 12.0.0 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Mon, 17 Jul 2023 06:18:25 +0000
+
+citus (11.3.0.citus-1) stable; urgency=low
+
+  * Official 11.3.0 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 02 May 2023 10:14:52 +0000
+
+citus (10.1.6.citus-1) stable; urgency=low
+
+  * Official 10.1.6 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 26 Apr 2023 15:42:50 +0000
+
+citus (9.5.12.citus-1) stable; urgency=low
+
+  * Official 9.5.12 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 26 Apr 2023 14:30:18 +0000
+
+citus (10.0.8.citus-1) stable; urgency=low
+
+  * Official 10.0.8 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 26 Apr 2023 13:44:04 +0000
+
+citus (10.2.9.citus-1) stable; urgency=low
+
+  * Official 10.2.9 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 26 Apr 2023 10:42:56 +0000
+
+citus (11.0.8.citus-1) stable; urgency=low
+
+  * Official 11.0.8 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 26 Apr 2023 07:14:14 +0000
+
+citus (11.1.6.citus-1) stable; urgency=low
+
+  * Official 11.1.6 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 25 Apr 2023 12:37:55 +0000
+
+citus (11.2.1.citus-1) stable; urgency=low
+
+  * Official 11.2.1 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 25 Apr 2023 11:11:21 +0000
+
+citus (11.2.0.citus-1) stable; urgency=low
+
+  * Official 11.2.0 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 03 Feb 2023 08:58:25 +0000
+
+citus (11.1.5.citus-1) stable; urgency=low
+
+  * Official 11.1.5 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 20 Dec 2022 12:53:50 +0000
+
+citus (11.0.7.citus-1) stable; urgency=low
+
+  * Official 11.0.7 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 08 Nov 2022 11:04:44 +0000
+
+citus (11.1.4.citus-1) stable; urgency=low
+
+  * Official 11.1.4 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Mon, 24 Oct 2022 11:09:58 +0000
+
+citus (11.1.3.citus-1) stable; urgency=low
+
+  * Official 11.1.3 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 14 Oct 2022 11:01:23 +0000
+
+citus (11.1.2.citus-1) stable; urgency=low
+
+  * Official 11.1.2 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 30 Sep 2022 11:50:28 +0000
+
+citus (11.1.1.citus-1) stable; urgency=low
+
+  * Official 11.1.1 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 16 Sep 2022 08:38:09 +0000
+
+citus (10.2.8.citus-1) stable; urgency=low
+
+  * Official 10.2.8 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 19 Aug 2022 13:22:52 +0000
+
+citus (11.0.6.citus-1) stable; urgency=low
+
+  * Official 11.0.6 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Fri, 19 Aug 2022 11:29:38 +0000
+
+citus (11.0.5.citus-1) stable; urgency=low
+
+  * Official 11.0.5 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Mon, 01 Aug 2022 11:06:46 +0000
+
+citus (11.0.4.citus-1) stable; urgency=low
+
+  * Official 11.0.4 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Wed, 13 Jul 2022 17:16:00 +0000
+
+citus (11.0.3.citus-1) stable; urgency=low
+
+  * Official 11.0.3 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Tue, 05 Jul 2022 12:54:16 +0000
+
+citus (11.0.2.citus-1) stable; urgency=low
+
+  * Official 11.0.2 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 16 Jun 2022 14:15:17 +0000
+
+citus (10.2.5.citus-1) stable; urgency=low
+
+  * Official 10.2.5 release of Citus
+
+ -- Gurkan Indibay <gindibay@microsoft.com>  Thu, 17 Mar 2022 13:18:37 +0000
+
 citus (10.2.4.citus-1) stable; urgency=low
 
   * Official 10.2.4 release of Citus
