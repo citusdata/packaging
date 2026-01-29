@@ -3,16 +3,19 @@
 %global pginstdir /usr/pgsql-%{pgpackageversion}
 %global sname citus
 %global debug_package %{nil}
+%global __strip /bin/true
+%global __objdump /usr/bin/objdump
+%global _find_debuginfo_opts --strict-build-id
 
 Summary:	PostgreSQL-based distributed RDBMS
 Name:		%{sname}%{?pkginfix}_%{pgmajorversion}
 Provides:	%{sname}_%{pgmajorversion}
 Conflicts:	%{sname}_%{pgmajorversion}
-Version:	13.1.1.citus
+Version:	13.2.0.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/citus/archive/v13.1.1.tar.gz
+Source0:	https://github.com/citusdata/citus/archive/v13.2.0.tar.gz
 URL:		https://github.com/citusdata/citus
 BuildRequires:	postgresql%{pgmajorversion}-devel libcurl-devel
 Requires:	postgresql%{pgmajorversion}-server
@@ -112,17 +115,6 @@ fi
 %doc %{pginstdir}/doc/extension/NOTICE-%{sname}
 
 %changelog
-* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.1.1.citus-1
-- Official 13.1.1 release of Citus
-
-* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.0.5.citus-1
-- Official 13.0.5 release of Citus
-* Tue Oct 07 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 12.1.10.citus-1
-- Official 12.1.10 release of Citus
-
-* Thu Sep 04 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 12.1.9.citus-1
-- Official 12.1.9 release of Citus
-
 * Fri Aug 29 2025 - Ibrahim Halatci <ihalatci@microsoft.com> 13.2.0.citus-1
 - Official 13.2.0 release of Citus
 
