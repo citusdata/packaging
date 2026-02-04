@@ -24,10 +24,10 @@ jobs:
       matrix:
         platform:
           - el/8
-          - debian/buster
           - debian/bullseye
           - debian/bookworm
-          - ubuntu/focal
+          #- debian/trixie
+          - ubuntu/noble
           - ubuntu/jammy
 
     steps:
@@ -42,7 +42,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.31 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.34 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources

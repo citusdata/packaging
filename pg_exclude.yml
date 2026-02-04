@@ -1,7 +1,9 @@
 exclude:
   nightly:
-    el/7: [16]
-    ol/7: [16]
+    all: [15]
   release:
-    el/7: [16]
-    ol/7: [16]
+    debian/trixie: [12,13]
+    debian/bookworm: [12,13]   # if PGDG dropped 12/13 there
+    ubuntu/noble: [12,13]
+    ubuntu/jammy: [12,13]      # adjust per PGDG availability
+
