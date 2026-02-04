@@ -4,8 +4,6 @@ debian,bullseye
 debian,bookworm
 debian,trixie
 oraclelinux,8
-oraclelinux,6
-ubuntu,focal
 ubuntu,jammy
 ubuntu,noble
 pgxn

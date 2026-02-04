@@ -1,4 +1,5 @@
 # vim:set ft=dockerfile:
+# NOTE: PGDG apt repo for bionic removed (404 Release); retained for reference only.
 FROM ubuntu:bionic
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -44,7 +45,7 @@ RUN ( [ ubuntu != debian ] || [ bionic != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main 17' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -132,7 +133,7 @@ RUN set -ex \
 
 
 # Added for pg17 beta package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17"
+ENV DEB_PG_SUPPORTED_VERSIONS="14 15 16 17"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH

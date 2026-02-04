@@ -35,7 +35,7 @@ RUN set -ex; \
     gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/postgres.gpg; \
     command -v gpgconf > /dev/null && gpgconf --kill all; \
     rm -rf "$GNUPGHOME"; \
-    apt-key list || true
+    gpg --batch --no-default-keyring --keyring /etc/apt/trusted.gpg.d/postgres.gpg --list-keys || true
 
 # add buster backports repo to be able to download missing packages in buster main repo
 RUN ( [ debian != debian ] || [ trixie != buster ] ) || ( \
@@ -44,7 +44,7 @@ RUN ( [ debian != debian ] || [ trixie != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main 18' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
@@ -103,10 +103,6 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 
 RUN curl https://install.citusdata.com/community/deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
-# patch pg_buildext to use multiple processors
-# COPY make_pg_buildext_parallel.patch /
-# RUN patch `which pg_buildext` < /make_pg_buildext_parallel.patch
-
 
 # install cmake from source
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2.tar.gz && \
@@ -132,7 +128,7 @@ RUN set -ex \
 
 
 # Added for pg18  package support.
-ENV DEB_PG_SUPPORTED_VERSIONS="10 11 12 13 14 15 16 17 18"
+ENV DEB_PG_SUPPORTED_VERSIONS="14 15 16 17 18"
 
 # place scripts on path and declare output volume
 ENV PATH /scripts:$PATH

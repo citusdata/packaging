@@ -33,9 +33,6 @@ jobs:
           - debian/bullseye
           - debian/bookworm
           - debian/trixie
-          # removing temporarily since postgres 16 packages does not exist for ubuntu bionic
-          # - ubuntu/bionic
-          - ubuntu/focal
           - ubuntu/jammy
           - ubuntu/noble
 
@@ -51,7 +48,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.32 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.34 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Clone build branch
         run: git clone -b "${MAIN_BRANCH}" --depth=1  https://github.com/citusdata/packaging.git packaging
