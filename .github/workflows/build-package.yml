@@ -24,11 +24,11 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - el/7
-          - debian/buster
-          - debian/bullseye
+          # - el/7
+          # - debian/buster
+          # - debian/bullseye
           - ubuntu/focal
-          - ubuntu/jammy
+          # - ubuntu/jammy
 
     steps:
       - name: Checkout repository
