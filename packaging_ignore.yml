@@ -22,6 +22,7 @@ base:
   - ".*: warning: 'EVP_PKEY_assign' is deprecated.*"
   - "^cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead$"
   - "\\d+ warnings generated."
+  - ".*: warning: no previous declaration for '.*' \\[-Wmissing-variable-declarations\\]"
 
 debian:
   - ".*: W: invalid-license Commercial"
