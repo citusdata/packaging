@@ -1,0 +1,297 @@
+﻿Diagnose log at 2026-02-04T11:45:44Z
+
+AppPath: /usr/local/bin/git-credential-manager
+InstallDir: /usr/local/share/gcm-core/
+Version: 2.7.0+d1dd8a4ded75a2b1faae653157ac1699609442ad
+
+------------
+Diagnostic: Environment
+Skipped: False
+Success: True
+Exception: None
+Log:
+OSType: Linux
+OSVersion: Ubuntu 22.04.5 LTS
+Reading environment variables... OK
+ Variables:
+VSCODE_IPC_HOOK_CLI=/run/user/1000/vscode-ipc-ecf968ce-c91d-4c9e-b9ec-685d2abb4b96.sock
+WT_SESSION=5c8a4612-fa61-4603-9032-5ceecfa415dd
+BUNDLED_DEBUGPY_PATH=/home/ihalatci/.vscode-server/extensions/ms-python.debugpy-2025.18.0/bundled/libs/debugpy
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+PYTHONSTARTUP=/home/ihalatci/.vscode-server/data/User/workspaceStorage/b6ad696534e01ac1c8de338be4250ab5/ms-python.python/pythonrc.py
+WSL_DISTRO_NAME=Ubuntu-22.04
+GCM_INTERACTIVE=0
+PATH=/home/ihalatci/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/ihalatci/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/ihalatci/.vscode-server/bin/c9d77990917f3102ada88be140d28b038d1dd7c7/bin/remote-cli:/home/ihalatci/.pgenv/bin:/home/ihalatci/.pgenv/pgsql/bin:/home/ihalatci/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/Azure Dev CLI:/mnt/c/Program Files/GitHub CLI/:/mnt/c/Users/vmadmin/AppData/Local/Microsoft/WindowsApps:/mnt/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/:/mnt/c/Program Files/Microsoft SQL Server/150/Tools/Binn/:/mnt/c/.tools/dotnet:/mnt/c/.tools/.npm-global:/mnt/c/ProgramData/chocolatey/bin:/mnt/c/Program Files (x86)/Microsoft SQL Server/160/DTS/Binn/:/mnt/c/nvm:/mnt/c/Program Files/nodejs:/mnt/c/ES.DevProd/SpringBoard/SBCli/SpringBoardCli:/mnt/c/Program Files/GVFS:/mnt/c/ES.DevProd/VMSetupScripts:/mnt/c/Program Files/nodejs/:/mnt/c/ProgramData/global-npm:/mnt/c/Windows/system32/config/systemprofile/AppData/Local/Microsoft/WindowsApps:/mnt/c/Program Files/Microsoft Dev Box Agent/Scripts:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/PowerShell/7/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/Users/ihalatci/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/ihalatci/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/ihalatci/.dotnet/tools:/snap/bin:/home/ihalatci/.vscode-server/extensions/ms-python.debugpy-2025.18.0/bundled/scripts/noConfigScripts
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+GIT_TRACE2_PARENT_SID=3a3154fd-38d2-4271-9898-78a59f85666f
+LESSOPEN=| /usr/bin/lesspipe %s
+SHLVL=2
+VSCODE_DEBUGPY_ADAPTER_ENDPOINTS=/home/ihalatci/.vscode-server/extensions/ms-python.debugpy-2025.18.0/.noConfigDebugAdapterEndpoints/endpoint-b65cbaa7cc345033.txt
+LANG=C.UTF-8
+DISPLAY=:0
+USER=ihalatci
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-AJhBS01voS,guid=a851ec31f9c0cadbae827703698327a4
+SHELL=/bin/bash
+_=/usr/local/bin/git-credential-manager
+OLDPWD=/home/ihalatci/sandbox/citusdata/packaging
+VSCODE_GIT_ASKPASS_NODE=/home/ihalatci/.vscode-server/bin/c9d77990917f3102ada88be140d28b038d1dd7c7/node
+LOGNAME=ihalatci
+GPG_TTY=/dev/pts/7
+TERM_PROGRAM_VERSION=1.108.2
+WAYLAND_DISPLAY=wayland-0
+TERM_PROGRAM=vscode
+PYTHON_BASIC_REPL=1
+MOTD_SHOWN=update-motd
+DBUS_SESSION_BUS_WINDOWID=6291457
+LESSCLOSE=/usr/bin/lesspipe %s %s
+VSCODE_GIT_IPC_HANDLE=/run/user/1000/vscode-git-59b743399d.sock
+VSCODE_GIT_ASKPASS_EXTRA_ARGS=
+XDG_RUNTIME_DIR=/run/user/1000/
+PULSE_SERVER=unix:/mnt/wslg/PulseServer
+TERM=xterm-256color
+HOSTTYPE=x86_64
+GIT_PAGER=cat
+PYDEVD_DISABLE_FILE_VALIDATION=1
+HOME=/home/ihalatci
+DBUS_SESSION_BUS_PID=64465
+VSCODE_GIT_ASKPASS_MAIN=/home/ihalatci/.vscode-server/bin/c9d77990917f3102ada88be140d28b038d1dd7c7/extensions/git/dist/askpass-main.js
+COLORTERM=truecolor
+WSL_INTEROP=/run/WSL/592_interop
+WSLENV=ELECTRON_RUN_AS_NODE/w:WT_SESSION:WT_PROFILE_ID:
+GCM_CREDENTIAL_STORE=secretservice
+VSCODE_PYTHON_AUTOACTIVATE_GUARD=1
+GIT_ASKPASS=/home/ihalatci/.vscode-server/bin/c9d77990917f3102ada88be140d28b038d1dd7c7/extensions/git/dist/askpass.sh
+PWD=/home/ihalatci/sandbox/citusdata/packaging
+WT_PROFILE_ID={4ff56d04-d9cf-57ea-bae2-ad396374e7e3}
+HISTCONTROL=ignoreboth
+WSL2_GUI_APPS_ENABLED=1
+NAME=Code
+
+
+------------
+Diagnostic: File system
+Skipped: False
+Success: True
+Exception: None
+Log:
+Temporary directory is '/tmp/'...
+Checking basic file I/O...
+Writing to temporary file '/tmp/cb48449ba00188a2dcc0d830'... OK
+Reading from temporary file '/tmp/cb48449ba00188a2dcc0d830'... OK
+Deleting temporary file '/tmp/cb48449ba00188a2dcc0d830'... OK
+Testing IFileSystem instance...
+UserHomePath: /home/ihalatci
+UserDataDirectoryPath: /home/ihalatci/.gcm
+GetCurrentDirectory(): /home/ihalatci/sandbox/citusdata/packaging
+
+------------
+Diagnostic: Networking
+Skipped: False
+Success: True
+Exception: None
+Log:
+Checking networking and HTTP stack...
+Creating HTTP client... OK
+IsNetworkAvailable: True
+Sending HEAD request to http://example.com...Sending HEAD request to https://example.com... OK
+ OK
+Acquiring free TCP port... OK
+Testing local HTTP loopback connections...
+Creating new HTTP listener for http://localhost:40741/... OK
+Waiting for loopback connection... OK
+Writing response... OK
+Waiting for response data... OK
+Loopback connection data OK
+
+------------
+Diagnostic: Git
+Skipped: False
+Success: True
+Exception: None
+Log:
+Getting Git version... OK
+Git version is '2.34.1'
+Locating current repository...Git repository at '/home/ihalatci/sandbox/citusdata/packaging/.git'
+ OK
+Listing all Git configuration... OK
+Git configuration:
+file:/home/ihalatci/.gitconfig	user.name=Ibrahim Halatci
+file:/home/ihalatci/.gitconfig	user.email=ihalatci@gmail.com
+file:/home/ihalatci/.gitconfig	user.signingkey=829106E629E93C3AF5CF8C2D4FB72F64B64E3FFC
+file:/home/ihalatci/.gitconfig	core.editor=code --reuse-window --wait
+file:/home/ihalatci/.gitconfig	credential.https://github.com.helper=
+file:/home/ihalatci/.gitconfig	credential.https://github.com.helper=!/usr/bin/gh auth git-credential
+file:/home/ihalatci/.gitconfig	credential.https://gist.github.com.helper=
+file:/home/ihalatci/.gitconfig	credential.https://gist.github.com.helper=!/usr/bin/gh auth git-credential
+file:/home/ihalatci/.gitconfig	gpg.program=gpg
+file:/home/ihalatci/.gitconfig	credential.helper=
+file:/home/ihalatci/.gitconfig	credential.helper=/usr/local/bin/git-credential-manager
+file:/home/ihalatci/.gitconfig	credential.credentialstore=gpg
+file:/home/ihalatci/.gitconfig	credential.https://dev.azure.com.usehttppath=true
+file:/home/ihalatci/.gitconfig	credential.https://example.com.provider=generic
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=true
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	remote.origin.url=https://github.com/citusdata/packaging.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.develop.remote=origin
+file:.git/config	branch.develop.merge=refs/heads/develop
+file:.git/config	branch.develop.vscode-merge-base=origin/develop
+file:.git/config	branch.develop.gk-last-accessed=2026-01-24T07:32:52.574Z
+file:.git/config	branch.develop.gk-last-modified=2026-01-24T07:32:52.574Z
+file:.git/config	branch.ihalatci-trixie.github-pr-base-branch=citusdata#packaging#develop
+file:.git/config	branch.ihalatci-trixie.vscode-merge-base=origin/develop
+file:.git/config	branch.ihalatci-trixie.github-pr-base-branch=citusdata#packaging#develop
+file:.git/config	branch.all-citus.remote=origin
+file:.git/config	branch.all-citus.merge=refs/heads/all-citus
+file:.git/config	branch.all-citus.vscode-merge-base=origin/all-citus
+file:.git/config	branch.all-citus.github-pr-owner-number=citusdata#packaging#1156
+file:.git/config	branch.all-citus.github-pr-owner-number=citusdata#packaging#1156
+file:.git/config	branch.all-citus.gk-last-accessed=2026-02-04T08:51:27.430Z
+file:.git/config	branch.all-citus.gk-last-modified=2026-02-04T08:51:30.538Z
+file:.git/config	branch.ihalatci-new-platforms.github-pr-base-branch=citusdata#packaging#all-citus
+file:.git/config	branch.ihalatci-new-platforms.vscode-merge-base=origin/all-citus
+file:.git/config	branch.ihalatci-new-platforms.remote=origin
+file:.git/config	branch.ihalatci-new-platforms.merge=refs/heads/ihalatci-new-platforms
+file:.git/config	branch.barkin/debian-trixie13.remote=origin
+file:.git/config	branch.barkin/debian-trixie13.merge=refs/heads/barkin/debian-trixie13
+file:.git/config	branch.barkin/debian-trixie13.vscode-merge-base=origin/barkin/debian-trixie13
+file:.git/config	branch.barkin/debian-trixie13.gk-last-accessed=2026-01-22T11:04:03.240Z
+file:.git/config	branch.barkin/debian-trixie13.gk-last-modified=2026-01-22T11:04:39.468Z
+file:.git/config	branch.ihalatci-update-versions-platforms.github-pr-base-branch=citusdata#packaging#develop
+file:.git/config	branch.ihalatci-update-versions-platforms.vscode-merge-base=origin/develop
+file:.git/config	branch.ihalatci-update-versions-platforms.remote=origin
+file:.git/config	branch.ihalatci-update-versions-platforms.merge=refs/heads/ihalatci-update-versions-platforms
+file:.git/config	branch.ihalatci-update-versions-platforms.gk-last-accessed=2026-02-04T08:22:06.364Z
+file:.git/config	branch.ihalatci-update-versions-platforms.gk-last-modified=2026-02-04T08:22:06.364Z
+file:.git/config	branch.ihalatci-update-versions-platforms.github-pr-owner-number=citusdata#packaging#1159
+file:.git/config	branch.all-citus-unit-tests.remote=origin
+file:.git/config	branch.all-citus-unit-tests.merge=refs/heads/all-citus-unit-tests
+file:.git/config	branch.all-citus-unit-tests.vscode-merge-base=origin/all-citus-unit-tests
+file:.git/config	branch.all-citus-unit-tests.gk-last-accessed=2026-01-29T14:31:12.242Z
+file:.git/config	branch.all-citus-unit-tests.gk-last-modified=2026-01-29T14:31:12.242Z
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-base-branch=citusdata#packaging#all-citus-unit-tests
+file:.git/config	branch.ihalatci-unit-tests-update.vscode-merge-base=origin/all-citus-unit-tests
+file:.git/config	branch.ihalatci-unit-tests-update.remote=origin
+file:.git/config	branch.ihalatci-unit-tests-update.merge=refs/heads/ihalatci-unit-tests-update
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.gk-last-accessed=2026-01-29T09:13:32.678Z
+file:.git/config	branch.ihalatci-unit-tests-update.gk-last-modified=2026-01-29T09:13:32.678Z
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1154
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.ihalatci-unit-tests-update.github-pr-owner-number=citusdata#packaging#1158
+file:.git/config	branch.gh-pages.remote=origin
+file:.git/config	branch.gh-pages.merge=refs/heads/gh-pages
+file:.git/config	branch.gh-pages.vscode-merge-base=origin/gh-pages
+file:.git/config	branch.gh-pages.gk-last-accessed=2026-01-25T04:24:59.431Z
+file:.git/config	branch.gh-pages.gk-last-modified=2026-01-25T04:24:59.431Z
+file:.git/config	branch.ihalatci-gh-pages-fix.github-pr-base-branch=citusdata#packaging#gh-pages
+file:.git/config	branch.ihalatci-gh-pages-fix.vscode-merge-base=origin/gh-pages
+file:.git/config	branch.ihalatci-gh-pages-fix.remote=origin
+file:.git/config	branch.ihalatci-gh-pages-fix.merge=refs/heads/ihalatci-gh-pages-fix
+file:.git/config	branch.ihalatci-gh-pages-fix.github-pr-owner-number=citusdata#packaging#1155
+file:.git/config	branch.ihalatci-gh-pages-fix.gk-last-accessed=2026-01-25T04:35:01.548Z
+file:.git/config	branch.ihalatci-gh-pages-fix.gk-last-modified=2026-01-25T04:37:22.847Z
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-base-branch=citusdata#packaging#all-citus
+file:.git/config	branch.ihalatci-update-all-citus.vscode-merge-base=origin/all-citus
+file:.git/config	branch.ihalatci-update-all-citus.remote=origin
+file:.git/config	branch.ihalatci-update-all-citus.merge=refs/heads/ihalatci-update-all-citus
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1157
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1157
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1157
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.gk-last-accessed=2026-02-04T08:00:11.340Z
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.gk-last-modified=2026-01-29T14:25:41.910Z
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.ihalatci-update-all-citus.github-pr-owner-number=citusdata#packaging#1160
+file:.git/config	branch.undefined.vscode-merge-base=origin/develop
+
+
+------------
+Diagnostic: Credential storage
+Skipped: False
+Success: True
+Exception: None
+Log:
+ICredentialStore instance is of type: CredentialStore
+Writing test credential... OK
+Reading test credential... OK
+Deleting test credential... OK
+
+------------
+Diagnostic: Microsoft authentication (AAD/MSA)
+Skipped: False
+Success: True
+Exception: None
+Log:
+Broker is not enabled.
+Flow type is: Auto
+Gathering MSAL token cache data... OK
+CacheDirectory: /home/ihalatci/.local/.IdentityService
+CacheFileName: msal.cache
+CacheFilePath: /home/ihalatci/.local/.IdentityService/msal.cache
+KeyringCollection: 
+KeyringSchemaName: 
+KeyringSecretLabel: 
+KeyringAttribute1: (,)
+KeyringAttribute2: (,)
+Creating cache helper... OK
+Verifying MSAL token cache persistence... OK
+
+------------
+Diagnostic: GitHub API
+Skipped: False
+Success: True
+Exception: None
+Log:
+Using 'https://github.com/' as API target.
+Querying '/meta' endpoint... OK
+
