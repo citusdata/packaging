@@ -10,6 +10,7 @@ base:
   - ".* warning: overriding recipe for target 'check'"
   - ".*: substitution variable \\$\\{postgresql:Depends\\} unused, but is defined.*"
   - ".* unused substitution variable \\$\\{postgresql:Depends\\}.*"
+  - "cc1plus: warning: '-Werror=' argument '-Werror=implicit-function-declaration' is not valid for C\\+\\+"
 debian:
   - ".*: W: invalid-license Commercial"
   - ".*: W: no-documentation"
