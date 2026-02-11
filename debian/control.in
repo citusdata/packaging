@@ -10,6 +10,8 @@ Homepage: https://github.com/citusdata/postgresql-hll
 Package: postgresql-PGVERSION-hll
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
+Breaks: ${postgresql:Breaks}
+Replaces: ${postgresql:Replaces}
 Description: HyperLogLog extension for PostgreSQL
  HyperLogLog is an algorithm for the count-distinct problem, approximating the
  number of distinct elements in a multiset. Calculating the exact cardinality
