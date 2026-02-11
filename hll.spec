@@ -60,6 +60,9 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
+* Wed Feb 11 2026 - Ibrahim Halatci <ihalatci@microsoft.com> 2.19.citus-1
+- Support for PostgreSQL 18
+
 * Fri Sep 1 2023 - Gurkan Indibay <gindibay@Microsoft.com> 2.18.citus-1
 - Support for PostgreSQL 16
 
