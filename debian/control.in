@@ -10,6 +10,7 @@ Homepage: https://github.com/citusdata/topn
 Package: postgresql-PGVERSION-topn
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
+Breaks: ${postgresql:Breaks}
 Description: Counter Based Implementation for top-n Approximation
  This extension is used to make approximations on top-n. It uses JSONB
  objects to store and read the data frequency and provides a chance to
