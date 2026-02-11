@@ -2,7 +2,7 @@ hll (2.19.citus-1) stable; urgency=low
 
   * Support for PostgreSQL 16
 
- -- Ibrahim Halatci <ihalatci@microsoft.com>  Wed, "10 Feb 2026 13:14:00 +0300
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Wed, 10 Feb 2026 13:14:00 +0300
 
 hll (2.18.citus-1) stable; urgency=low
 
