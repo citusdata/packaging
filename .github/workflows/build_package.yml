@@ -1,0 +1,36 @@
+name: Release on PGXN
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  release_check:
+    if: github.ref != 'refs/heads/pgxn-citus'
+    name: Release check
+    runs-on: ubuntu-latest
+    container: pgxn/pgxn-tools
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Bundle the Release
+        run: pgxn-bundle
+  release_pgxn:
+    if: github.ref == 'refs/heads/pgxn-citus'
+    name: Actual Release on PGXN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Release package
+        env:
+          MAIN_BRANCH: pgxn-citus
+          PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
+          PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        shell: bash
+        run: |
+          sudo apt install -y  zip
+          source pkgvars
+          pkg_path=$(pwd)/"citus-${pkglatest}.zip"
+          ./scripts/fetch_and_build_pgxn release
+          ./scripts/release_pgxn $pkg_path
