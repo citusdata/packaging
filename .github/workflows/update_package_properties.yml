@@ -32,11 +32,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_TOKEN }}
       - name: Install dependencies
-        run: sudo apt install libcurl4-openssl-dev libssl-dev python3-testresources
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
 
       - name: Clone tools branch
         run: git clone -b v0.8.35 --depth=1  https://github.com/citusdata/tools.git tools
