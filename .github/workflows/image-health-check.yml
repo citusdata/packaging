@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Update and check dockerfiles
         run: |
           ./update_dockerfiles
@@ -60,10 +60,12 @@ jobs:
           - TARGET_PLATFORM: pgxn
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Install package dependencies
-        run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
 
       - name: Install wheel for el/8
         if: matrix.TARGET_PLATFORM  == 'centos,8'
