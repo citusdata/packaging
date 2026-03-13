@@ -16,10 +16,12 @@ jobs:
     name: Update pgxn configuration
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
-        run: sudo apt install libcurl4-openssl-dev libssl-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
 
       - name: Clone Tools branch
         run: git clone --branch v0.8.35 https://github.com/citusdata/tools.git
