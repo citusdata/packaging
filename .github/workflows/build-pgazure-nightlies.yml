@@ -50,7 +50,11 @@ jobs:
         with:
           token: ${{ steps.app.outputs.token }}
 
-      
+      - name: Setup git authentication for GitHub App
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
 
       # This step is to fetch the images unanonymously to have higher bandwidth
       - name: Login to Docker Hub
@@ -60,10 +64,14 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.35 --depth=1  https://github.com/citusdata/tools.git tools
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: git clone -b v0.8.35 --depth=1  https://x-access-token:${GH_TOKEN}@github.com/citusdata/tools.git tools
 
       - name: Clone build branch
-        run: git clone -b "${MAIN_BRANCH}" --depth=1  https://github.com/citusdata/packaging.git packaging
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: git clone -b "${MAIN_BRANCH}" --depth=1  https://x-access-token:${GH_TOKEN}@github.com/citusdata/packaging.git packaging
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
@@ -85,6 +93,8 @@ jobs:
           --input_files_dir "$(pwd)/packaging"
 
       - name: Publish packages
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
         run: |
           python -m  tools.packaging_automation.upload_to_package_cloud \
           --platform "${{ matrix.platform }}" \

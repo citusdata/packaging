@@ -29,11 +29,19 @@ jobs:
         with:
           token: ${{ steps.app.outputs.token }}
 
+      - name: Setup git authentication for GitHub App
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+
       - name: Install dependencies
         run: sudo apt install libcurl4-openssl-dev libssl-dev
 
       - name: Clone Tools branch
-        run: git clone --branch v0.8.35 https://github.com/citusdata/tools.git
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: git clone --branch v0.8.35 https://x-access-token:${GH_TOKEN}@github.com/citusdata/tools.git
 
       - name: Install Python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt

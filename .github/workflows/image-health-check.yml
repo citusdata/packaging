@@ -26,7 +26,7 @@ jobs:
     name: Check if docker files are compliant with templates
     runs-on: ubuntu-latest
     steps:
-      
+
       - name: Create GitHub App token
         id: app
         uses: actions/create-github-app-token@v1
@@ -70,8 +70,19 @@ jobs:
           - TARGET_PLATFORM: ubuntu,noble
           - TARGET_PLATFORM: pgxn
     steps:
+
+      - name: Create GitHub App token
+        id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ steps.app.outputs.token }}
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
@@ -88,8 +99,11 @@ jobs:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
+
       - name: Clone tools repo for test
-        run: git clone -b v0.8.35 --depth=1  https://github.com/citusdata/tools.git tools
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}  
+        run: git clone -b v0.8.35 --depth=1  https://x-access-token:${GH_TOKEN}@github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
@@ -97,4 +111,5 @@ jobs:
           python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
         env:
           PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
+          GH_TOKEN: ${{ steps.app.outputs.token }}
 
