@@ -1,7 +1,6 @@
 name: Image Health Check
 
 env:
-  GH_TOKEN: "${{ secrets.GH_TOKEN }}"
   PACKAGING_SECRET_KEY: "${{ secrets.PACKAGING_SECRET_KEY }}"
   PACKAGE_ENCRYPTION_KEY: "${{ secrets.PACKAGE_ENCRYPTION_KEY }}"
   PACKAGING_PASSPHRASE: "${{ secrets.PACKAGING_PASSPHRASE }}"
@@ -27,8 +26,18 @@ jobs:
     name: Check if docker files are compliant with templates
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Create GitHub App token
+        id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APPLICATION_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+      - name: Check out repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ steps.app.outputs.token }}
+
       - name: Update and check dockerfiles
         run: |
           ./update_dockerfiles

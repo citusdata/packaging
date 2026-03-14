@@ -1,7 +1,6 @@
 name: Build package for test images
 
 env:
-  GH_TOKEN: "${{ secrets.GH_TOKEN }}"
   PACKAGING_SECRET_KEY: "${{ secrets.PACKAGING_SECRET_KEY }}"
   PACKAGE_ENCRYPTION_KEY: "${{ secrets.PACKAGE_ENCRYPTION_KEY }}"
   PACKAGING_PASSPHRASE: "${{ secrets.PACKAGING_PASSPHRASE }}"
@@ -57,8 +56,19 @@ jobs:
           - TARGET_PLATFORM: ubuntu,noble
           - TARGET_PLATFORM: pgxn
     steps:
+
+      - name: Create GitHub App token
+        id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APPLICATION_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ steps.app.outputs.token }}
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
