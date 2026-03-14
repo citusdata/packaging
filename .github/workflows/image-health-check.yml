@@ -26,13 +26,15 @@ jobs:
     name: Check if docker files are compliant with templates
     runs-on: ubuntu-latest
     steps:
+      
       - name: Create GitHub App token
         id: app
         uses: actions/create-github-app-token@v1
         with:
-          app-id: ${{ vars.GH_APPLICATION_ID }}
+          app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_KEY }}
           owner: ${{ github.repository_owner }}
+
       - name: Check out repository
         uses: actions/checkout@v2
         with:
