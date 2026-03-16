@@ -1,6 +1,9 @@
 name: Test Latest Citus Package Installation on Supported PostgreSQL Versions
 
 on:
+  push:
+    branches:
+      - all-citus-test-installation-workflow
   workflow_dispatch:
 
 env:
