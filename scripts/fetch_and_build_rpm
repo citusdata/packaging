@@ -81,7 +81,15 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
+if [ -z "${GH_TOKEN:-}" ]; then
+    echo "$0: GH_TOKEN (GitHub App token) is required but not set" >&2
+    exit 66
+fi
+
+echo "header=\"Authorization: Bearer ${GH_TOKEN}\"" > ~/.curlrc
+
+# ensuring GH_TOKEN usage for clones/fetches
+git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 name=$(determine_name)
 email=$(determine_email)
