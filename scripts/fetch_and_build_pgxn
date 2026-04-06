@@ -50,15 +50,20 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-if [ -z "${GH_TOKEN:-}" ]; then
-    echo "$0: GH_TOKEN (GitHub App token) is required but not set" >&2
-    exit 66
+# normalize token name (accept GH_TOKEN from CI) and fail fast — we only use installation tokens
+if [ -n "${GH_TOKEN:-}" ] && [ -z "${GITHUB_TOKEN:-}" ]; then
+    export GITHUB_TOKEN="${GH_TOKEN}"
 fi
 
-echo "header=\"Authorization: Bearer ${GH_TOKEN}\"" > ~/.curlrc
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+    echo "$0: error: GITHUB_TOKEN (installation token) is required" >&2
+    exit $noinput
+fi
 
-# ensuring GH_TOKEN usage for clones/fetches
-git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+# use installation token for curl and git; keep token file permission-restricted
+printf 'header="Authorization: token %s"\n' "${GITHUB_TOKEN}" > ~/.curlrc
+chmod 600 ~/.curlrc
+git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 cp -R /buildfiles/META.json "${builddir}"
 repopath="citusdata/${hubproj}"
