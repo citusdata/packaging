@@ -17,15 +17,7 @@ fi
 project=$1
 buildtype=$2
 
-if [ -z "${GH_TOKEN:-}" ]; then
-    echo "$0: GH_TOKEN (GitHub App token) is required but not set" >&2
-    exit 66
-fi
-
-echo "header=\"Authorization: Bearer ${GH_TOKEN}\"" > ~/.curlrc
-
-# ensuring GH_TOKEN usage for clones/fetches
-git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 name=$(git config --get user.name)
 email=$(git config --get user.email)
@@ -62,7 +54,7 @@ while read -r line; do
             continue
         fi
         args+="run --rm -v ${outputdir}:/packages -v ${buildfilesdir}/deb:/buildfiles:ro "
-        args+="-e GH_TOKEN=${GH_TOKEN} -e DEBFULLNAME='${name}' -e DEBEMAIL='${email}' "
+        args+="-e GITHUB_TOKEN=${GITHUB_TOKEN} -e DEBFULLNAME='${name}' -e DEBEMAIL='${email}' "
         args+="citusdata/packaging:${os}-${release}-all $buildtype\n"
     elif [[ "${os}" = 'centos' ]] || [[ "${os}" = 'fedora' ]] || [[ "${os}" = 'oraclelinux' ]]; then
         # shellcheck source=/dev/null
@@ -88,13 +80,13 @@ while read -r line; do
             fi
             pgshort=${pgversion//./}
             args+="run --rm -v ${outputdir}:/packages -v ${buildfilesdir}/rpm:/buildfiles:ro "
-            args+="-e GH_TOKEN=${GH_TOKEN} -e RPM_PACKAGER='${packager}' "
+            args+="-e GITHUB_TOKEN=${GITHUB_TOKEN} -e RPM_PACKAGER='${packager}' "
             args+="citusdata/packaging:${os}-${release}-pg${pgshort} $buildtype\n"
         done
     elif [[ "${os}" = 'pgxn' ]]; then
         if [[ "${project}" = 'citus' ]] && [[ "${buildtype}" = 'release' ]]; then
             args+="run --rm -v ${outputdir}:/packages -v ${buildfilesdir}/pgxn:/buildfiles:ro "
-            args+="-e GH_TOKEN=${GH_TOKEN} citusdata/packaging:${os}-all $buildtype\n"
+            args+="-e GITHUB_TOKEN=${GITHUB_TOKEN} citusdata/packaging:${os}-all $buildtype\n"
         else
             echo "skipping PGXN... unsupported for this build" >&2
         fi

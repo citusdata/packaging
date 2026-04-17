@@ -107,4 +107,3 @@ jobs:
         env:
           TARGET_PLATFORM: ${{ matrix.TARGET_PLATFORM }}
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
-          GH_TOKEN: ${{ steps.app.outputs.token }}

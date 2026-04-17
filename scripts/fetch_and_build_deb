@@ -88,19 +88,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-# normalize token name (accept GH_TOKEN from CI) and fail fast — we only use installation tokens
-if [ -n "${GH_TOKEN:-}" ] && [ -z "${GITHUB_TOKEN:-}" ]; then
-    export GITHUB_TOKEN="${GH_TOKEN}"
-fi
-
-if [ -z "${GITHUB_TOKEN:-}" ]; then
-    echo "$0: error: GITHUB_TOKEN (installation token) is required" >&2
-    exit $noinput
-fi
-
-# use installation token for curl and git; keep token file permission-restricted
-printf 'header="Authorization: token %s"\n' "${GITHUB_TOKEN}" > ~/.curlrc
-chmod 600 ~/.curlrc
+echo "header=\"Authorization: Bearer ${GITHUB_TOKEN}\"" > ~/.curlrc
 git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 export NAME

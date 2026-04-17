@@ -18,24 +18,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Create GitHub App token
-        id: app
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_KEY }}
-          owner: ${{ github.repository_owner }}
-
-      - name: Set GH_TOKEN for all steps
-        run: echo "GH_TOKEN=${{ steps.app.outputs.token }}" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          token: ${{ steps.app.outputs.token }}
-
-      - name: Configure git with x-access-token
-        run: git config --global url."https://x-access-token:${{ steps.app.outputs.token }}@github.com/".insteadOf "https://github.com/"
 
       # Runs a single command using the runners shell
       - name: Clone Tools branch
