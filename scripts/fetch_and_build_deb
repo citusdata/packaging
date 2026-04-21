@@ -88,7 +88,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-echo "header=\"Authorization: Bearer ${GITHUB_TOKEN}\"" > ~/.curlrc
+echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
 git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 export NAME
@@ -161,6 +161,9 @@ curl -sL "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
 
 mkdir -p "${packagepath}"
 tar xf "${tarballpath}" -C "${packagepath}" --strip-components 1
+
+echo "DEBUG: .gitmodules present?"; ls -la "${packagepath}/.gitmodules" || true
+echo "DEBUG: first 50 lines of .gitmodules:"; sed -n '1,50p' "${packagepath}/.gitmodules" || true
 
 # git metadata needs to be setup to initialize submodules
 # in repos which rely on git submodules
