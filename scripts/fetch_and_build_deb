@@ -88,14 +88,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-if [[ "$GITHUB_TOKEN" == ..* ]]; then
-    echo "TOKEN FORMAT: appears to be a JWT (app-level token)."
-else
-    echo "TOKEN FORMAT: not a JWT (installation token or PAT)."
-fi
-
-
-echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
+echo "header=\"Authorization: Bearer ${GITHUB_TOKEN}\"" > ~/.curlrc
 git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 export NAME

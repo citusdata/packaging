@@ -81,7 +81,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
+echo "header=\"Authorization: Bearer ${GITHUB_TOKEN}\"" > ~/.curlrc
 git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 name=$(determine_name)
