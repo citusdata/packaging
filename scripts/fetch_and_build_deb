@@ -88,7 +88,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
-echo "header=\"Authorization: Bearer ${GITHUB_TOKEN}\"" > ~/.curlrc
+# echo "header=\"Authorization: Bearer ${GITHUB_TOKEN}\"" > ~/.curlrc not used currently
 git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 export NAME
@@ -102,7 +102,9 @@ repopath="citusdata/${hubproj}"
 
 echo "DEBUG: GITHUB_TOKEN length: ${#GITHUB_TOKEN}"
 curl -s -o /dev/null -w "DEBUG: commits endpoint HTTP=%{http_code}\n" \
-  -H "Authorization: token ${GITHUB_TOKEN}" \
+  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
   "https://api.github.com/repos/${repopath}/commits/${nightlyref}"
 
 case "${1}" in
@@ -111,15 +113,23 @@ case "${1}" in
         releasetag="v${packageversion/'~'/-}"
         releasetag="${releasetag%.citus}"
 
-        gitsha=$(curl -s "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
+        gitsha=$(curl -sf \
+                 -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                 -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
+                 "https://api.github.com/repos/${repopath}/git/refs/tags/${releasetag}" | \
                  jq -r '.object.sha')
         if [ "${gitsha}" == 'null' ]; then
             echo "$0: could not determine commit for git tag ${releasetag}" >&2
             exit $failure
         fi
 
-        verified=$(curl -s "https://api.github.com/repos/${repopath}/releases/tags/${releasetag}" | \
-           jq -r '.verify_tag // false')
+        verified=$(curl -sf \
+                   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                   -H "Accept: application/vnd.github+json" \
+                   -H "X-GitHub-Api-Version: 2022-11-28" \
+                   "https://api.github.com/repos/${repopath}/releases/tags/${releasetag}" | \
+                   jq -r '.verify_tag // false')
         if [ "${verified}" != 'true' ]; then
             echo "$0: could not verify release for tag ${releasetag}" >&2
             exit $failure
@@ -139,7 +149,10 @@ case "${1}" in
         setnextversion "${pkglatest}"
 
         set +e
-        gitsha=$(curl -sfH 'Accept:application/vnd.github+json' \
+        gitsha=$(curl -sf \
+                 -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                 -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
                  "https://api.github.com/repos/${repopath}/commits/${ref}" | \
                  jq -r '.sha')
         if [ "${?}" -ne 0 ]; then
@@ -161,8 +174,12 @@ esac
 tarballpath="${builddir}/${pkgname}_${packageversion}.orig.tar.gz"
 packagepath="${builddir}/${packageversion}"
 
-curl -sL "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
-     -o "${tarballpath}"
+curl -sfL \
+  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  "https://api.github.com/repos/${repopath}/tarball/${gitsha}" \
+  -o "${tarballpath}"
 
 mkdir -p "${packagepath}"
 tar xf "${tarballpath}" -C "${packagepath}" --strip-components 1
