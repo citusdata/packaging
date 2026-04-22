@@ -139,8 +139,9 @@ case "${1}" in
         setnextversion "${pkglatest}"
 
         set +e
-        gitsha=$(curl -sfH 'Accept:application/vnd.github.v3.sha' \
-                 "https://api.github.com/repos/${repopath}/commits/${ref}")
+        gitsha=$(curl -sfH 'Accept:application/vnd.github+json' \
+                 "https://api.github.com/repos/${repopath}/commits/${ref}" | \
+                 jq -r '.sha')
         if [ "${?}" -ne 0 ]; then
             echo "$0: could not determine commit for git ref ${ref}" >&2
             exit $failure
