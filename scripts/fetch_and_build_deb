@@ -230,6 +230,7 @@ case "${1}" in
 esac
 
 
+echo "DEBUG: running pg_buildext updatecontrol in $(pwd)" >&2
 pg_buildext updatecontrol
 
 procs="$(nproc)"
