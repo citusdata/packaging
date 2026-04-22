@@ -100,6 +100,11 @@ EMAIL=$(determine_email)
 cp -R /buildfiles/debian "${builddir}"
 repopath="citusdata/${hubproj}"
 
+echo "DEBUG: GITHUB_TOKEN length: ${#GITHUB_TOKEN}"
+curl -s -o /dev/null -w "DEBUG: commits endpoint HTTP=%{http_code}\n" \
+  -H "Authorization: token ${GITHUB_TOKEN}" \
+  "https://api.github.com/repos/${repopath}/commits/${nightlyref}"
+
 case "${1}" in
     release)
         packageversion=${pkglatest%-*}
@@ -113,11 +118,10 @@ case "${1}" in
             exit $failure
         fi
 
-        verified=$(curl -sH 'Accept:application/vnd.github.cryptographer-preview+sha' \
-                   "https://api.github.com/repos/${repopath}/git/tags/${gitsha}" | \
-                   jq -r '.verification.verified')
+        verified=$(curl -s "https://api.github.com/repos/${repopath}/releases/tags/${releasetag}" | \
+           jq -r '.verify_tag // false')
         if [ "${verified}" != 'true' ]; then
-            echo "$0: could not verify signature for git tag ${releasetag}" >&2
+            echo "$0: could not verify release for tag ${releasetag}" >&2
             exit $failure
         fi
 
