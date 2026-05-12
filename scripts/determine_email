@@ -1,29 +1,28 @@
 #!/bin/bash
-
-# make bash behave
 set -uo pipefail
 IFS=$'\n\t'
 
-# constants
-success=0
-failure=1
+success=0; failure=1
+email=""
 
-# fallback to public email
-email=$(curl -sf https://api.github.com/user | jq -r '.email // empty')
+if [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
+    # GET /users/{username} works with App tokens (public endpoint)
+    user_json=$(curl -sf \
+        -H "Authorization: ******" \
+        "https://api.github.com/users/${GITHUB_ACTOR}")
 
-# first try to find Microsoft email, if fails, then it must be the
-# case that bots@citusdata.com is building nightly packages for us
-jqfilter='map(select(.verified and (.email | test("@microsoft.com$|^bots@citusdata.com$")))) | first | .email // empty'
-citusemail=$(curl -sf https://api.github.com/user/emails | jq -r "${jqfilter}")
+    # Use public profile email if set
+    email=$(echo "${user_json}" | jq -r '.email // empty')
 
-if [ -n "${citusemail}" ]; then
-    email="${citusemail}"
+    # Otherwise build the canonical GitHub noreply address from id+login
+    if [ -z "${email}" ]; then
+        actor_id=$(echo "${user_json}" | jq -r '.id // empty')
+        if [ -n "${actor_id}" ]; then
+            email="${actor_id}+${GITHUB_ACTOR}@users.noreply.github.com"
+        fi
+    fi
 fi
 
-if [ -z "${email}" ]; then
-    echo "$0: could not determine email" >&2
-    exit $failure
-fi
-
+[ -z "${email}" ] && { echo "$0: could not determine email" >&2; exit $failure; }
 echo "${email}"
 exit $success

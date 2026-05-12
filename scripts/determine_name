@@ -1,19 +1,21 @@
 #!/bin/bash
-
-# make bash behave
 set -euo pipefail
 IFS=$'\n\t'
 
-# constants
-success=0
-failure=1
+success=0; failure=1
+fullname=""
 
-fullname=$(curl -sf https://api.github.com/user | jq -r '.name // empty')
-
-if [ -z "${fullname}" ]; then
-    echo "$0: could not determine user name" >&2
-    exit $failure
+if [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
+    fullname=$(curl -sf \
+        -H "Authorization: ******" \
+        "https://api.github.com/users/${GITHUB_ACTOR}" | jq -r '.name // empty')
 fi
 
+# Last resort: actor login itself
+if [ -z "${fullname}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
+    fullname="${GITHUB_ACTOR}"
+fi
+
+[ -z "${fullname}" ] && { echo "$0: could not determine user name" >&2; exit $failure; }
 echo "${fullname}"
 exit $success
