@@ -5,20 +5,29 @@ IFS=$'\n\t'
 success=0; failure=1
 email=""
 
-if [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
-    # GET /users/{username} works with App tokens (public endpoint)
+# Primary: Build noreply address from workflow context (always available, no API call)
+if [ -n "${GITHUB_ACTOR_ID:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
+    email="${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+elif [ -n "${GITHUB_ACTOR:-}" ]; then
+    # Fallback if no ACTOR_ID: use actor login alone
+    email="${GITHUB_ACTOR}@users.noreply.github.com"
+fi
+
+# Last resort: Try API if workflow context missing (shouldn't happen)
+if [ -z "${email}" ] && [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
     user_json=$(curl -sf \
-        -H "Authorization: ******" \
+        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
         "https://api.github.com/users/${GITHUB_ACTOR}")
 
-    # Use public profile email if set
-    email=$(echo "${user_json}" | jq -r '.email // empty')
-
-    # Otherwise build the canonical GitHub noreply address from id+login
-    if [ -z "${email}" ]; then
-        actor_id=$(echo "${user_json}" | jq -r '.id // empty')
-        if [ -n "${actor_id}" ]; then
-            email="${actor_id}+${GITHUB_ACTOR}@users.noreply.github.com"
+    if [ -n "${user_json}" ]; then
+        # Try public profile email first
+        email=$(echo "${user_json}" | jq -r '.email // empty')
+        # If no public email, build noreply from API response
+        if [ -z "${email}" ]; then
+            actor_id=$(echo "${user_json}" | jq -r '.id // empty')
+            if [ -n "${actor_id}" ]; then
+                email="${actor_id}+${GITHUB_ACTOR}@users.noreply.github.com"
+            fi
         fi
     fi
 fi

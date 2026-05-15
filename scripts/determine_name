@@ -5,15 +5,18 @@ IFS=$'\n\t'
 success=0; failure=1
 fullname=""
 
-if [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
-    fullname=$(curl -sf \
-        -H "Authorization: ******" \
-        "https://api.github.com/users/${GITHUB_ACTOR}" | jq -r '.name // empty')
+# Primary: Use GITHUB_ACTOR directly (always available in GitHub Actions)
+if [ -n "${GITHUB_ACTOR:-}" ]; then
+    fullname="${GITHUB_ACTOR}"
 fi
 
-# Last resort: actor login itself
-if [ -z "${fullname}" ] && [ -n "${GITHUB_ACTOR:-}" ]; then
-    fullname="${GITHUB_ACTOR}"
+# Fallback: Try API if GITHUB_ACTOR somehow unavailable (edge case)
+if [ -z "${fullname}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    # This shouldn't happen in normal Actions, but keep for safety
+    actor="${GITHUB_ACTOR:-unknown}"
+    fullname=$(curl -sf \
+        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+        "https://api.github.com/users/${actor}" | jq -r '.name // empty') || true
 fi
 
 [ -z "${fullname}" ] && { echo "$0: could not determine user name" >&2; exit $failure; }
