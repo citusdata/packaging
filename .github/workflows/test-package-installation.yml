@@ -1,0 +1,93 @@
+name: Test Latest Citus Package Installation on Supported PostgreSQL Versions
+
+on:
+  workflow_dispatch:
+
+env:
+  # Branch whose build-package.yml, postgres-matrix.yml and pkgvars files are the source of truth
+  SOURCE_BRANCH: "all-citus"
+
+jobs:
+  discover:
+    name: Discover platforms & versions
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build_matrix.outputs.matrix }}
+      citus_version: ${{ steps.resolve_versions.outputs.citus_version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch source branch
+        run: git fetch origin "${SOURCE_BRANCH}" --depth=1
+
+      - name: Extract platform list
+        id: extract_platforms
+        run: |
+          git show "origin/${SOURCE_BRANCH}:.github/workflows/build-package.yml" \
+            > /tmp/build-package.yml
+
+          platforms=$(
+            yq -o=json '.jobs.build_package.strategy.matrix.platform' /tmp/build-package.yml \
+            | jq -c '.'
+          )
+
+          echo "Discovered platforms: ${platforms}"
+          echo "platforms=${platforms}" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve Citus & PG versions
+        id: resolve_versions
+        run: |
+          git show "origin/${SOURCE_BRANCH}:pkgvars" > /tmp/pkgvars
+          git show "origin/${SOURCE_BRANCH}:postgres-matrix.yml" > /tmp/postgres-matrix.yml
+
+          # Extract version from pkglatest (e.g. "14.0.0.citus-1" -> "14.0.0")
+          citus_version=$(grep '^pkglatest=' /tmp/pkgvars | sed 's/^pkglatest=//;s/\.citus-.*//')
+
+          # postgres-matrix.yml keys use major.minor (e.g. "14.0"), strip patch
+          citus_major_minor=$(echo "${citus_version}" | cut -d. -f1,2)
+
+          pg_versions=$(
+            yq -o=json \
+              ".version_matrix[-1].\"${citus_major_minor}\".postgres_versions" \
+              /tmp/postgres-matrix.yml \
+            | jq -c '[.[] | tostring]'
+          )
+
+          echo "Latest Citus version: ${citus_version}"
+          echo "Supported PG versions: ${pg_versions}"
+          echo "citus_version=${citus_version}" >> "$GITHUB_OUTPUT"
+          echo "pg_versions=${pg_versions}" >> "$GITHUB_OUTPUT"
+
+      - name: Build matrix
+        id: build_matrix
+        run: |
+          matrix=$(jq -cn \
+            --argjson platforms '${{ steps.extract_platforms.outputs.platforms }}' \
+            --argjson pg_versions '${{ steps.resolve_versions.outputs.pg_versions }}' \
+            '{"platform": $platforms, "pg_version": $pg_versions}')
+          echo "Matrix: ${matrix}"
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+
+  test_package:
+    name: "PG${{ matrix.pg_version }}/Citus${{ needs.discover.outputs.citus_version }} - ${{ matrix.platform }}"
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ">=3.10"
+
+      - name: Run package installation test
+        run: |
+          python3 test_package_installation/run_test.py \
+            "${{ matrix.platform }}" \
+            "${{ matrix.pg_version }}" \
+            "${{ needs.discover.outputs.citus_version }}"
