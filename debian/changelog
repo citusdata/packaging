@@ -1,5 +1,11 @@
 azure-storage (1.3.2.citus-1) stable; urgency=low
 
+  * Official 1.9 release of azure-storage.
+
+ -- Selcuk Bozcan <selcukbozcan@microsoft.com>  Tue, 5 June 2026 10:45:00 +0300
+
+azure-storage (1.3.2.citus-1) stable; urgency=low
+
   * Official 1.3.2 release of azure-storage.
 
  -- Selcuk Bozcan <selcukbozcan@microsoft.com>  Tue, 3 Feb 2026 10:45:00 +0300

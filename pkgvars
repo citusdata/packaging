@@ -2,6 +2,6 @@ pkgname=azure_storage
 hubproj=pgazure
 deb_pkgname=azure-storage
 pkgdesc='PG Azure Storage'
-pkglatest=1.3.2.citus-1
+pkglatest=1.9.citus-1
 versioning=fancy
 nightlyref=main
