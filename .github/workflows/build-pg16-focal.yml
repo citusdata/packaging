@@ -1,0 +1,105 @@
+name: Build PostgreSQL 16 (focal)
+
+# Builds PostgreSQL 16 *core* .deb packages for Ubuntu 20.04 (focal) by rebuilding
+# the official Debian source package (PGDG dropped focal binaries upstream), then
+# signs them with debsigs (--sign=maint) using the existing packaging key.
+#
+# This is intentionally a *standalone* pipeline: it does not use the extension
+# build flow (citus_package / pg_buildext / the build-package.yml matrix), which
+# assumes PostgreSQL itself comes from PGDG.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pg_upstream_version:
+        description: "PostgreSQL 16 minor version to build (e.g. 16.14, 16.15)"
+        required: true
+        default: "16.14"
+      pg_orig_sha256:
+        description: "Optional: pin sha256 of postgresql-16_<version>.orig.tar.bz2 (leave empty to auto-resolve from the official .dsc)"
+        required: false
+        default: ""
+      run_tests:
+        description: "Run upstream regression suite (1=yes, slower)"
+        required: false
+        default: "0"
+  push:
+    branches:
+      - pg16-focal
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-sign:
+    name: Build & sign PostgreSQL ${{ github.event.inputs.pg_upstream_version || '16.14' }} (focal)
+    runs-on: ubuntu-latest
+    env:
+      # Same signing key the pg-azure-storage pipeline uses
+      # (see .github/workflows/build-pgazure-nightlies.yml on all-pg-azure-storage).
+      PACKAGING_SECRET_KEY: ${{ secrets.PGAZ_PACKAGE_SECRET_KEY }}
+      PACKAGING_PASSPHRASE: ${{ secrets.PGAZ_PACKAGE_PASSPHRASE }}
+      PG_UPSTREAM_VERSION: ${{ github.event.inputs.pg_upstream_version || '16.14' }}
+      PG_ORIG_SHA256: ${{ github.event.inputs.pg_orig_sha256 || '' }}
+      RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build focal builder image
+        run: |
+          docker build -t pg16-focal-builder \
+            -f dockerfiles/pg16-focal-builder/Dockerfile .
+
+      - name: Build PostgreSQL 16 packages
+        run: |
+          mkdir -p packages
+          docker run --rm \
+            -e PG_UPSTREAM_VERSION="${PG_UPSTREAM_VERSION}" \
+            -e PG_ORIG_SHA256="${PG_ORIG_SHA256}" \
+            -e RUN_TESTS="${RUN_TESTS}" \
+            -v "${PWD}/packages:/packages" \
+            pg16-focal-builder
+          echo "Built packages:"
+          ls -1 packages/focal/*.deb
+
+      - name: Build debsigner image
+        run: |
+          docker build -t debsigner \
+            -f dockerfiles/debsigner/Dockerfile dockerfiles/debsigner
+
+      - name: Sign packages (debsigs --sign=maint)
+        run: |
+          if [ -z "${PACKAGING_SECRET_KEY}" ] || [ -z "${PACKAGING_PASSPHRASE}" ]; then
+            echo "::error::PACKAGING_SECRET_KEY / PACKAGING_PASSPHRASE secrets are not set" >&2
+            exit 1
+          fi
+          docker run --rm \
+            -e PACKAGING_SECRET_KEY \
+            -e PACKAGING_PASSPHRASE \
+            -v "${PWD}/packages:/packages" \
+            debsigner
+
+      - name: Verify signatures are embedded
+        run: |
+          rc=0
+          for deb in packages/focal/*.deb; do
+            if ar t "$deb" | grep -q '^_gpgmaint$'; then
+              echo "signed: $deb"
+            else
+              echo "::error::missing _gpgmaint signature in $deb" >&2
+              rc=1
+            fi
+          done
+          exit $rc
+
+      - name: Upload signed packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-16-focal-deb
+          path: |
+            packages/focal/*.deb
+            packages/focal/*.changes
+            packages/focal/*.buildinfo
+          if-no-files-found: error
