@@ -42,7 +42,6 @@ bash add-citus-repo.sh
 citus_major_minor_version="${CITUS_FULL_VERSION%.*}"
 citus_major_minor_version_without_dot="${citus_major_minor_version//./}"
 
-# TODO: use --nogpgcheck for now
-yum install -y --nogpgcheck citus${citus_major_minor_version_without_dot}_${PG_MAJOR_VERSION}-${CITUS_FULL_VERSION}.citus-1.el${OS_VERSION}
+yum install -y citus${citus_major_minor_version_without_dot}_${PG_MAJOR_VERSION}-${CITUS_FULL_VERSION}.citus-1.el${OS_VERSION}
 
 echo "PostgreSQL and Citus packages installed successfully."
