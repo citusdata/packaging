@@ -36,10 +36,8 @@ jobs:
     name: Build & sign PostgreSQL ${{ github.event.inputs.pg_upstream_version || '16.14' }} (focal)
     runs-on: ubuntu-latest
     env:
-      # Same signing key the pg-azure-storage pipeline uses
-      # (see .github/workflows/build-pgazure-nightlies.yml on all-pg-azure-storage).
-      PACKAGING_SECRET_KEY: ${{ secrets.PGAZ_PACKAGE_SECRET_KEY }}
-      PACKAGING_PASSPHRASE: ${{ secrets.PGAZ_PACKAGE_PASSPHRASE }}
+      PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+      PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
       PG_UPSTREAM_VERSION: ${{ github.event.inputs.pg_upstream_version || '16.14' }}
       PG_ORIG_SHA256: ${{ github.event.inputs.pg_orig_sha256 || '' }}
       RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
