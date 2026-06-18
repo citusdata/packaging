@@ -34,7 +34,8 @@ concurrency:
 jobs:
   build-and-sign:
     name: Build & sign PostgreSQL ${{ github.event.inputs.pg_upstream_version || '16.14' }} (focal)
-    runs-on: ubuntu-latest
+    # Pinned to focal to match the (green) pg-azure-storage signing pipeline.
+    runs-on: ubuntu-20.04
     env:
       # Same signing key the pg-azure-storage pipeline uses
       # (see .github/workflows/build-pgazure-nightlies.yml on all-pg-azure-storage).
@@ -46,6 +47,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build focal builder image
         run: |
@@ -64,22 +71,20 @@ jobs:
           echo "Built packages:"
           ls -1 packages/focal/*.deb
 
-      - name: Build debsigner image
-        run: |
-          docker build -t debsigner \
-            -f dockerfiles/debsigner/Dockerfile dockerfiles/debsigner
-
       - name: Sign packages (debsigs --sign=maint)
+        # Use the prebuilt, deployed debsigner image (the one all Citus signing
+        # uses), not a locally built copy of dockerfiles/debsigner, which has
+        # drifted from it. Mirrors tools.packaging_automation.citus_package.
         run: |
           if [ -z "${PACKAGING_SECRET_KEY}" ] || [ -z "${PACKAGING_PASSPHRASE}" ]; then
             echo "::error::PACKAGING_SECRET_KEY / PACKAGING_PASSPHRASE secrets are not set" >&2
             exit 1
           fi
-          docker run --rm \
+          printf '%s' "${PACKAGING_PASSPHRASE}" | docker run --rm -i \
             -e PACKAGING_SECRET_KEY \
             -e PACKAGING_PASSPHRASE \
             -v "${PWD}/packages:/packages" \
-            debsigner
+            citusdata/packaging:debsigner
 
       - name: Verify signatures are embedded
         run: |
