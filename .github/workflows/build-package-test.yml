@@ -13,10 +13,7 @@ env:
   TEST: true
 on:
   push:
-    branches-ignore:
-      # pg16-focal builds PostgreSQL core (see build-pg16-focal.yml); the Citus
-      # extension build/test here is unrelated and should not run on that branch.
-      - pg16-focal
+    branches: "**"
   workflow_dispatch:
 
 concurrency:
