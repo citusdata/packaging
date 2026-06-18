@@ -34,8 +34,7 @@ concurrency:
 jobs:
   build-and-sign:
     name: Build & sign PostgreSQL ${{ github.event.inputs.pg_upstream_version || '16.14' }} (focal)
-    # Pinned to focal to match the (green) pg-azure-storage signing pipeline.
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       # Same signing key the pg-azure-storage pipeline uses
       # (see .github/workflows/build-pgazure-nightlies.yml on all-pg-azure-storage).
