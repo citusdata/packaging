@@ -1,0 +1,118 @@
+name: Build & Push Signer Image
+
+# Builds (and optionally pushes) the GPG signer images used by the packaging
+# pipeline to sign packages: citusdata/packaging:rpmsigner and
+# citusdata/packaging:debsigner.
+#
+# These images are NOT produced by build-package / ci/push_images (which only
+# handle the per-platform citus/packaging[-test] build images). Historically the
+# signer images were built and pushed by hand, so a signer source change (e.g. the
+# rpmsigner SHA-256 + fail-loud hardening) only reaches production once the image
+# on Docker Hub is rebuilt and pushed. This workflow makes that reproducible and
+# auditable.
+#
+# Publishing is deliberate: the image is always built (and smoke-tested), but it is
+# only pushed when the `push` input is set to true. The push step authenticates
+# with the DOCKERHUB_USER_NAME / DOCKERHUB_PASSWORD secrets -- that account MUST
+# have push rights to the `citusdata` Docker Hub organisation's `packaging` repo
+# (note: ci/push_images publishes to the separate `citus` org, so citusdata push
+# rights are a distinct prerequisite that must be confirmed before a real push).
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Which signer image to build"
+        type: choice
+        default: rpmsigner
+        options:
+          - rpmsigner
+          - debsigner
+      push:
+        description: "Push to Docker Hub (citusdata/packaging). Leave false for a build-only dry run."
+        type: boolean
+        default: false
+      dated_tag:
+        description: "Also tag/push an immutable dated rollback tag (<image>-YYYYMMDD-<sha>)"
+        type: boolean
+        default: true
+
+env:
+  DOCKERHUB_USER_NAME: "${{ secrets.DOCKERHUB_USER_NAME }}"
+  DOCKERHUB_PASSWORD: "${{ secrets.DOCKERHUB_PASSWORD }}"
+  REPO: citusdata/packaging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.image }}
+  cancel-in-progress: false
+
+jobs:
+  build_push:
+    name: Build ${{ inputs.image }}${{ inputs.push && ' + push' || ' (dry run)' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Compute tags
+        id: meta
+        run: |
+          set -euo pipefail
+          mutable="${REPO}:${{ inputs.image }}"
+          dated="${REPO}:${{ inputs.image }}-$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+          echo "mutable=${mutable}" >> "$GITHUB_OUTPUT"
+          echo "dated=${dated}" >> "$GITHUB_OUTPUT"
+          echo "Mutable tag: ${mutable}"
+          echo "Dated tag:   ${dated}"
+
+      - name: Build image
+        run: |
+          set -euo pipefail
+          docker build --pull --platform linux/amd64 \
+            -t "${{ steps.meta.outputs.mutable }}" \
+            -t "${{ steps.meta.outputs.dated }}" \
+            "dockerfiles/${{ inputs.image }}"
+
+      - name: Fail-closed smoke test (rpmsigner)
+        if: inputs.image == 'rpmsigner'
+        run: |
+          set -uo pipefail
+          # With no signing config the rpmsigner entrypoint must exit non-zero
+          # (fail-closed). A zero exit here means the silent-unsigned regression
+          # has returned, so block the push.
+          docker run --rm "${{ steps.meta.outputs.mutable }}"
+          rc=$?
+          if [ "$rc" -eq 0 ]; then
+            echo "::error::rpmsigner exited 0 with no signing config -- fail-closed behaviour is broken"
+            exit 1
+          fi
+          echo "fail-closed smoke OK (entrypoint exited ${rc} with no config)"
+
+      - name: Log in to Docker Hub
+        if: ${{ inputs.push }}
+        run: |
+          set -euo pipefail
+          echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USER_NAME}" --password-stdin
+
+      - name: Push image
+        if: ${{ inputs.push }}
+        run: |
+          set -euo pipefail
+          docker push "${{ steps.meta.outputs.mutable }}"
+          if [ "${{ inputs.dated_tag }}" = "true" ]; then
+            docker push "${{ steps.meta.outputs.dated }}"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Signer image: ${{ inputs.image }}"
+            echo ""
+            echo "| field | value |"
+            echo "| --- | --- |"
+            echo "| mutable tag | \`${{ steps.meta.outputs.mutable }}\` |"
+            echo "| dated tag | \`${{ steps.meta.outputs.dated }}\` |"
+            echo "| pushed | ${{ inputs.push }} |"
+            echo "| dated tag pushed | ${{ inputs.push && inputs.dated_tag }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
