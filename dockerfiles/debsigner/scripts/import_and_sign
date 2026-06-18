@@ -15,8 +15,29 @@ elif [ -z "${PACKAGING_SECRET_KEY+x}" ]; then
     exit $badconfig
 fi
 
-gpg --batch --no-tty --trust-model always \
-    --import <(echo "${PACKAGING_SECRET_KEY}" | base64 -d)
+# PACKAGING_SECRET_KEY may be provided either as an ASCII-armored private key
+# block (-----BEGIN PGP PRIVATE KEY BLOCK-----) or as base64-encoded key
+# material (the historical format). Detect and import accordingly.
+if printf '%s' "${PACKAGING_SECRET_KEY}" | grep -qa 'BEGIN PGP'; then
+    printf '%s\n' "${PACKAGING_SECRET_KEY}" \
+        | gpg --batch --no-tty --trust-model always --import
+else
+    printf '%s' "${PACKAGING_SECRET_KEY}" | base64 -d \
+        | gpg --batch --no-tty --trust-model always --import
+fi
+
+# Fail fast if no secret (private) key is available; otherwise debsigs would
+# silently emit unsigned packages.
+if ! gpg --list-secret-keys --with-colons 2>/dev/null | grep -q '^sec'; then
+    echo "$0: ERROR: no PRIVATE (secret) key was imported from PACKAGING_SECRET_KEY." >&2
+    if gpg --list-keys --with-colons 2>/dev/null | grep -q '^pub'; then
+        echo "$0: a PUBLIC key was found instead:" >&2
+        gpg --list-keys 2>/dev/null | sed 's/^/    /' >&2
+    fi
+    echo "$0: PACKAGING_SECRET_KEY must contain the PRIVATE signing key (ASCII-armored," >&2
+    echo "$0: or base64 of the armored key), e.g.: gpg --armor --export-secret-keys <KEYID>" >&2
+    exit $badconfig
+fi
 
 for deb in /packages/*/*.deb
 do
