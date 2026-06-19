@@ -17,7 +17,21 @@ name: (temp) Backfill-sign community el9 RPMs
 #
 # Delete this file once the backfill is published and the 6 legs go green.
 
+# This workflow file does not yet exist on the default branch, so workflow_dispatch
+# cannot reach it. It is therefore driven by a push trigger on the feature branch
+# (feature-branch pushes do NOT publish — upload_to_package_cloud skips when
+# current_branch != develop), scoped to a marker file so it only runs deliberately.
+#   * touch .github/backfill.trigger + push            -> dry-run (sign + verify only)
+#   * touch .github/backfill.trigger + push with a
+#     commit message containing [backfill-replace]     -> replace (yank + push)
+# workflow_dispatch is also declared for when this lands on the default branch.
 on:
+  push:
+    branches:
+      - ihalatci/sign-community-rpm-packages
+    paths:
+      - .github/backfill.trigger
+      - .github/workflows/temp-backfill-sign-community-el9.yml
   workflow_dispatch:
     inputs:
       mode:
@@ -33,7 +47,7 @@ permissions:
 
 jobs:
   backfill:
-    name: Backfill-sign 9 el9 RPMs (${{ inputs.mode }})
+    name: Backfill-sign 9 el9 RPMs
     runs-on: ubuntu-latest
     container:
       image: almalinux:9
@@ -41,7 +55,6 @@ jobs:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
       PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
-      MODE: ${{ inputs.mode }}
       PC_TARGET: citusdata/community/el/9
       NVRS: >-
         citus141_16-14.1.0.citus-1.el9 citus141_17-14.1.0.citus-1.el9 citus141_18-14.1.0.citus-1.el9
@@ -49,6 +62,22 @@ jobs:
         topn_16-2.7.0.citus-1.el9 topn_17-2.7.0.citus-1.el9 topn_18-2.7.0.citus-1.el9
 
     steps:
+      - name: Resolve mode (dispatch input or [backfill-replace] commit marker)
+        env:
+          DISPATCH_MODE: ${{ inputs.mode }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DISPATCH_MODE:-}" ]; then
+            M="${DISPATCH_MODE}"
+          elif printf '%s' "${COMMIT_MSG:-}" | grep -q '\[backfill-replace\]'; then
+            M="replace"
+          else
+            M="dry-run"
+          fi
+          echo "MODE=${M}" >> "$GITHUB_ENV"
+          echo "::notice title=Mode::${M}"
+
       - name: Install tooling
         run: |
           set -euxo pipefail
@@ -132,7 +161,7 @@ jobs:
           echo "All signed RPMs verify against the live community keyring (this is exactly what the test legs check)."
 
       - name: Replace on packagecloud (yank unsigned -> push signed)
-        if: ${{ inputs.mode == 'replace' }}
+        if: ${{ env.MODE == 'replace' }}
         run: |
           set -euo pipefail
           cd /work/signed
@@ -148,7 +177,7 @@ jobs:
           done
 
       - name: Re-verify served files are now signed
-        if: ${{ inputs.mode == 'replace' }}
+        if: ${{ env.MODE == 'replace' }}
         run: |
           set -euo pipefail
           cd /work
