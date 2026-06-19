@@ -41,6 +41,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID || secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+
+      - name: Export App token to environment
+        run: |
+          echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+          echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+
       # This step is to fetch the images unanonymously to have higher bandwidth
       - name: Login to Docker Hub
         uses: docker/login-action@v4
@@ -49,7 +62,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.36-dev2 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.36-dev3 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Clone build branch
         run: git clone -b "${MAIN_BRANCH}" --depth=1  https://github.com/citusdata/packaging.git packaging
