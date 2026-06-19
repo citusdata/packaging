@@ -6,23 +6,28 @@ IFS=$'\n\t'
 
 # constants
 success=0
-failure=1
 
-# fallback to public email
-email=$(curl -sf https://api.github.com/user | jq -r '.email // empty')
+# Resolve the packager email WITHOUT contacting api.github.com/user or
+# /user/emails, which are incompatible with GitHub App installation tokens (the
+# App identity has no user endpoint and returns 403). Precedence: explicit env,
+# then the address embedded in RPM_PACKAGER, then a fixed bot identity.
+email="${PACKAGER_EMAIL:-}"
 
-# first try to find Microsoft email, if fails, then it must be the
-# case that bots@citusdata.com is building nightly packages for us
-jqfilter='map(select(.verified and (.email | test("@microsoft.com$|^bots@citusdata.com$")))) | first | .email // empty'
-citusemail=$(curl -sf https://api.github.com/user/emails | jq -r "${jqfilter}")
+if [ -z "${email}" ]; then
+    email="${DEBEMAIL:-}"
+fi
 
-if [ -n "${citusemail}" ]; then
-    email="${citusemail}"
+if [ -z "${email}" ] && [ -n "${RPM_PACKAGER:-}" ]; then
+    # Extract the address from "Full Name <email@example.com>" if present.
+    case "${RPM_PACKAGER}" in
+        *"<"*">"*)
+            email="$(printf '%s' "${RPM_PACKAGER}" | sed -E 's/^.*<([^>]*)>.*$/\1/')"
+            ;;
+    esac
 fi
 
 if [ -z "${email}" ]; then
-    echo "$0: could not determine email" >&2
-    exit $failure
+    email="bots@citusdata.com"
 fi
 
 echo "${email}"
