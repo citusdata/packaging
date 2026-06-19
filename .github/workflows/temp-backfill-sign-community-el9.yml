@@ -23,7 +23,7 @@ name: (temp) Backfill-sign community el9 RPMs
 # current_branch != develop), scoped to a marker file so it only runs deliberately.
 #   * touch .github/backfill.trigger + push            -> dry-run (sign + verify only)
 #   * touch .github/backfill.trigger + push with a
-#     commit message containing [backfill-replace]     -> replace (yank + push)
+#     commit SUBJECT containing BACKFILL-REPLACE        -> replace (yank + push)
 # workflow_dispatch is also declared for when this lands on the default branch.
 on:
   push:
@@ -51,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: almalinux:9
+    defaults:
+      run:
+        shell: bash
     env:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
@@ -68,9 +71,10 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           set -euo pipefail
+          SUBJECT="$(printf '%s\n' "${COMMIT_MSG:-}" | head -n1)"
           if [ -n "${DISPATCH_MODE:-}" ]; then
             M="${DISPATCH_MODE}"
-          elif printf '%s' "${COMMIT_MSG:-}" | grep -q '\[backfill-replace\]'; then
+          elif printf '%s' "${SUBJECT}" | grep -q 'BACKFILL-REPLACE'; then
             M="replace"
           else
             M="dry-run"
@@ -84,7 +88,7 @@ jobs:
           dnf -y install --setopt=install_weak_deps=False \
             rpm-sign gnupg2 'dnf-command(download)' \
             ruby ruby-devel gcc make redhat-rpm-config libcurl-devel \
-            curl findutils
+            findutils
           gem install --no-document package_cloud
 
       - name: Configure community repo (identical to the test legs)
