@@ -3,6 +3,18 @@ set timeout -1
 
 spawn rpmsign --addsign {*}$argv
 
-expect -exact "Enter pass phrase: "
-send -- "$env(PACKAGING_PASSPHRASE)\r"
-expect eof
+# Feed the passphrase whenever rpmsign prompts (once per invocation, but tolerate
+# zero or many prompts so a key/gpg failure that skips the prompt cannot hang).
+expect {
+    -exact "Enter pass phrase: " {
+        send -- "$env(PACKAGING_PASSPHRASE)\r"
+        exp_continue
+    }
+    eof
+}
+
+# Propagate rpmsign's real exit status. Without this, the script reaches EOF and
+# exits 0 even when rpmsign/gpg fails (e.g. "No secret key"), which is how unsigned
+# rpms were published "successfully".
+catch wait result
+exit [lindex $result 3]

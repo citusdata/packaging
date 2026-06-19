@@ -6,6 +6,7 @@ IFS=$'\n\t'
 
 # constants
 badconfig=78
+signfail=1
 
 if [ -z "${PACKAGING_PASSPHRASE+x}" ]; then
     echo "$0: passphrase not set" >&2
@@ -15,7 +16,41 @@ elif [ -z "${PACKAGING_SECRET_KEY+x}" ]; then
     exit $badconfig
 fi
 
-gpg2 --batch --no-tty --trust-model always \
-     --import <(echo "${PACKAGING_SECRET_KEY}" | base64 -d)
+if ! gpg2 --batch --no-tty --trust-model always \
+          --import <(echo "${PACKAGING_SECRET_KEY}" | base64 -d); then
+    echo "$0: failed to import signing key" >&2
+    exit $badconfig
+fi
 
-sign_rpm /packages/*/*.rpm
+shopt -s nullglob
+rpms=(/packages/*/*.rpm)
+if [ "${#rpms[@]}" -eq 0 ]; then
+    echo "$0: no rpms found under /packages/*/*.rpm" >&2
+    exit $badconfig
+fi
+
+sign_rpm "${rpms[@]}"
+rc=$?
+if [ "$rc" -ne 0 ]; then
+    echo "$0: rpmsign reported failure (exit $rc)" >&2
+    exit $signfail
+fi
+
+# rpmsign/expect can still exit 0 when gpg signing fails (e.g. "No secret key"),
+# leaving unsigned-but-"successful" rpms -- the long-standing silent-unsigned bug.
+# Verify every rpm actually carries a signature and fail loudly otherwise.
+unsigned=()
+for rpm in "${rpms[@]}"; do
+    sig=$(rpm -qp --qf '%{SIGPGP:pgpsig}|%{SIGGPG:pgpsig}' "${rpm}" 2>/dev/null)
+    if [ "${sig}" = "(none)|(none)" ]; then
+        unsigned+=("${rpm}")
+    fi
+done
+
+if [ "${#unsigned[@]}" -ne 0 ]; then
+    echo "$0: signing left ${#unsigned[@]} rpm(s) UNSIGNED:" >&2
+    printf '  %s\n' "${unsigned[@]}" >&2
+    exit $signfail
+fi
+
+echo "$0: signed and verified ${#rpms[@]} rpm(s)"
