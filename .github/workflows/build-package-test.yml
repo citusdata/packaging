@@ -91,7 +91,7 @@ jobs:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.36-dev3 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.36-dev4 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
@@ -99,6 +99,7 @@ jobs:
           python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
         env:
           PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Push images
         run: |
