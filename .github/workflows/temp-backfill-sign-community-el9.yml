@@ -1,13 +1,20 @@
 name: (temp) Backfill-sign community el9 RPMs
 
-# TEMPORARY one-shot workflow. Re-signs the 9 already-published UNSIGNED community
+# TEMPORARY one-shot workflow. Re-signs the already-published UNSIGNED community
 # .el9 RPMs that keep the 6 tools-PR #409 `test_execution (el/9 & ol/9, pg16-18)`
-# legs RED, and replaces them on packagecloud (citusdata/community el/9).
+# legs RED, and replaces them on packagecloud.
+#
+# IMPORTANT: packagecloud stores these packages under TWO separate distro trees —
+# `el/9` AND `ol/9` — as DISTINCT package records (byte-identical content, but each
+# has its own signature state). The almalinux-9 test leg installs from the el/9 tree;
+# the ol-9 leg installs from the ol/9 tree. So BOTH trees must be backfilled. This
+# workflow now signs+replaces across both `el/9` and `ol/9`.
 #
 # Scope (empirically confirmed unsigned against the live community repo):
 #   citus141_{16,17,18}-14.1.0.citus-1.el9
 #   hll_{16,17,18}-2.19.citus-1.el9          (citus-community hll, NOT PGDG 2.21)
 #   topn_{16,17,18}-2.7.0.citus-1.el9
+# ...across each of the el/9 and ol/9 distro trees (already-signed files are skipped).
 #
 # SELF-VALIDATING: it signs with whatever key PACKAGING_SECRET_KEY holds, then
 # verifies every RPM against the EXACT keyring the test legs trust (the gpgkey
@@ -58,7 +65,9 @@ jobs:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
       PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
-      PC_TARGET: citusdata/community/el/9
+      # packagecloud stores el9 community RPMs under BOTH of these distro trees.
+      DISTROS: "el/9 ol/9"
+      REPO_BASE: https://repos.citusdata.com/community
       NVRS: >-
         citus141_16-14.1.0.citus-1.el9 citus141_17-14.1.0.citus-1.el9 citus141_18-14.1.0.citus-1.el9
         hll_16-2.19.citus-1.el9 hll_17-2.19.citus-1.el9 hll_18-2.19.citus-1.el9
@@ -133,76 +142,96 @@ jobs:
           rpm -q gpg-pubkey --qf '%{NAME}-%{VERSION}-%{RELEASE} %{SUMMARY}\n' \
             | grep -iE 'citus|packagecloud' || true
 
-      - name: Download + sign + verify all 9 RPMs
+      - name: Download + sign + verify (both distro trees)
         run: |
           set -euo pipefail
-          mkdir -p /work/signed /work/unsigned
-          cd /work
+          rm -rf /work && mkdir -p /work
           fail=0
-          for nvr in $NVRS; do
-            echo "==================== ${nvr} ===================="
-            rm -f ./*.rpm
-            dnf download --disablerepo='pgdg*' "${nvr}"
-            f=$(basename "$(ls ./*.rpm)")
-            cp -f "${f}" /work/unsigned/"${f}"
-            if rpm -K "${f}" 2>&1 | grep -qi 'signatures'; then
-              echo "::warning::${f} is ALREADY signed on the server — keeping as-is"
-              cp -f "${f}" /work/signed/"${f}"
-              continue
-            fi
-            rpm --addsign "${f}"
-            out=$(rpm -Kv "${f}" 2>&1); echo "${out}"
-            if ! echo "${out}" | grep -qiE 'Signature.*: OK'; then
-              echo "::error::${f}: no good RSA/SHA256 signature after addsign"; fail=1
-            fi
-            if echo "${out}" | grep -qiE 'NOKEY|: BAD|NOT OK'; then
-              echo "::error::${f}: signature NOT trusted by the test legs' keyring (NOKEY). The key in PACKAGING_SECRET_KEY (id ${SIGN_KEY}) is not one of the community gpgkeys — do the packagecloud pubkey upload (gate-b) first."
-              fail=1
-            fi
-            cp -f "${f}" /work/signed/"${f}"
+          for distro in $DISTROS; do
+            d_dir="${distro//\//-}"
+            mkdir -p "/work/${d_dir}" "/work/replace/${d_dir}"
+            for nvr in $NVRS; do
+              file="${nvr}.x86_64.rpm"
+              url="${REPO_BASE}/${distro}/x86_64/${file}"
+              echo "==================== ${distro}  ${file} ===================="
+              if ! curl -fsSL -o "/work/${d_dir}/${file}" "${url}"; then
+                echo "::error::could not download ${url}"; fail=1; continue
+              fi
+              sig=$(rpm -qp --qf '%{RSAHEADER:pgpsig}' "/work/${d_dir}/${file}" 2>/dev/null || echo '(none)')
+              if [ "${sig}" != "(none)" ]; then
+                echo "ALREADY signed on server (${distro}): ${sig} — skipping"
+                continue
+              fi
+              # unsigned -> sign it
+              ( cd "/work/${d_dir}" && rpm --addsign "${file}" )
+              out=$(rpm -Kv "/work/${d_dir}/${file}" 2>&1); echo "${out}"
+              if ! echo "${out}" | grep -qiE 'Signature.*: OK'; then
+                echo "::error::${distro}/${file}: no good RSA/SHA256 signature after addsign"; fail=1
+              fi
+              if echo "${out}" | grep -qiE 'NOKEY|: BAD|NOT OK'; then
+                echo "::error::${distro}/${file}: signature NOT trusted by the test legs' keyring (NOKEY). The key in PACKAGING_SECRET_KEY (id ${SIGN_KEY}) is not one of the community gpgkeys."
+                fail=1
+              fi
+              cp -f "/work/${d_dir}/${file}" "/work/replace/${d_dir}/${file}"
+            done
           done
           if [ "${fail}" -ne 0 ]; then
-            echo "::error title=Verification failed::At least one RPM did not verify against the LIVE community keyring. Nothing was replaced."
+            echo "::error title=Verification failed::At least one RPM failed download/sign/verify against the LIVE community keyring. Nothing was replaced."
             exit 1
           fi
-          echo "All signed RPMs verify against the live community keyring (this is exactly what the test legs check)."
+          echo "--- files staged for replacement (newly signed; already-signed were skipped) ---"
+          find /work/replace -name '*.rpm' -printf '%p\n' | sort || echo "(none — everything already signed)"
 
-      - name: Replace on packagecloud (yank unsigned -> push signed)
+      - name: Replace on packagecloud (yank unsigned -> push signed), per distro
         if: ${{ env.MODE == 'replace' }}
         run: |
           set -euo pipefail
-          cd /work/signed
-          for f in *.rpm; do
-            echo "---- ${f} ----"
-            package_cloud yank "${PC_TARGET}" "${f}" || echo "(yank skipped/absent)"
-            sleep 5
-            if ! package_cloud push "${PC_TARGET}" "${f}"; then
-              echo "push failed once (yank may be propagating) — retrying in 15s"
-              sleep 15
-              package_cloud push "${PC_TARGET}" "${f}"
+          for distro in $DISTROS; do
+            d_dir="${distro//\//-}"
+            target="citusdata/community/${distro}"
+            shopt -s nullglob
+            files=(/work/replace/${d_dir}/*.rpm)
+            shopt -u nullglob
+            if [ "${#files[@]}" -eq 0 ]; then
+              echo "==== ${target}: nothing to replace (all already signed) ===="
+              continue
             fi
+            for path in "${files[@]}"; do
+              f=$(basename "${path}")
+              echo "---- ${target}  ${f} ----"
+              package_cloud yank "${target}" "${f}" || echo "(yank skipped/absent)"
+              sleep 5
+              if ! package_cloud push "${target}" "${path}"; then
+                echo "push failed once (yank may be propagating) — retrying in 15s"
+                sleep 15
+                package_cloud push "${target}" "${path}"
+              fi
+            done
           done
 
-      - name: Re-verify served files are now signed
+      - name: Re-verify served files are now signed (both distro trees)
         if: ${{ env.MODE == 'replace' }}
         run: |
           set -euo pipefail
-          cd /work
           rc=0
-          for nvr in $NVRS; do
-            rm -f ./*.rpm
-            ok=0
-            for attempt in 1 2 3 4 5 6 7 8; do
-              dnf clean expire-cache >/dev/null 2>&1 || true
-              if dnf download --disablerepo='pgdg*' "${nvr}" >/dev/null 2>&1; then ok=1; break; fi
-              sleep 15
+          for distro in $DISTROS; do
+            for nvr in $NVRS; do
+              file="${nvr}.x86_64.rpm"
+              url="${REPO_BASE}/${distro}/x86_64/${file}"
+              ok=0
+              for attempt in $(seq 1 12); do
+                if curl -fsSL -H 'Cache-Control: no-cache' -o /tmp/v.rpm "${url}?cb=$(date +%s)$RANDOM" 2>/dev/null \
+                   || curl -fsSL -o /tmp/v.rpm "${url}" 2>/dev/null; then
+                  sig=$(rpm -qp --qf '%{RSAHEADER:pgpsig}' /tmp/v.rpm 2>/dev/null || echo '(none)')
+                  if [ "${sig}" != "(none)" ]; then ok=1; break; fi
+                fi
+                sleep 20
+              done
+              if [ "${ok}" -eq 1 ]; then
+                echo "OK served+signed: ${distro}/${file} -> ${sig}"
+              else
+                echo "::error::served file still UNSIGNED after retries (CDN may still be propagating): ${distro}/${file}"; rc=1
+              fi
             done
-            [ "${ok}" -eq 1 ] || { echo "::error::could not re-download ${nvr}"; rc=1; continue; }
-            g=$(basename "$(ls ./*.rpm)")
-            if rpm -K "${g}" 2>&1 | grep -qi 'signatures'; then
-              echo "OK served+signed: ${g}"
-            else
-              echo "::error::served file still UNSIGNED: ${g}"; rc=1
-            fi
           done
           exit ${rc}
