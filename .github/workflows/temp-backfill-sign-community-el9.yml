@@ -1,0 +1,172 @@
+name: (temp) Backfill-sign community el9 RPMs
+
+# TEMPORARY one-shot workflow. Re-signs the 9 already-published UNSIGNED community
+# .el9 RPMs that keep the 6 tools-PR #409 `test_execution (el/9 & ol/9, pg16-18)`
+# legs RED, and replaces them on packagecloud (citusdata/community el/9).
+#
+# Scope (empirically confirmed unsigned against the live community repo):
+#   citus141_{16,17,18}-14.1.0.citus-1.el9
+#   hll_{16,17,18}-2.19.citus-1.el9          (citus-community hll, NOT PGDG 2.21)
+#   topn_{16,17,18}-2.7.0.citus-1.el9
+#
+# SELF-VALIDATING: it signs with whatever key PACKAGING_SECRET_KEY holds, then
+# verifies every RPM against the EXACT keyring the test legs trust (the gpgkey
+# URLs from the live config_file.repo). If the signing key is not in that keyring
+# (e.g. gate-b new-pubkey upload not done yet), it FAILS LOUDLY and replaces
+# nothing. Only when all 9 verify does mode=replace yank+push to packagecloud.
+#
+# Delete this file once the backfill is published and the 6 legs go green.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "dry-run = download+sign+verify only (no server change). replace = also yank+push the signed RPMs to packagecloud."
+        type: choice
+        options:
+          - dry-run
+          - replace
+        default: dry-run
+
+permissions:
+  contents: read
+
+jobs:
+  backfill:
+    name: Backfill-sign 9 el9 RPMs (${{ inputs.mode }})
+    runs-on: ubuntu-latest
+    container:
+      image: almalinux:9
+    env:
+      PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+      PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+      PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
+      MODE: ${{ inputs.mode }}
+      PC_TARGET: citusdata/community/el/9
+      NVRS: >-
+        citus141_16-14.1.0.citus-1.el9 citus141_17-14.1.0.citus-1.el9 citus141_18-14.1.0.citus-1.el9
+        hll_16-2.19.citus-1.el9 hll_17-2.19.citus-1.el9 hll_18-2.19.citus-1.el9
+        topn_16-2.7.0.citus-1.el9 topn_17-2.7.0.citus-1.el9 topn_18-2.7.0.citus-1.el9
+
+    steps:
+      - name: Install tooling
+        run: |
+          set -euxo pipefail
+          dnf -y install --setopt=install_weak_deps=False \
+            rpm-sign gnupg2 'dnf-command(download)' \
+            ruby ruby-devel gcc make redhat-rpm-config libcurl-devel \
+            curl findutils
+          gem install --no-document package_cloud
+
+      - name: Configure community repo (identical to the test legs)
+        run: |
+          set -euxo pipefail
+          curl -fsSL https://install.citusdata.com/community/rpm.sh | bash
+          echo "--- gpgkey URLs the test legs trust ---"
+          grep -oE 'https://[^[:space:]]+' /etc/yum.repos.d/citusdata_community.repo \
+            | grep '/gpgkey' | sort -u
+
+      - name: Import signing key + show identity
+        run: |
+          set -euo pipefail
+          echo "$PACKAGING_SECRET_KEY" | base64 -d | gpg --batch --import 2>&1 | sed 's/^/gpg: /'
+          SIGN_KEY=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/{print $5; exit}')
+          SIGN_FPR=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr:/{print $10; exit}')
+          echo "SIGN_KEY=${SIGN_KEY}" >> "$GITHUB_ENV"
+          echo "::notice title=Signing key::secret key id=${SIGN_KEY} fpr=${SIGN_FPR}"
+          # passphrase via file (keeps it out of the macro / process args)
+          printf '%s' "$PACKAGING_PASSPHRASE" > /root/.gpg-pass
+          chmod 600 /root/.gpg-pass
+          cat > /root/.rpmmacros <<EOF
+          %_gpg_name ${SIGN_KEY}
+          %_gpg_digest_algo sha256
+          %__gpg_sign_cmd %{__gpg} gpg --batch --no-armor --pinentry-mode loopback --passphrase-file /root/.gpg-pass --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
+          EOF
+
+      - name: Import the EXACT pubkeys the test legs trust (into rpmdb)
+        run: |
+          set -euo pipefail
+          mapfile -t urls < <(grep -oE 'https://[^[:space:]]+' /etc/yum.repos.d/citusdata_community.repo \
+            | grep '/gpgkey' | sort -u)
+          for url in "${urls[@]}"; do
+            echo "importing ${url}"
+            curl -fsSL "${url}" -o /tmp/k.gpg
+            rpm --import /tmp/k.gpg
+          done
+          echo "--- rpmdb trusted citus/packagecloud keys ---"
+          rpm -q gpg-pubkey --qf '%{NAME}-%{VERSION}-%{RELEASE} %{SUMMARY}\n' \
+            | grep -iE 'citus|packagecloud' || true
+
+      - name: Download + sign + verify all 9 RPMs
+        run: |
+          set -euo pipefail
+          mkdir -p /work/signed /work/unsigned
+          cd /work
+          fail=0
+          for nvr in $NVRS; do
+            echo "==================== ${nvr} ===================="
+            rm -f ./*.rpm
+            dnf download --disablerepo='pgdg*' "${nvr}"
+            f=$(basename "$(ls ./*.rpm)")
+            cp -f "${f}" /work/unsigned/"${f}"
+            if rpm -K "${f}" 2>&1 | grep -qi 'signatures'; then
+              echo "::warning::${f} is ALREADY signed on the server — keeping as-is"
+              cp -f "${f}" /work/signed/"${f}"
+              continue
+            fi
+            rpm --addsign "${f}"
+            out=$(rpm -Kv "${f}" 2>&1); echo "${out}"
+            if ! echo "${out}" | grep -qiE 'Signature.*: OK'; then
+              echo "::error::${f}: no good RSA/SHA256 signature after addsign"; fail=1
+            fi
+            if echo "${out}" | grep -qiE 'NOKEY|: BAD|NOT OK'; then
+              echo "::error::${f}: signature NOT trusted by the test legs' keyring (NOKEY). The key in PACKAGING_SECRET_KEY (id ${SIGN_KEY}) is not one of the community gpgkeys — do the packagecloud pubkey upload (gate-b) first."
+              fail=1
+            fi
+            cp -f "${f}" /work/signed/"${f}"
+          done
+          if [ "${fail}" -ne 0 ]; then
+            echo "::error title=Verification failed::At least one RPM did not verify against the LIVE community keyring. Nothing was replaced."
+            exit 1
+          fi
+          echo "All signed RPMs verify against the live community keyring (this is exactly what the test legs check)."
+
+      - name: Replace on packagecloud (yank unsigned -> push signed)
+        if: ${{ inputs.mode == 'replace' }}
+        run: |
+          set -euo pipefail
+          cd /work/signed
+          for f in *.rpm; do
+            echo "---- ${f} ----"
+            package_cloud yank "${PC_TARGET}" "${f}" || echo "(yank skipped/absent)"
+            sleep 5
+            if ! package_cloud push "${PC_TARGET}" "${f}"; then
+              echo "push failed once (yank may be propagating) — retrying in 15s"
+              sleep 15
+              package_cloud push "${PC_TARGET}" "${f}"
+            fi
+          done
+
+      - name: Re-verify served files are now signed
+        if: ${{ inputs.mode == 'replace' }}
+        run: |
+          set -euo pipefail
+          cd /work
+          rc=0
+          for nvr in $NVRS; do
+            rm -f ./*.rpm
+            ok=0
+            for attempt in 1 2 3 4 5 6 7 8; do
+              dnf clean expire-cache >/dev/null 2>&1 || true
+              if dnf download --disablerepo='pgdg*' "${nvr}" >/dev/null 2>&1; then ok=1; break; fi
+              sleep 15
+            done
+            [ "${ok}" -eq 1 ] || { echo "::error::could not re-download ${nvr}"; rc=1; continue; }
+            g=$(basename "$(ls ./*.rpm)")
+            if rpm -K "${g}" 2>&1 | grep -qi 'signatures'; then
+              echo "OK served+signed: ${g}"
+            else
+              echo "::error::served file still UNSIGNED: ${g}"; rc=1
+            fi
+          done
+          exit ${rc}
