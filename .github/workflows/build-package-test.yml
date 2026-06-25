@@ -60,6 +60,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+
+      - name: Export App token to environment
+        run: |
+          echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+          echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+
       - name: Install package dependencies
         run: |
           sudo apt-get update
@@ -78,7 +91,7 @@ jobs:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.36-dev2 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.36 --depth=1 https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
@@ -86,6 +99,7 @@ jobs:
           python -m pytest -q tools/packaging_automation/tests/test_citus_package.py -k 'test_build_packages'
         env:
           PACKAGING_IMAGE_PLATFORM: "${{matrix.TARGET_PLATFORM}}"
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Push images
         run: |
