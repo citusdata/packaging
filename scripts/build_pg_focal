@@ -1,0 +1,219 @@
+#!/bin/bash
+#
+# build_pg_focal -- rebuild PostgreSQL *core* Debian packages for Ubuntu 20.04 (focal).
+#
+# PGDG stopped shipping focal binaries once focal reached EOL standard support, so
+# the only way to get newer minors on focal is to rebuild the official Debian
+# source package ourselves. This works for every major that ever had a focal
+# build *and* still receives new upstream minors: PG 13, 14, 15, 16, 17.
+#
+# Approach (see dockerfiles/focal-pg-builder/Dockerfile for the rationale):
+#   newer upstream orig.tar.bz2  +  the frozen focal-era debian/ packaging
+#   (the last "<major>.<x>-N.pgdg20.04+1" PGDG published for focal)
+#   -> dpkg-buildpackage inside a focal environment that has the archived
+#      focal-pgdg build tooling available.
+#
+# The focal-era debian/ packaging matters: its *default* build profile uses
+# focal's default toolchain (clang/llvm-dev = LLVM 10), so the resulting JIT
+# depends on focal's libllvm10 (installable on focal) instead of the
+# clang-19/llvm-19 that newer packaging requires.
+#
+# Output: unsigned *.deb in ${OUTPUT_DIR} (default /packages/focal/pg<major>).
+# Signing is a separate step performed by the debsigner image (debsigs
+# --sign=maint), so the build and the signing key never live in the same
+# container.
+#
+# All inputs are overridable via environment variables. The common cases need
+# nothing but PG_MAJOR:
+#   * PG_UPSTREAM_VERSION defaults to the latest minor PGDG publishes for the
+#     major, so a new minor release needs no edit here.
+#   * PG_DEBIAN_BASE defaults to the known last focal packaging for the major
+#     (focal is EOL, so these are frozen); override only if PGDG ever re-touches
+#     the archive.
+#
+# Examples:
+#   PG_MAJOR=15 build_pg_focal                      # latest 15.x
+#   PG_MAJOR=16 PG_UPSTREAM_VERSION=16.15 build_pg_focal
+#   PG_MAJOR=17 PG_DROP_PATCHES="hurd-iovec foo" build_pg_focal
+
+set -euo pipefail
+
+# ----------------------------------------------------------------------------
+# Inputs (override via env)
+# ----------------------------------------------------------------------------
+PG_MAJOR="${PG_MAJOR:?ERROR: set PG_MAJOR (one of: 13 14 15 16 17)}"
+
+case "${PG_MAJOR}" in
+  13|14|15|16|17) : ;;
+  *) echo "ERROR: PG_MAJOR='${PG_MAJOR}' is not a focal-buildable major (expected 13|14|15|16|17)." >&2
+     echo "       (11/12 are EOL with no minor newer than their last focal build; 18 never shipped on focal.)" >&2
+     exit 64 ;;
+esac
+
+# Sources: orig tarball from the live pool (shared across distros), focal-era
+# debian/ packaging from the archive (removed from the live pool with focal).
+LIVE_POOL="https://apt.postgresql.org/pub/repos/apt/pool/main/p/postgresql-${PG_MAJOR}"
+ARCHIVE_POOL="https://apt-archive.postgresql.org/pub/repos/apt/pool/main/p/postgresql-${PG_MAJOR}"
+
+# default_debian_base -- the last focal packaging PGDG published per major.
+# These are frozen (focal is EOL); override with PG_DEBIAN_BASE if ever needed.
+default_debian_base() {
+  case "${PG_MAJOR}" in
+    13) echo "13.21-1.pgdg20.04+1" ;;
+    14) echo "14.18-1.pgdg20.04+1" ;;
+    15) echo "15.13-1.pgdg20.04+1" ;;
+    16) echo "16.9-1.pgdg20.04+1"  ;;
+    17) echo "17.5-1.pgdg20.04+1"  ;;
+  esac
+}
+
+# find_latest_upstream_minor -- newest <major>.<x> orig tarball in the live pool.
+# The orig tarball is shared across every per-distro revision, so the live pool
+# still carries it long after focal binaries were dropped.
+find_latest_upstream_minor() {
+  curl -fsSL "${LIVE_POOL}/" \
+    | grep -oE "postgresql-${PG_MAJOR}_${PG_MAJOR}\.[0-9]+\.orig\.tar\.bz2" \
+    | sed -E "s/.*_(${PG_MAJOR}\.[0-9]+)\.orig.*/\1/" \
+    | sort -V | tail -1
+}
+
+UPSTREAM="${PG_UPSTREAM_VERSION:-}"               # upstream PostgreSQL minor to build
+if [ -z "${UPSTREAM}" ]; then
+  UPSTREAM="$(find_latest_upstream_minor || true)"
+  [ -n "${UPSTREAM}" ] || { echo "ERROR: could not auto-resolve the latest ${PG_MAJOR}.x minor from ${LIVE_POOL}." >&2; exit 1; }
+  echo "==> PG_UPSTREAM_VERSION not set; auto-resolved latest minor: ${UPSTREAM}"
+fi
+
+DEBIAN_BASE="${PG_DEBIAN_BASE:-$(default_debian_base)}"          # focal-era packaging to reuse
+TARGET_VERSION="${PG_TARGET_VERSION:-${UPSTREAM}-1.pgdg20.04+1}" # produced package version
+
+# sha256 of the artifacts we download. Leave empty to auto-resolve from the
+# official .dsc; set to pin a specific value (integrity / reproducibility).
+ORIG_SHA256="${PG_ORIG_SHA256:-}"
+DEBIAN_SHA256="${PG_DEBIAN_SHA256:-}"
+
+# Patches in the frozen focal debian/ packaging that no longer apply to newer
+# upstream (e.g. merged upstream). Space-separated; each is dropped from the
+# quilt series only if present, so the default is safe for every major:
+#   * hurd-iovec was merged upstream as of 16.14 (pg_iovec.h guards IOV_MAX),
+#     so it fails to apply on 16.x/17.x but is absent from 13/14/15 packaging.
+# If a future minor introduces new drift, append the offending patch name here
+# (or via the PG_DROP_PATCHES env) -- no other code change required.
+PG_DROP_PATCHES="${PG_DROP_PATCHES:-hurd-iovec}"
+
+# Set RUN_TESTS=1 to run the upstream regression suite (slower, needs more deps).
+RUN_TESTS="${RUN_TESTS:-0}"
+
+OUTPUT_DIR="${OUTPUT_DIR:-/packages/focal/pg${PG_MAJOR}}"
+
+ORIG_TARBALL="postgresql-${PG_MAJOR}_${UPSTREAM}.orig.tar.bz2"
+DEBIAN_TARBALL="postgresql-${PG_MAJOR}_${DEBIAN_BASE}.debian.tar.xz"
+
+WORK="${WORK_DIR:-/build}"
+SRCDIR="${WORK}/postgresql-${PG_MAJOR}-${UPSTREAM}"
+
+# changelog identity (only cosmetic for a binary build)
+export DEBEMAIL="${DEBEMAIL:-pgsql-pkg-debian@lists.postgresql.org}"
+export DEBFULLNAME="${DEBFULLNAME:-PostgreSQL focal rebuild}"
+
+# dsc_sha256 <dsc-url> <filename> -> prints the sha256 recorded for <filename>
+# in the Checksums-Sha256 stanza of a Debian .dsc (served over HTTPS by PGDG).
+dsc_sha256() {
+  curl -fsSL "$1" | awk -v f="$2" '
+    /^Checksums-Sha256:/ { insec=1; next }
+    /^[A-Za-z]/          { insec=0 }
+    insec && $3==f       { print $1; exit }'
+}
+
+# Find any released .dsc for this upstream version (the orig tarball is shared
+# across every per-distro revision, so any of them carries its checksum).
+find_orig_dsc_url() {
+  local v="${UPSTREAM//./\\.}"
+  curl -fsSL "${LIVE_POOL}/" \
+    | grep -oE "postgresql-${PG_MAJOR}_${v}-[0-9]+\.pgdg[A-Za-z0-9.+~]*\.dsc" \
+    | sort -u | tail -1
+}
+
+echo "==> Building PostgreSQL ${UPSTREAM} (PG${PG_MAJOR}) as ${TARGET_VERSION} (focal)"
+echo "    debian/ packaging base: ${DEBIAN_BASE}"
+mkdir -p "${WORK}" "${OUTPUT_DIR}"
+cd "${WORK}"
+
+echo "==> [1/6] Download source artifacts"
+curl -fSL "${LIVE_POOL}/${ORIG_TARBALL}"      -o "${ORIG_TARBALL}"
+curl -fSL "${ARCHIVE_POOL}/${DEBIAN_TARBALL}" -o "${DEBIAN_TARBALL}"
+
+echo "==> [2/6] Resolve & verify checksums"
+if [ -z "${ORIG_SHA256}" ]; then
+  orig_dsc="$(find_orig_dsc_url || true)"
+  [ -n "${orig_dsc}" ] || { echo "ERROR: could not find a .dsc for ${ORIG_TARBALL} (is ${UPSTREAM} released?)." >&2; exit 1; }
+  ORIG_SHA256="$(dsc_sha256 "${LIVE_POOL}/${orig_dsc}" "${ORIG_TARBALL}")"
+  [ -n "${ORIG_SHA256}" ] || { echo "ERROR: ${ORIG_TARBALL} not listed in ${orig_dsc}." >&2; exit 1; }
+  echo "    orig   sha256 resolved from ${orig_dsc}: ${ORIG_SHA256}"
+else
+  echo "    orig   sha256 pinned: ${ORIG_SHA256}"
+fi
+if [ -z "${DEBIAN_SHA256}" ]; then
+  DEBIAN_SHA256="$(dsc_sha256 "${ARCHIVE_POOL}/postgresql-${PG_MAJOR}_${DEBIAN_BASE}.dsc" "${DEBIAN_TARBALL}")"
+  [ -n "${DEBIAN_SHA256}" ] || { echo "ERROR: ${DEBIAN_TARBALL} not listed in postgresql-${PG_MAJOR}_${DEBIAN_BASE}.dsc." >&2; exit 1; }
+  echo "    debian sha256 resolved from postgresql-${PG_MAJOR}_${DEBIAN_BASE}.dsc: ${DEBIAN_SHA256}"
+else
+  echo "    debian sha256 pinned: ${DEBIAN_SHA256}"
+fi
+echo "${ORIG_SHA256}  ${ORIG_TARBALL}"     | sha256sum -c -
+echo "${DEBIAN_SHA256}  ${DEBIAN_TARBALL}" | sha256sum -c -
+
+echo "==> [3/6] Assemble 3.0 (quilt) source tree"
+rm -rf "${SRCDIR}"
+mkdir -p "${SRCDIR}"
+tar -xf "${ORIG_TARBALL}"   -C "${SRCDIR}" --strip-components=1
+tar -xf "${DEBIAN_TARBALL}" -C "${SRCDIR}"     # unpacks debian/
+# NB: ${ORIG_TARBALL} is already named postgresql-${PG_MAJOR}_${UPSTREAM}.orig.tar.bz2,
+# exactly what dpkg-buildpackage expects one level above ${SRCDIR}.
+
+cd "${SRCDIR}"
+
+# Drop patches from the frozen focal packaging that no longer apply to the newer
+# upstream (each removed only if present, so this is a no-op where unneeded).
+for p in ${PG_DROP_PATCHES}; do
+  if grep -qx "${p}" debian/patches/series 2>/dev/null; then
+    sed -i "/^${p}$/d" debian/patches/series
+    rm -f "debian/patches/${p}"
+    echo "    dropped patch (PG_DROP_PATCHES): ${p}"
+  fi
+done
+
+echo "==> [4/6] Verify the quilt patch series applies cleanly to ${UPSTREAM}"
+export QUILT_PATCHES=debian/patches
+if [ -s debian/patches/series ]; then
+  quilt push -a
+  quilt pop -a
+fi
+
+echo "==> [5/6] Set version to ${TARGET_VERSION} and install Build-Depends"
+dch --newversion "${TARGET_VERSION}" --distribution focal --force-distribution \
+    "Rebuild of PostgreSQL ${UPSTREAM} for focal (upstream PGDG focal-pgdg discontinued)."
+
+BUILD_PROFILES=""
+BUILD_OPTIONS="parallel=$(nproc)"
+if [ "${RUN_TESTS}" != "1" ]; then
+  BUILD_PROFILES="nocheck"
+  BUILD_OPTIONS="${BUILD_OPTIONS} nocheck"
+fi
+export DEB_BUILD_PROFILES="${BUILD_PROFILES}"
+
+apt-get update
+mk-build-deps --install --remove \
+  --tool 'apt-get -o Debug::pkgProblemResolver=yes --yes --no-install-recommends' \
+  debian/control
+
+echo "==> [6/6] Build binary packages (DEB_BUILD_OPTIONS='${BUILD_OPTIONS}')"
+export DEB_BUILD_OPTIONS="${BUILD_OPTIONS}"
+dpkg-buildpackage -b -uc -us
+
+echo "==> Collect artifacts into ${OUTPUT_DIR}"
+cp -v "${WORK}"/*.deb "${OUTPUT_DIR}/"
+cp -v "${WORK}"/*.buildinfo "${WORK}"/*.changes "${OUTPUT_DIR}/" 2>/dev/null || true
+
+echo "==> DONE. Packages:"
+ls -1 "${OUTPUT_DIR}"/*.deb

@@ -1,8 +1,12 @@
-name: Build PostgreSQL 16 (focal)
+name: Build PostgreSQL core (focal)
 
-# Builds PostgreSQL 16 *core* .deb packages for Ubuntu 20.04 (focal) by rebuilding
+# Builds PostgreSQL *core* .deb packages for Ubuntu 20.04 (focal) by rebuilding
 # the official Debian source package (PGDG dropped focal binaries upstream), then
 # signs them with debsigs (--sign=maint) using the existing packaging key.
+#
+# One parameterized pipeline covers every focal-buildable major (PG 13..17): a
+# matrix builds them all by default; workflow_dispatch can target a single major
+# and pin its minor / orig sha256.
 #
 # This is intentionally a *standalone* pipeline: it does not use the extension
 # build flow (citus_package / pg_buildext / the build-package.yml matrix), which
@@ -11,12 +15,24 @@ name: Build PostgreSQL 16 (focal)
 on:
   workflow_dispatch:
     inputs:
-      pg_upstream_version:
-        description: "PostgreSQL 16 minor version to build (e.g. 16.14, 16.15)"
+      pg_major:
+        description: "PostgreSQL major to build"
         required: true
-        default: "16.14"
+        type: choice
+        default: "all"
+        options:
+          - "all"
+          - "13"
+          - "14"
+          - "15"
+          - "16"
+          - "17"
+      pg_upstream_version:
+        description: "Optional: pin the minor (e.g. 16.15). Blank = latest. Only used when a single major is selected."
+        required: false
+        default: ""
       pg_orig_sha256:
-        description: "Optional: pin sha256 of postgresql-16_<version>.orig.tar.bz2 (leave empty to auto-resolve from the official .dsc)"
+        description: "Optional: pin sha256 of the orig.tar.bz2 (blank = auto-resolve from the official .dsc). Only used when a single major is selected."
         required: false
         default: ""
       run_tests:
@@ -25,21 +41,44 @@ on:
         default: "0"
   push:
     branches:
-      - pg16-focal
+      - pg-focal
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-and-sign:
-    name: Build & sign PostgreSQL ${{ github.event.inputs.pg_upstream_version || '16.14' }} (focal)
+  setup:
+    name: Resolve build matrix
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Compute pg_major matrix
+        id: matrix
+        run: |
+          sel="${{ github.event.inputs.pg_major }}"
+          if [ -z "${sel}" ] || [ "${sel}" = "all" ]; then
+            echo 'matrix={"pg_major":["13","14","15","16","17"]}' >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix={\"pg_major\":[\"${sel}\"]}" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-and-sign:
+    needs: setup
+    name: Build & sign PG${{ matrix.pg_major }} (focal)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     env:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
-      PG_UPSTREAM_VERSION: ${{ github.event.inputs.pg_upstream_version || '16.14' }}
-      PG_ORIG_SHA256: ${{ github.event.inputs.pg_orig_sha256 || '' }}
+      PG_MAJOR: ${{ matrix.pg_major }}
+      # Minor / sha pins only make sense for a single explicitly-selected major;
+      # ignore them on the "all" matrix so each major still auto-resolves latest.
+      PG_UPSTREAM_VERSION: ${{ github.event.inputs.pg_major != 'all' && github.event.inputs.pg_upstream_version || '' }}
+      PG_ORIG_SHA256: ${{ github.event.inputs.pg_major != 'all' && github.event.inputs.pg_orig_sha256 || '' }}
       RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
     steps:
       - name: Checkout repository
@@ -53,20 +92,21 @@ jobs:
 
       - name: Build focal builder image
         run: |
-          docker build -t pg16-focal-builder \
-            -f dockerfiles/pg16-focal-builder/Dockerfile .
+          docker build -t focal-pg-builder \
+            -f dockerfiles/focal-pg-builder/Dockerfile .
 
-      - name: Build PostgreSQL 16 packages
+      - name: Build PostgreSQL ${{ matrix.pg_major }} packages
         run: |
           mkdir -p packages
           docker run --rm \
+            -e PG_MAJOR="${PG_MAJOR}" \
             -e PG_UPSTREAM_VERSION="${PG_UPSTREAM_VERSION}" \
             -e PG_ORIG_SHA256="${PG_ORIG_SHA256}" \
             -e RUN_TESTS="${RUN_TESTS}" \
             -v "${PWD}/packages:/packages" \
-            pg16-focal-builder
+            focal-pg-builder
           echo "Built packages:"
-          ls -1 packages/focal/*.deb
+          ls -1 "packages/focal/pg${PG_MAJOR}"/*.deb
 
       - name: Sign packages (debsigs --sign=maint)
         # Use the prebuilt, deployed debsigner image (the one all Citus signing
@@ -86,7 +126,7 @@ jobs:
       - name: Verify signatures are embedded
         run: |
           rc=0
-          for deb in packages/focal/*.deb; do
+          for deb in "packages/focal/pg${PG_MAJOR}"/*.deb; do
             if ar t "$deb" | grep -q '^_gpgmaint$'; then
               echo "signed: $deb"
             else
@@ -99,9 +139,9 @@ jobs:
       - name: Upload signed packages
         uses: actions/upload-artifact@v4
         with:
-          name: postgresql-16-focal-deb
+          name: postgresql-${{ matrix.pg_major }}-focal-deb
           path: |
-            packages/focal/*.deb
-            packages/focal/*.changes
-            packages/focal/*.buildinfo
+            packages/focal/pg${{ matrix.pg_major }}/*.deb
+            packages/focal/pg${{ matrix.pg_major }}/*.changes
+            packages/focal/pg${{ matrix.pg_major }}/*.buildinfo
           if-no-files-found: error
