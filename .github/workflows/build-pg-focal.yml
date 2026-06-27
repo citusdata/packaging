@@ -112,6 +112,11 @@ jobs:
         # Use the prebuilt, deployed debsigner image (the one all Citus signing
         # uses), not a locally built copy of dockerfiles/debsigner, which has
         # drifted from it. Mirrors tools.packaging_automation.citus_package.
+        #
+        # The signer's entrypoint signs exactly "/packages/*/*.deb" (one dir
+        # level deep), so mount the parent of the per-major output dir: with
+        # "${PWD}/packages/focal:/packages" the debs land at /packages/pg<major>/*.deb,
+        # which is what that glob expects.
         run: |
           if [ -z "${PACKAGING_SECRET_KEY}" ] || [ -z "${PACKAGING_PASSPHRASE}" ]; then
             echo "::error::PACKAGING_SECRET_KEY / PACKAGING_PASSPHRASE secrets are not set" >&2
@@ -120,7 +125,7 @@ jobs:
           printf '%s' "${PACKAGING_PASSPHRASE}" | docker run --rm -i \
             -e PACKAGING_SECRET_KEY \
             -e PACKAGING_PASSPHRASE \
-            -v "${PWD}/packages:/packages" \
+            -v "${PWD}/packages/focal:/packages" \
             citusdata/packaging:debsigner
 
       - name: Verify signatures are embedded
