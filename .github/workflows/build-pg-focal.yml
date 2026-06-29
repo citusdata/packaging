@@ -150,3 +150,74 @@ jobs:
             packages/focal/pg${{ matrix.pg_major }}/*.changes
             packages/focal/pg${{ matrix.pg_major }}/*.buildinfo
           if-no-files-found: error
+
+  assemble:
+    needs: build-and-sign
+    name: Assemble combined co-installable set
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all per-major package sets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: postgresql-*-focal-deb
+          path: per-major          # -> per-major/postgresql-<major>-focal-deb/*.deb
+
+      - name: Assemble de-duplicated set
+        # PostgreSQL builds six shared, single-instance system libraries from
+        # *every* major's source -- libpq5, libpq-dev, libpgtypes3, libecpg6,
+        # libecpg-dev, libecpg-compat3 (plus their -dbgsym). They share one
+        # package name but carry a per-major version, so they cannot be
+        # co-installed; the newest copy satisfies every major's ">=" dependency.
+        # Keep all per-major packages from every major, but keep the shared
+        # libraries only from the highest major present. The result installs
+        # 13..17 side by side with no conflicts. Packages stay byte-identical
+        # (already signed) -- we only copy, never repackage.
+        run: |
+          set -euo pipefail
+          shared_re='^(libpq5|libpq-dev|libpgtypes3|libecpg6|libecpg-dev|libecpg-compat3)(-dbgsym)?$'
+
+          # Discover the majors we actually received and pick the highest.
+          majors="$(find per-major -maxdepth 1 -type d -name 'postgresql-*-focal-deb' \
+                    | sed -E 's#.*/postgresql-([0-9]+)-focal-deb#\1#' | sort -n)"
+          [ -n "${majors}" ] || { echo "::error::no per-major artifacts found" >&2; exit 1; }
+          newest="$(echo "${majors}" | tail -1)"
+          echo "majors present: $(echo ${majors} | tr '\n' ' '); shared libs taken from PG${newest}"
+
+          mkdir -p postgresql-all-focal
+          for m in ${majors}; do
+            for deb in per-major/postgresql-${m}-focal-deb/*.deb; do
+              [ -e "${deb}" ] || continue
+              pkg="$(dpkg-deb -f "${deb}" Package)"
+              if [[ "${pkg}" =~ ${shared_re} ]] && [ "${m}" != "${newest}" ]; then
+                echo "  skip shared ${pkg} from PG${m} (kept from PG${newest})"
+                continue
+              fi
+              cp -n "${deb}" postgresql-all-focal/
+            done
+          done
+
+          echo "==> Assembled $(ls postgresql-all-focal/*.deb | wc -l) packages"
+          echo "==> Shared libraries in the combined set (must be exactly one version each):"
+          for deb in postgresql-all-focal/*.deb; do
+            pkg="$(dpkg-deb -f "${deb}" Package)"
+            [[ "${pkg}" =~ ${shared_re} ]] && echo "    $(dpkg-deb -f "${deb}" Package Version | tr '\n' ' ')"
+          done | sort -u
+
+      - name: Verify the combined set has no duplicate package names
+        run: |
+          set -euo pipefail
+          dupes="$(for deb in postgresql-all-focal/*.deb; do dpkg-deb -f "${deb}" Package; done \
+                   | sort | uniq -d)"
+          if [ -n "${dupes}" ]; then
+            echo "::error::duplicate package names in combined set (would conflict on install):" >&2
+            echo "${dupes}" >&2
+            exit 1
+          fi
+          echo "OK: every package name appears exactly once"
+
+      - name: Upload combined co-installable set
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-all-focal
+          path: postgresql-all-focal/*.deb
+          if-no-files-found: error

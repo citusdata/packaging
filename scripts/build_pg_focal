@@ -213,6 +213,14 @@ dpkg-buildpackage -b -uc -us
 
 echo "==> Collect artifacts into ${OUTPUT_DIR}"
 cp -v "${WORK}"/*.deb "${OUTPUT_DIR}/"
+# Debug-symbol packages are emitted as .ddeb on Ubuntu (e.g. postgresql-16-dbgsym
+# _..._amd64.ddeb). Ship them as .deb (the Debian convention; the on-disk format
+# is identical) so they flow through the same signing/verification/publishing as
+# every other package instead of being silently dropped by the *.deb glob above.
+for ddeb in "${WORK}"/*.ddeb; do
+  [ -e "${ddeb}" ] || continue
+  cp -v "${ddeb}" "${OUTPUT_DIR}/$(basename "${ddeb}" .ddeb).deb"
+done
 cp -v "${WORK}"/*.buildinfo "${WORK}"/*.changes "${OUTPUT_DIR}/" 2>/dev/null || true
 
 echo "==> DONE. Packages:"
