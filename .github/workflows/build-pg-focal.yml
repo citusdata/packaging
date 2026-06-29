@@ -192,7 +192,7 @@ jobs:
                 echo "  skip shared ${pkg} from PG${m} (kept from PG${newest})"
                 continue
               fi
-              cp -n "${deb}" postgresql-all-focal/
+              cp "${deb}" postgresql-all-focal/
             done
           done
 
@@ -200,7 +200,9 @@ jobs:
           echo "==> Shared libraries in the combined set (must be exactly one version each):"
           for deb in postgresql-all-focal/*.deb; do
             pkg="$(dpkg-deb -f "${deb}" Package)"
-            [[ "${pkg}" =~ ${shared_re} ]] && echo "    $(dpkg-deb -f "${deb}" Package Version | tr '\n' ' ')"
+            if [[ "${pkg}" =~ ${shared_re} ]]; then
+              dpkg-deb -f "${deb}" Package Version | tr '\n' ' '; echo
+            fi
           done | sort -u
 
       - name: Verify the combined set has no duplicate package names
