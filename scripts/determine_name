@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# make bash behave
+set -euo pipefail
+IFS=$'\n\t'
+
+# constants
+success=0
+
+# Resolve the packager name WITHOUT contacting api.github.com/user, which is
+# incompatible with GitHub App installation tokens (the App identity has no user
+# endpoint and returns 403). Precedence: explicit env, then the name portion of
+# RPM_PACKAGER, then DEBFULLNAME, then a fixed bot identity.
+name="${PACKAGER_NAME:-}"
+
+if [ -z "${name}" ] && [ -n "${RPM_PACKAGER:-}" ]; then
+    # RPM_PACKAGER is typically "Full Name <email@example.com>"; drop the address.
+    name="$(printf '%s' "${RPM_PACKAGER}" | sed -E 's/[[:space:]]*<[^>]*>[[:space:]]*$//')"
+fi
+
+if [ -z "${name}" ]; then
+    name="${DEBFULLNAME:-}"
+fi
+
+if [ -z "${name}" ]; then
+    name="Citus Bot"
+fi
+
+echo "${name}"
+exit $success

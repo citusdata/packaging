@@ -1,0 +1,117 @@
+name: Build Citus (Ubuntu focal stop-gap)
+
+# TEMPORARY STOP-GAP pipeline for Ubuntu 20.04 (focal).
+# PGDG removed the live focal repo, and the standard build-package.yml matrix no longer
+# includes ubuntu/focal. This workflow builds the citus extension debs for focal by using
+# the repo-local `dockerfiles/ubuntu-focal-all/Dockerfile`, which builds against the
+# PostgreSQL apt ARCHIVE (apt-archive.postgresql.org focal-pgdg main).
+#
+# It is intentionally NOT on develop / all-citus and is NOT triggered by
+# update_package_properties. Delete this file (and the focal branch) when focal is retired.
+#
+# Flow:
+#   - push to a citus-focal* branch   -> BUILD + VALIDATE only (never publishes)
+#   - workflow_dispatch (publish=false) -> BUILD + VALIDATE only
+#   - workflow_dispatch (publish=true)  -> BUILD + VALIDATE + PUBLISH to citusdata/community
+#
+# Prerequisite: the signed `v<version>` citus tag MUST already be pushed on citusdata/citus
+# (citus_package release mode fetches + GPG-verifies the tag). The focal branch must carry
+# the 12.1.x metadata (pkgvars pkglatest, debian/, supported-postgres) produced by
+# update_package_properties on the all-citus lineage.
+
+env:
+  PACKAGE_CLOUD_REPO_NAME: "citusdata/community"
+  PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+  PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+  FOCAL_IMAGE: "citus/packaging:ubuntu-focal-all"
+
+on:
+  push:
+    branches:
+      - "citus-focal**"
+
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish the built focal packages to citusdata/community (packagecloud). Leave false for a build+validate dry-run."
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: build-citus-focal-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build_package:
+    name: Build focal package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - ubuntu/focal
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Clone tools branch
+        run: git clone -b v0.8.35 --depth=1 https://github.com/citusdata/tools.git tools
+
+      - name: Install package dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
+
+      - name: Install python requirements
+        run: python -m pip install -r tools/packaging_automation/requirements.txt
+
+      # Build the focal builder image LOCALLY with the exact tag citus_package expects
+      # (`docker run citus/packaging:ubuntu-focal-all release`). Because the tag already
+      # exists locally, citus_package reuses it instead of pulling the broken Docker Hub
+      # image. Build context MUST be the repo root (Dockerfile does `COPY scripts /scripts`).
+      - name: Build focal builder image
+        run: |
+          docker build \
+            -t "${FOCAL_IMAGE}" \
+            -f dockerfiles/ubuntu-focal-all/Dockerfile \
+            .
+
+      - name: Build packages
+        run: |
+          python -m tools.packaging_automation.citus_package \
+          --gh_token "${GH_TOKEN}" \
+          --platform "${{ matrix.platform }}" \
+          --build_type "release" \
+          --secret_key "${PACKAGING_SECRET_KEY}" \
+          --passphrase "${PACKAGING_PASSPHRASE}" \
+          --output_dir "$(pwd)/packages/" \
+          --input_files_dir "$(pwd)" \
+          --output_validation
+
+      - name: Upload build artifacts (backup)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: citus-focal-packages
+          path: packages/**
+          if-no-files-found: warn
+          retention-days: 14
+
+      # PUBLISH is gated behind a manual dispatch with publish=true. A plain push to the
+      # focal branch NEVER publishes. When it does run, current_branch == main_branch so the
+      # tool's own publish guard passes.
+      - name: Publish packages
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish }}
+        run: |
+          python -m tools.packaging_automation.upload_to_package_cloud \
+          --platform "${{ matrix.platform }}" \
+          --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
+          --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
+          --output_file_path "$(pwd)/packages" \
+          --current_branch "${GITHUB_REF##*/}" \
+          --main_branch "${GITHUB_REF##*/}"

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# make bash behave
+set -uo pipefail
+IFS=$'\n\t'
+
+# constants
+success=0
+
+# Resolve the packager email WITHOUT contacting api.github.com/user or
+# /user/emails, which are incompatible with GitHub App installation tokens (the
+# App identity has no user endpoint and returns 403). Precedence: explicit env,
+# then the address embedded in RPM_PACKAGER, then a fixed bot identity.
+email="${PACKAGER_EMAIL:-}"
+
+if [ -z "${email}" ]; then
+    email="${DEBEMAIL:-}"
+fi
+
+if [ -z "${email}" ] && [ -n "${RPM_PACKAGER:-}" ]; then
+    # Extract the address from "Full Name <email@example.com>" if present.
+    case "${RPM_PACKAGER}" in
+        *"<"*">"*)
+            email="$(printf '%s' "${RPM_PACKAGER}" | sed -E 's/^.*<([^>]*)>.*$/\1/')"
+            ;;
+    esac
+fi
+
+if [ -z "${email}" ]; then
+    email="bots@citusdata.com"
+fi
+
+echo "${email}"
+exit $success

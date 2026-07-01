@@ -5,4 +5,5 @@ exclude:
     debian/bookworm: [12,13]   # if PGDG dropped 12/13 there
     ubuntu/noble: [12,13]
     ubuntu/jammy: [12,13]      # adjust per PGDG availability
+    ubuntu/focal: [14,15]      # focal stop-gap: PG16 ONLY (drop 14/15). 12.1 matrix is [14,15,16] -> leaves [16].
 
