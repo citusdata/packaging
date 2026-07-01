@@ -23,6 +23,7 @@ base:
   - "^cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead$"
   - "\\d+ warnings generated."
   - ".*: warning: no previous declaration for '.*' \\[-Wmissing-variable-declarations\\]"
+  - ".*substitution variable \\$\\{postgresql:Breaks\\} used, but is not defined.*"
 
 debian:
   - ".*: W: invalid-license Commercial"
