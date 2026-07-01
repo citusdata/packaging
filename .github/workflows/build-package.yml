@@ -36,8 +36,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+      - name: Export app token to environment
+        run: |
+          echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> $GITHUB_ENV
+
       - name: Clone tools branch
-        run: git clone -b v0.8.33-dev2 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.36 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
@@ -73,6 +84,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
       - name: Set citus version
         id: set_version
         run: |
@@ -85,4 +102,4 @@ jobs:
           --repo citusdata/tools \
           -f project_version="${{ steps.set_version.outputs.version }}"
         env:
-          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
