@@ -46,7 +46,16 @@ RUN ( [ ubuntu != debian ] || [ focal != buster ] ) || ( \
 
 # install build tools and PostgreSQL development files
 
-RUN echo 'deb http://apt-archive.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+# ca-certificates must be installed BEFORE adding the apt-archive pgdg source:
+# apt-archive.postgresql.org 301-redirects http->https, so apt needs system certs
+# to fetch the focal-pgdg Release/InRelease files. The stock ubuntu:focal image
+# ships no certs, which is why the pgdg apt-get update failed with
+# "does not have a Release file" / "No system certificates available".
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN echo 'deb https://apt-archive.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         autotools-dev \
