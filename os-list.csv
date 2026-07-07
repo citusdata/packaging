@@ -6,4 +6,5 @@ debian,trixie
 oraclelinux,8
 ubuntu,jammy
 ubuntu,noble
+ubuntu,resolute
 pgxn
