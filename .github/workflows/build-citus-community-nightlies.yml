@@ -24,7 +24,8 @@ concurrency:
 jobs:
   build_package:
     name: Build package
-    runs-on: ubuntu-latest
+    # arm64 legs run on native ARM64 runners; amd64 stays on ubuntu-latest.
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -35,6 +36,13 @@ jobs:
           - debian/trixie
           - ubuntu/jammy
           - ubuntu/noble
+        # arm64 debs are gated behind the DEB_BUILD_MULTI_ARCH repo variable
+        # (default OFF -> amd64 only, so the existing pipeline is unchanged).
+        arch: ${{ fromJSON(vars.DEB_BUILD_MULTI_ARCH == 'true' && '["amd64", "arm64"]' || '["amd64"]') }}
+        exclude:
+          # el/8 is an RPM target; arm64 RPM parity is out of scope here.
+          - platform: el/8
+            arch: arm64
 
     steps:
       - name: Checkout repository
@@ -73,6 +81,22 @@ jobs:
 
       - name: Install python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
+
+      # The arm64 builder/signer images are not published to Docker Hub yet, so
+      # build them natively in-job. "docker run" prefers a local image, so
+      # citus_package picks these up automatically; amd64 keeps pulling from Docker Hub.
+      - name: Build arm64 builder image
+        if: matrix.arch == 'arm64'
+        run: |
+          export TEST=true
+          export TARGET_PLATFORM="${PLATFORM/\//,}"
+          ./update_image
+        env:
+          PLATFORM: ${{ matrix.platform }}
+
+      - name: Build arm64 debsigner image
+        if: matrix.arch == 'arm64'
+        run: docker build -t citusdata/packaging:debsigner -f dockerfiles/debsigner/Dockerfile .
 
       - name: Build packages
         run: |
