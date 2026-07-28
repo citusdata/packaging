@@ -4,9 +4,10 @@ name: Build PostgreSQL core (focal)
 # the official Debian source package (PGDG dropped focal binaries upstream), then
 # signs them with debsigs (--sign=maint) using the existing packaging key.
 #
-# One parameterized pipeline covers every focal-buildable major (PG 13..17): a
-# matrix builds them all by default; workflow_dispatch can target a single major
-# and pin its minor / orig sha256.
+# One parameterized pipeline covers every focal-buildable major (PG 13..17). The
+# default "all" matrix builds 13..16; PG17 is excluded up front and is built on
+# demand by dispatching pg_major=17. workflow_dispatch can also target a single
+# major and pin its minor / orig sha256.
 #
 # This is intentionally a *standalone* pipeline: it does not use the extension
 # build flow (citus_package / pg_buildext / the build-package.yml matrix), which
@@ -16,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       pg_major:
-        description: "PostgreSQL major to build"
+        description: "PostgreSQL major to build (\"all\" builds 13-16; pick 17 explicitly if needed)"
         required: true
         type: choice
         default: "all"
@@ -59,7 +60,9 @@ jobs:
         run: |
           sel="${{ github.event.inputs.pg_major }}"
           if [ -z "${sel}" ] || [ "${sel}" = "all" ]; then
-            echo 'matrix={"pg_major":["13","14","15","16","17"]}' >> "$GITHUB_OUTPUT"
+            # PG17 is intentionally excluded from "all" -- not needed up front.
+            # It remains fully supported: dispatch with pg_major=17 to build it.
+            echo 'matrix={"pg_major":["13","14","15","16"]}' >> "$GITHUB_OUTPUT"
           else
             echo "matrix={\"pg_major\":[\"${sel}\"]}" >> "$GITHUB_OUTPUT"
           fi
@@ -82,10 +85,10 @@ jobs:
       RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USER_NAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -170,8 +173,8 @@ jobs:
         # co-installed; the newest copy satisfies every major's ">=" dependency.
         # Keep all per-major packages from every major, but keep the shared
         # libraries only from the highest major present. The result installs
-        # 13..17 side by side with no conflicts. Packages stay byte-identical
-        # (already signed) -- we only copy, never repackage.
+        # every built major side by side with no conflicts. Packages stay
+        # byte-identical (already signed) -- we only copy, never repackage.
         run: |
           set -euo pipefail
           shared_re='^(libpq5|libpq-dev|libpgtypes3|libecpg6|libecpg-dev|libecpg-compat3)(-dbgsym)?$'
