@@ -6,14 +6,25 @@ IFS=$'\n\t'
 
 # constants
 success=0
-failure=1
 
-fullname=$(curl -sf https://api.github.com/user | jq -r '.name // empty')
+# Resolve the packager name WITHOUT contacting api.github.com/user, which is
+# incompatible with GitHub App installation tokens (the App identity has no user
+# endpoint and returns 403). Precedence: explicit env, then the name portion of
+# RPM_PACKAGER, then DEBFULLNAME, then a fixed bot identity.
+name="${PACKAGER_NAME:-}"
 
-if [ -z "${fullname}" ]; then
-    echo "$0: could not determine user name" >&2
-    exit $failure
+if [ -z "${name}" ] && [ -n "${RPM_PACKAGER:-}" ]; then
+    # RPM_PACKAGER is typically "Full Name <email@example.com>"; drop the address.
+    name="$(printf '%s' "${RPM_PACKAGER}" | sed -E 's/[[:space:]]*<[^>]*>[[:space:]]*$//')"
 fi
 
-echo "${fullname}"
+if [ -z "${name}" ]; then
+    name="${DEBFULLNAME:-}"
+fi
+
+if [ -z "${name}" ]; then
+    name="Citus Bot"
+fi
+
+echo "${name}"
 exit $success
