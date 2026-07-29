@@ -226,3 +226,34 @@ jobs:
           name: postgresql-all-focal
           path: postgresql-all-focal/*.deb
           if-no-files-found: error
+
+  install-smoke-test:
+    needs: assemble
+    name: Install smoke test (focal)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download combined co-installable set
+        uses: actions/download-artifact@v4
+        with:
+          name: postgresql-all-focal
+          path: debs
+
+      - name: Install and verify in a clean focal container
+        # The jobs above only prove the packages exist, are signed, and have
+        # unique names -- not that they can actually be installed. This installs
+        # the whole shipped set (including -dbgsym) into a stock ubuntu:20.04,
+        # starts every cluster, and checks JIT is live.
+        #
+        # See scripts/smoke_test_focal_debs for why the PGDG archive's "main"
+        # component has to be enabled: focal ships postgresql-common
+        # 214ubuntu0.1, but the server packages need >= 252~.
+        run: |
+          docker run --rm \
+            -v "${PWD}/debs:/debs:ro" \
+            -v "${PWD}/scripts/smoke_test_focal_debs:/usr/local/bin/smoke_test_focal_debs:ro" \
+            -e DEBS_DIR=/debs \
+            ubuntu:20.04 \
+            /usr/local/bin/smoke_test_focal_debs

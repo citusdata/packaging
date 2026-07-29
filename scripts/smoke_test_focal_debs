@@ -1,0 +1,182 @@
+#!/bin/bash
+#
+# smoke_test_focal_debs -- install the built PostgreSQL core .deb set inside a
+# clean Ubuntu 20.04 (focal) container and prove it actually works.
+#
+# The build pipeline already checks that the packages *exist*, are signed, and
+# carry unique package names. None of that proves they are installable: the
+# combined set deliberately ships the six single-instance shared libraries
+# (libpq5, libpq-dev, libpgtypes3, libecpg6, libecpg-dev, libecpg-compat3) from
+# only the highest major, on the assumption that e.g. libpq5 16.x satisfies
+# PG13's "libpq5 (>= 13~~)". This script tests that assumption for real.
+#
+# It also asserts JIT is live (SELECT pg_jit_available()). PostgreSQL here links
+# libllvm10 directly -- there is no separate postgresql-NN-jit-llvm package --
+# so a regression in the frozen-focal-packaging / LLVM-10 strategy that silently
+# disables JIT would otherwise ship unnoticed.
+#
+# NOTE ON CLUSTER CREATION
+# ------------------------
+# Installing several majors at once produces exactly *one* cluster, not one per
+# major: postgresql-common's create_main_cluster() returns early if any cluster
+# already exists, and again if the package being configured is not the newest
+# installed major. That is intended upstream behaviour, so this script creates
+# the remaining clusters explicitly rather than expecting them to appear.
+#
+# NOTE ON THE PGDG ARCHIVE REPOSITORY
+# -----------------------------------
+# This is *not* a self-containment test. The produced server packages depend on
+# postgresql-common (>= 229~ / 241~ / 252~ depending on major), but Ubuntu focal
+# only ships 214ubuntu0.1. The only focal build that satisfies them is
+# 278.pgdg20.04+1 from apt-archive.postgresql.org, so the archive's "main"
+# component is enabled below. Consumers of these packages need it too -- that is
+# the point of encoding it here rather than leaving it as tribal knowledge.
+#
+# Only "main" is enabled, never the per-major components: those still carry
+# PGDG's own libpq5/libecpg6/... for focal and would shadow the packages under
+# test.
+#
+# Usage (inside a stock ubuntu:20.04 container, as root):
+#   DEBS_DIR=/debs smoke_test_focal_debs
+#
+# Everything is overridable via environment variables:
+#   DEBS_DIR            directory holding the *.deb set          (default /debs)
+#   EXPECTED_PGCOMMON   postgresql-common version to expect      (default 278.pgdg20.04+1)
+#   PGDG_ARCHIVE_SUITE  archive suite to enable                  (default focal-pgdg)
+
+set -euo pipefail
+
+DEBS_DIR="${DEBS_DIR:-/debs}"
+EXPECTED_PGCOMMON="${EXPECTED_PGCOMMON:-278.pgdg20.04+1}"
+PGDG_ARCHIVE_SUITE="${PGDG_ARCHIVE_SUITE:-focal-pgdg}"
+PGDG_ARCHIVE_URL="${PGDG_ARCHIVE_URL:-https://apt-archive.postgresql.org/pub/repos/apt}"
+
+export DEBIAN_FRONTEND=noninteractive
+# Pin the locale so initdb is deterministic. C.UTF-8 always exists on focal and
+# needs no locale-gen.
+export LANG=C.UTF-8
+
+fail=0
+note() { echo "==> $*"; }
+err()  { echo "::error::$*" >&2; fail=1; }
+
+shopt -s nullglob
+debs=("${DEBS_DIR}"/*.deb)
+shopt -u nullglob
+[ ${#debs[@]} -gt 0 ] || { echo "ERROR: no .deb files found in ${DEBS_DIR}" >&2; exit 1; }
+
+note "[1/8] Preparing container environment (${#debs[@]} packages to install)"
+# postgresql-NN.postinst ends in `invoke-rc.d postgresql start $VERSION` under
+# `set -e`, and there is no systemd in a container. A policy-rc.d denying the
+# action makes invoke-rc.d return 0, so the postinst still creates the cluster;
+# we start the clusters explicitly further down instead.
+printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d
+chmod +x /usr/sbin/policy-rc.d
+
+apt-get update -qq
+apt-get install -y -qq --no-install-recommends ca-certificates curl gnupg >/dev/null
+
+note "[2/8] Enabling the PGDG archive (main only) for postgresql-common"
+# PGDG repository signing key fingerprint:
+#   B97B 0AFC AA1A 47F0 44F2  44A0 7FCC 7D46 ACCC 4CF8
+install -d /usr/share/keyrings
+curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+  | gpg --dearmor -o /usr/share/keyrings/pgdg-archive.gpg
+echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] ${PGDG_ARCHIVE_URL} ${PGDG_ARCHIVE_SUITE} main" \
+  > /etc/apt/sources.list.d/pgdg-archive.list
+apt-get update -qq
+
+note "[3/8] Installing the full shipped set (including -dbgsym)"
+apt-get install -y "${debs[@]}"
+
+note "[4/8] Verifying every shipped package installed at its exact version"
+# Proves apt used *our* binaries and did not silently substitute a package of
+# the same name from focal or from the PGDG archive.
+for deb in "${debs[@]}"; do
+  pkg="$(dpkg-deb -f "${deb}" Package)"
+  want="$(dpkg-deb -f "${deb}" Version)"
+  got="$(dpkg-query -W -f='${Version}' "${pkg}" 2>/dev/null || echo MISSING)"
+  if [ "${got}" != "${want}" ]; then
+    err "${pkg}: installed ${got}, expected ${want}"
+  fi
+done
+if [ "${fail}" -eq 0 ]; then
+  note "    all ${#debs[@]} packages installed at the expected versions"
+fi
+
+note "[5/8] Verifying postgresql-common came from the archive at ${EXPECTED_PGCOMMON}"
+pgc="$(dpkg-query -W -f='${Version}' postgresql-common 2>/dev/null || echo MISSING)"
+if [ "${pgc}" != "${EXPECTED_PGCOMMON}" ]; then
+  err "postgresql-common is ${pgc}, expected ${EXPECTED_PGCOMMON}"
+else
+  note "    postgresql-common ${pgc}"
+fi
+
+note "[6/8] Creating a cluster for every installed major"
+# Derive the majors from the installed server binaries rather than hardcoding,
+# so this works unchanged for a single-major dispatch as well as the full matrix.
+mapfile -t majors < <(ls -v /usr/lib/postgresql/*/bin/postgres \
+                      | sed -E 's#.*/postgresql/([0-9]+)/bin/postgres#\1#')
+[ ${#majors[@]} -gt 0 ] || { echo "ERROR: no PostgreSQL server binaries installed" >&2; exit 1; }
+echo "    installed majors: ${majors[*]}"
+
+# postgresql-common's create_main_cluster() deliberately creates at most ONE
+# cluster when several majors are installed at once -- it returns early if any
+# cluster already exists, and again if the package being configured is not the
+# newest major. So exactly one "main" cluster (on the newest major) exists at
+# this point. Create the rest explicitly: running every major side by side is
+# precisely the property the assemble job's shared-library de-duplication
+# assumes, and nothing else verifies it.
+for m in "${majors[@]}"; do
+  if [ -e "/etc/postgresql/${m}/main/postgresql.conf" ]; then
+    echo "    PG${m}: cluster already present (created by postinst)"
+  else
+    pg_createcluster -u postgres "${m}" main
+  fi
+done
+
+note "[7/8] Starting every cluster"
+for m in "${majors[@]}"; do
+  status="$(pg_lsclusters -h | awk -v v="${m}" '$1 == v && $2 == "main" { print $4 }')"
+  [ "${status}" = "online" ] || pg_ctlcluster "${m}" main start
+done
+pg_lsclusters
+
+note "[8/8] Querying each cluster (version + JIT availability)"
+for m in "${majors[@]}"; do
+  port="$(pg_lsclusters -h | awk -v v="${m}" '$1 == v && $2 == "main" { print $3 }')"
+  status="$(pg_lsclusters -h | awk -v v="${m}" '$1 == v && $2 == "main" { print $4 }')"
+  if [ "${status}" != "online" ]; then
+    err "PG${m}: cluster is '${status}', expected 'online'"
+    continue
+  fi
+  ver="$(su postgres -c "psql -p ${port} -tAc 'SELECT version()'" | head -1)"
+  jit="$(su postgres -c "psql -p ${port} -tAc 'SELECT pg_jit_available()'" | tr -d '[:space:]')"
+  echo "    PG${m} (port ${port}): ${ver}"
+  if [ "${jit}" != "t" ]; then
+    err "PG${m}: pg_jit_available() returned '${jit}', expected 't' (JIT is not available)"
+  else
+    echo "    PG${m}: JIT available"
+  fi
+done
+
+# Co-installability: every major that shipped a server package must be installed
+# and running, each on its own port.
+note "Verifying co-existence"
+for m in $(printf '%s\n' "${debs[@]}" | sed -nE 's#.*/postgresql-([0-9]+)_.*#\1#p' | sort -un); do
+  if ! printf '%s\n' "${majors[@]}" | grep -qx "${m}"; then
+    err "PG${m} shipped a server package but is not installed"
+  fi
+done
+nports="$(pg_lsclusters -h | awk '{print $3}' | sort -u | wc -l)"
+nclusters="$(pg_lsclusters -h | wc -l)"
+if [ "${nports}" -ne "${nclusters}" ]; then
+  err "expected ${nclusters} distinct ports, found ${nports} (clusters are colliding)"
+fi
+echo "    ${nclusters} clusters running on ${nports} distinct ports"
+
+if [ "${fail}" -ne 0 ]; then
+  echo "SMOKE TEST FAILED" >&2
+  exit 1
+fi
+echo "SMOKE TEST PASSED: ${#debs[@]} packages installed, ${nclusters} clusters running (PG ${majors[*]}), JIT available on all"
