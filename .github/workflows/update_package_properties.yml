@@ -2,7 +2,6 @@ name: Update Package Properties
 
 env:
   PRJ_NAME: "citus"
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
 on:
   workflow_dispatch:
     inputs:
@@ -31,15 +30,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
+      - name: Export app token to environment
+        run: |
+          echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> $GITHUB_ENV
       - name: Install dependencies
         run: sudo apt-get update && sudo apt install libcurl4-openssl-dev libssl-dev python3-testresources
 
       - name: Clone tools branch
-        run: git clone -b v0.8.10 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.36 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Set git name and email
         run: |
