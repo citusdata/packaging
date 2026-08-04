@@ -1,7 +1,6 @@
 name: Image Health Check
 
 env:
-  GH_TOKEN: "${{ secrets.GH_TOKEN }}"
   PACKAGING_SECRET_KEY: "${{ secrets.PACKAGING_SECRET_KEY }}"
   PACKAGE_ENCRYPTION_KEY: "${{ secrets.PACKAGE_ENCRYPTION_KEY }}"
   PACKAGING_PASSPHRASE: "${{ secrets.PACKAGING_PASSPHRASE }}"
