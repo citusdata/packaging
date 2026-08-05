@@ -2,7 +2,6 @@ name: Update Version on PGXN Config Files
 
 env:
   PROJECT_VERSION: ${{ github.event.inputs.project_version }}
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
 on:
   workflow_dispatch:
