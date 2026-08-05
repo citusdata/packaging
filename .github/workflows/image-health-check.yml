@@ -56,6 +56,7 @@ jobs:
           - TARGET_PLATFORM: debian,trixie
           - TARGET_PLATFORM: ubuntu,jammy
           - TARGET_PLATFORM: ubuntu,noble
+          - TARGET_PLATFORM: ubuntu,resolute
           - TARGET_PLATFORM: pgxn
     steps:
       - name: Checkout repository
@@ -92,7 +93,7 @@ jobs:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
 
       - name: Clone tools repo for test
-        run: git clone -b v0.8.36 --depth=1 https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.37 --depth=1 https://github.com/citusdata/tools.git tools
 
       - name: Execute packaging tests
         run: |
