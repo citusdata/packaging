@@ -1,0 +1,262 @@
+name: Build PostgreSQL core (focal)
+
+# Builds PostgreSQL *core* .deb packages for Ubuntu 20.04 (focal) by rebuilding
+# the official Debian source package (PGDG dropped focal binaries upstream), then
+# signs them with debsigs (--sign=maint) using the existing packaging key.
+#
+# One parameterized pipeline covers every focal-buildable major (PG 13..17). The
+# default "all" matrix builds 13..16; PG17 is excluded up front and is built on
+# demand by dispatching pg_major=17. workflow_dispatch can also target a single
+# major and pin its minor / orig sha256.
+#
+# This is intentionally a *standalone* pipeline: it does not use the extension
+# build flow (citus_package / pg_buildext / the build-package.yml matrix), which
+# assumes PostgreSQL itself comes from PGDG.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pg_major:
+        description: "PostgreSQL major to build (\"all\" builds 13-16; pick 17 explicitly if needed)"
+        required: true
+        type: choice
+        default: "all"
+        options:
+          - "all"
+          - "13"
+          - "14"
+          - "15"
+          - "16"
+          - "17"
+      pg_upstream_version:
+        description: "Optional: pin the minor (e.g. 16.15). Blank = latest. Only used when a single major is selected."
+        required: false
+        default: ""
+      pg_orig_sha256:
+        description: "Optional: pin sha256 of the orig.tar.bz2 (blank = auto-resolve from the official .dsc). Only used when a single major is selected."
+        required: false
+        default: ""
+      run_tests:
+        description: "Run upstream regression suite (1=yes, slower)"
+        required: false
+        default: "0"
+  push:
+    branches:
+      - pg-focal
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  setup:
+    name: Resolve build matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Compute pg_major matrix
+        id: matrix
+        run: |
+          sel="${{ github.event.inputs.pg_major }}"
+          if [ -z "${sel}" ] || [ "${sel}" = "all" ]; then
+            # PG17 is intentionally excluded from "all" -- not needed up front.
+            # It remains fully supported: dispatch with pg_major=17 to build it.
+            echo 'matrix={"pg_major":["13","14","15","16"]}' >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix={\"pg_major\":[\"${sel}\"]}" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-and-sign:
+    needs: setup
+    name: Build & sign PG${{ matrix.pg_major }} (focal)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    env:
+      PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+      PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+      PG_MAJOR: ${{ matrix.pg_major }}
+      # Minor / sha pins only make sense for a single explicitly-selected major;
+      # ignore them on the "all" matrix so each major still auto-resolves latest.
+      PG_UPSTREAM_VERSION: ${{ github.event.inputs.pg_major != 'all' && github.event.inputs.pg_upstream_version || '' }}
+      PG_ORIG_SHA256: ${{ github.event.inputs.pg_major != 'all' && github.event.inputs.pg_orig_sha256 || '' }}
+      RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build focal builder image
+        run: |
+          docker build -t focal-pg-builder \
+            -f dockerfiles/focal-pg-builder/Dockerfile .
+
+      - name: Build PostgreSQL ${{ matrix.pg_major }} packages
+        run: |
+          mkdir -p packages
+          docker run --rm \
+            -e PG_MAJOR="${PG_MAJOR}" \
+            -e PG_UPSTREAM_VERSION="${PG_UPSTREAM_VERSION}" \
+            -e PG_ORIG_SHA256="${PG_ORIG_SHA256}" \
+            -e RUN_TESTS="${RUN_TESTS}" \
+            -v "${PWD}/packages:/packages" \
+            focal-pg-builder
+          echo "Built packages:"
+          ls -1 "packages/focal/pg${PG_MAJOR}"/*.deb
+
+      - name: Sign packages (debsigs --sign=maint)
+        # Use the prebuilt, deployed debsigner image (the one all Citus signing
+        # uses), not a locally built copy of dockerfiles/debsigner, which has
+        # drifted from it. Mirrors tools.packaging_automation.citus_package.
+        #
+        # The signer's entrypoint signs exactly "/packages/*/*.deb" (one dir
+        # level deep), so mount the parent of the per-major output dir: with
+        # "${PWD}/packages/focal:/packages" the debs land at /packages/pg<major>/*.deb,
+        # which is what that glob expects.
+        run: |
+          if [ -z "${PACKAGING_SECRET_KEY}" ] || [ -z "${PACKAGING_PASSPHRASE}" ]; then
+            echo "::error::PACKAGING_SECRET_KEY / PACKAGING_PASSPHRASE secrets are not set" >&2
+            exit 1
+          fi
+          printf '%s' "${PACKAGING_PASSPHRASE}" | docker run --rm -i \
+            -e PACKAGING_SECRET_KEY \
+            -e PACKAGING_PASSPHRASE \
+            -v "${PWD}/packages/focal:/packages" \
+            citusdata/packaging:debsigner
+
+      - name: Verify signatures are embedded
+        run: |
+          rc=0
+          for deb in "packages/focal/pg${PG_MAJOR}"/*.deb; do
+            if ar t "$deb" | grep -q '^_gpgmaint$'; then
+              echo "signed: $deb"
+            else
+              echo "::error::missing _gpgmaint signature in $deb" >&2
+              rc=1
+            fi
+          done
+          exit $rc
+
+      - name: Upload signed packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-${{ matrix.pg_major }}-focal-deb
+          path: |
+            packages/focal/pg${{ matrix.pg_major }}/*.deb
+            packages/focal/pg${{ matrix.pg_major }}/*.changes
+            packages/focal/pg${{ matrix.pg_major }}/*.buildinfo
+          if-no-files-found: error
+
+  assemble:
+    needs: build-and-sign
+    name: Assemble combined co-installable set
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all per-major package sets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: postgresql-*-focal-deb
+          path: per-major          # -> per-major/postgresql-<major>-focal-deb/*.deb
+
+      - name: Assemble de-duplicated set
+        # PostgreSQL builds six shared, single-instance system libraries from
+        # *every* major's source -- libpq5, libpq-dev, libpgtypes3, libecpg6,
+        # libecpg-dev, libecpg-compat3 (plus their -dbgsym). They share one
+        # package name but carry a per-major version, so they cannot be
+        # co-installed; the newest copy satisfies every major's ">=" dependency.
+        # Keep all per-major packages from every major, but keep the shared
+        # libraries only from the highest major present. The result installs
+        # every built major side by side with no conflicts. Packages stay
+        # byte-identical (already signed) -- we only copy, never repackage.
+        run: |
+          set -euo pipefail
+          shared_re='^(libpq5|libpq-dev|libpgtypes3|libecpg6|libecpg-dev|libecpg-compat3)(-dbgsym)?$'
+
+          # Discover the majors we actually received and pick the highest.
+          majors="$(find per-major -maxdepth 1 -type d -name 'postgresql-*-focal-deb' \
+                    | sed -E 's#.*/postgresql-([0-9]+)-focal-deb#\1#' | sort -n)"
+          [ -n "${majors}" ] || { echo "::error::no per-major artifacts found" >&2; exit 1; }
+          newest="$(echo "${majors}" | tail -1)"
+          echo "majors present: $(echo ${majors} | tr '\n' ' '); shared libs taken from PG${newest}"
+
+          mkdir -p postgresql-all-focal
+          for m in ${majors}; do
+            for deb in per-major/postgresql-${m}-focal-deb/*.deb; do
+              [ -e "${deb}" ] || continue
+              pkg="$(dpkg-deb -f "${deb}" Package)"
+              if [[ "${pkg}" =~ ${shared_re} ]] && [ "${m}" != "${newest}" ]; then
+                echo "  skip shared ${pkg} from PG${m} (kept from PG${newest})"
+                continue
+              fi
+              cp "${deb}" postgresql-all-focal/
+            done
+          done
+
+          echo "==> Assembled $(ls postgresql-all-focal/*.deb | wc -l) packages"
+          echo "==> Shared libraries in the combined set (must be exactly one version each):"
+          for deb in postgresql-all-focal/*.deb; do
+            pkg="$(dpkg-deb -f "${deb}" Package)"
+            if [[ "${pkg}" =~ ${shared_re} ]]; then
+              dpkg-deb -f "${deb}" Package Version | tr '\n' ' '; echo
+            fi
+          done | sort -u
+
+      - name: Verify the combined set has no duplicate package names
+        run: |
+          set -euo pipefail
+          dupes="$(for deb in postgresql-all-focal/*.deb; do dpkg-deb -f "${deb}" Package; done \
+                   | sort | uniq -d)"
+          if [ -n "${dupes}" ]; then
+            echo "::error::duplicate package names in combined set (would conflict on install):" >&2
+            echo "${dupes}" >&2
+            exit 1
+          fi
+          echo "OK: every package name appears exactly once"
+
+      - name: Upload combined co-installable set
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-all-focal
+          path: postgresql-all-focal/*.deb
+          if-no-files-found: error
+
+  install-smoke-test:
+    needs: assemble
+    name: Install smoke test (focal)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download combined co-installable set
+        uses: actions/download-artifact@v4
+        with:
+          name: postgresql-all-focal
+          path: debs
+
+      - name: Install and verify in a clean focal container
+        # The jobs above only prove the packages exist, are signed, and have
+        # unique names -- not that they can actually be installed. This installs
+        # the whole shipped set (including -dbgsym) into a stock ubuntu:20.04,
+        # starts every cluster, and checks JIT is live.
+        #
+        # See scripts/smoke_test_focal_debs for why the PGDG archive's "main"
+        # component has to be enabled: focal ships postgresql-common
+        # 214ubuntu0.1, but the server packages need >= 252~.
+        run: |
+          docker run --rm \
+            -v "${PWD}/debs:/debs:ro" \
+            -v "${PWD}/scripts/smoke_test_focal_debs:/usr/local/bin/smoke_test_focal_debs:ro" \
+            -e DEBS_DIR=/debs \
+            ubuntu:20.04 \
+            /usr/local/bin/smoke_test_focal_debs
