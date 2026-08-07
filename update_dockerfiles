@@ -4,7 +4,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-pgversions='14 15 16 17 18'
+pgversions='14 15 16 17 18 19'
 topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dockerfiles_dir="${topdir}/dockerfiles"
 templates_dir="${topdir}"/templates
@@ -61,7 +61,11 @@ function update_rpm_dockerfile {
     mkdir -p "${target_subdir}"
 
     template="${templates_dir}"/Dockerfile-rpm.tmpl
-    sed "$sed_cmd; s#%%rpm_url%%#${rpm_url}#g; s/%%pgshort%%/${pgshort}/g; s/%%pgversion%%/${pgversion}/g" \
+    pg19_sed_cmd=''
+    if [[ "${pgversion}" != '19' ]]; then
+        pg19_sed_cmd='/pgdg19-updates-testing/d;'
+    fi
+    sed "$sed_cmd; ${pg19_sed_cmd} s#%%rpm_url%%#${rpm_url}#g; s/%%pgshort%%/${pgshort}/g; s/%%pgversion%%/${pgversion}/g" \
         "${template}" > "${target_subdir}/Dockerfile"
 
 
@@ -92,6 +96,10 @@ while read -r line; do
         # redhat variants need a Dockerfile for each PostgreSQL version
         IFS=' '
         for pgversion in ${pgversions}; do
+            if [[ "${release}" = '8' ]] && [[ "${pgversion}" = '19' ]]; then
+                # PGDG does not publish PostgreSQL 19 packages for EL8.
+                continue
+            fi
             if { [[ "${os}" = 'centos' ]] || [[ "${os}" = 'oraclelinux' ]]; } && \
                  [[ "${release}" = '6' ]] && [[ "${pgversion}" = '13' ]]; then
                 # CentOS and OracleLinux 6 doesn't have pg13 packages yet.

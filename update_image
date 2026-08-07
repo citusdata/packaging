@@ -9,7 +9,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-pgversions='14 15 16 17 18'
+pgversions='14 15 16 17 18 19'
 topdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dockerfiles_dir="${topdir}/dockerfiles"
 
@@ -26,6 +26,11 @@ else
 fi
 
 IFS=',' read -r os release <<< "${TARGET_PLATFORM}"
+
+if [[ "${release}" = '8' ]] && [[ "${POSTGRES_VERSION}" = '19' ]]; then
+    echo "${TARGET_PLATFORM} unsupported: PGDG does not publish PostgreSQL 19 packages for EL8" >&2
+    exit 1
+fi
 
 if [[ "${os},${release}" =~ ^ubuntu,(focal|bionic)$ ]]; then
     echo "${TARGET_PLATFORM} unsupported: PGDG apt repo for ${release} is no longer available" >&2
