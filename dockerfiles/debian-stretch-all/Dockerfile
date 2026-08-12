@@ -92,10 +92,11 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main' > /etc
 
 RUN pip3 install sphinx
 
-# install jq to process JSON API responses
-RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 \
-         -o /usr/bin/jq \
-    && chmod +x /usr/bin/jq
+# install jq to process JSON API responses (distro package is arch-independent,
+# unlike the amd64-only jq-linux64 release binary, so it works on arm64 too)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends jq \
+    && rm -rf /var/lib/apt/lists/*
 
 # install packagecloud repos for pg_auto_failover
 RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.deb.sh | bash \
