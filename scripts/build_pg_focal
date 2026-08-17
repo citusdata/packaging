@@ -93,12 +93,11 @@ ORIG_SHA256="${PG_ORIG_SHA256:-}"
 DEBIAN_SHA256="${PG_DEBIAN_SHA256:-}"
 
 # Patches in the frozen focal debian/ packaging that no longer apply to newer
-# upstream (e.g. merged upstream). Space-separated; each is dropped from the
-# quilt series only if present, so the default is safe for every major:
+# upstream *at all* (e.g. merged upstream). Space-separated; each is dropped from
+# the quilt series only if present, so the default is safe for every major:
 #   * hurd-iovec was merged upstream as of 16.14 (pg_iovec.h guards IOV_MAX),
 #     so it fails to apply on 16.x/17.x but is absent from 13/14/15 packaging.
-# If a future minor introduces new drift, append the offending patch name here
-# (or via the PG_DROP_PATCHES env) -- no other code change required.
+# Context drift needs no entry here -- [4/6] refreshes the series instead.
 PG_DROP_PATCHES="${PG_DROP_PATCHES:-hurd-iovec}"
 
 # Set RUN_TESTS=1 to run the upstream regression suite (slower, needs more deps).
@@ -183,11 +182,42 @@ for p in ${PG_DROP_PATCHES}; do
   fi
 done
 
-echo "==> [4/6] Verify the quilt patch series applies cleanly to ${UPSTREAM}"
-export QUILT_PATCHES=debian/patches
+echo "==> [4/6] Apply & refresh the quilt patch series against ${UPSTREAM}"
+# Frozen debian/ + newer upstream means patch *context* drifts: 14.24/15.19/16.15
+# added output_plugin_libraries inside the extension_destdir hunk's trailing
+# context. quilt applies that with fuzz; dpkg-source replays the same series in
+# [6/6] with "patch -F 0" and refuses it. So refresh the series against this
+# upstream (context only, no +/- line changes) and gate on zero fuzz here.
+export QUILTRC=/dev/null                                       # /etc/quilt.quiltrc is sourced after
+export QUILT_PATCHES=debian/patches                            # ... the environment and would win
+export QUILT_REFRESH_ARGS="-p ab --no-timestamps --no-index"   # keep PGDG's patch style
+export QUILT_DIFF_OPTS="-p"                                    # ... including @@ function context
 if [ -s debian/patches/series ]; then
-  quilt push -a
-  quilt pop -a
+  push_log="${WORK}/quilt-push-pg${PG_MAJOR}.log"
+  if ! quilt push -a --refresh 2>&1 | tee "${push_log}"; then
+    echo "ERROR: a patch does not apply to ${UPSTREAM} at all. If upstream merged or" >&2
+    echo "       obsoleted it, drop it via PG_DROP_PATCHES." >&2
+    exit 1
+  fi
+  quilt pop -a > /dev/null
+
+  # A fuzzy hunk was placed on less context than its author wrote, and --refresh
+  # bakes that placement in, so the gate below can no longer catch it: annotate
+  # the run rather than leave it buried in the build log.
+  awk -v m="${PG_MAJOR}" -v u="${UPSTREAM}" '
+    /^Applying patch / { p = $3 }
+    /^patching file /  { f = substr($0, 15) }
+    /with fuzz/        { print "::warning::PG" m ": " p " needed fuzz against " u " in " f " -- " $0 }
+  ' "${push_log}"
+
+  echo "    verifying the refreshed series applies with zero fuzz (as dpkg-source does)"
+  if ! quilt push -a --fuzz=0 > "${WORK}/quilt-verify-pg${PG_MAJOR}.log" 2>&1; then
+    cat "${WORK}/quilt-verify-pg${PG_MAJOR}.log" >&2
+    echo "ERROR: series does not apply to ${UPSTREAM} at zero fuzz; dpkg-source would" >&2
+    echo "       reject it too. Fix or drop the offending patch (PG_DROP_PATCHES)." >&2
+    exit 1
+  fi
+  quilt pop -a > /dev/null
 fi
 
 echo "==> [5/6] Set version to ${TARGET_VERSION} and install Build-Depends"
