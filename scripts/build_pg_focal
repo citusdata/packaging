@@ -188,20 +188,27 @@ echo "==> [4/6] Apply & refresh the quilt patch series against ${UPSTREAM}"
 # context. quilt applies that with fuzz; dpkg-source replays the same series in
 # [6/6] with "patch -F 0" and refuses it. So refresh the series against this
 # upstream (context only, no +/- line changes) and gate on zero fuzz here.
-export QUILT_PATCHES=debian/patches
+export QUILTRC=/dev/null                                       # /etc/quilt.quiltrc is sourced after
+export QUILT_PATCHES=debian/patches                            # ... the environment and would win
 export QUILT_REFRESH_ARGS="-p ab --no-timestamps --no-index"   # keep PGDG's patch style
 export QUILT_DIFF_OPTS="-p"                                    # ... including @@ function context
 if [ -s debian/patches/series ]; then
   push_log="${WORK}/quilt-push-pg${PG_MAJOR}.log"
-  quilt push -a --refresh 2>&1 | tee "${push_log}"
+  if ! quilt push -a --refresh 2>&1 | tee "${push_log}"; then
+    echo "ERROR: a patch does not apply to ${UPSTREAM} at all. If upstream merged or" >&2
+    echo "       obsoleted it, drop it via PG_DROP_PATCHES." >&2
+    exit 1
+  fi
   quilt pop -a > /dev/null
 
-  # A fuzzy hunk was placed on less context than its author wrote: worth a look.
-  if grep -q 'with fuzz' "${push_log}"; then
-    echo "    NOTE: refreshed patches that no longer match ${UPSTREAM} verbatim:"
-    awk '/^Applying patch / { p = $3 }
-         /with fuzz/        { print "      " p ": " $0 }' "${push_log}"
-  fi
+  # A fuzzy hunk was placed on less context than its author wrote, and --refresh
+  # bakes that placement in, so the gate below can no longer catch it: annotate
+  # the run rather than leave it buried in the build log.
+  awk -v m="${PG_MAJOR}" -v u="${UPSTREAM}" '
+    /^Applying patch / { p = $3 }
+    /^patching file /  { f = substr($0, 15) }
+    /with fuzz/        { print "::warning::PG" m ": " p " needed fuzz against " u " in " f " -- " $0 }
+  ' "${push_log}"
 
   echo "    verifying the refreshed series applies with zero fuzz (as dpkg-source does)"
   if ! quilt push -a --fuzz=0 > "${WORK}/quilt-verify-pg${PG_MAJOR}.log" 2>&1; then
