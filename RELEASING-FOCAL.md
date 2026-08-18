@@ -12,8 +12,8 @@ each release (see below).
 ## What this branch publishes
 
 - **Platform:** `ubuntu/focal` only.
-- **PostgreSQL:** **PG16 only.** Enforced by `pg_exclude.yml` (`ubuntu/focal: [14, 15]`
-  under `release`).
+- **PostgreSQL:** **PG14, PG15 and PG16** — the full `12.1` matrix from
+  `postgres-matrix.yml`. focal has no entry in `pg_exclude.yml`, so nothing is dropped.
 - **Target:** packagecloud repo **`citusdata/community`**, focal distro id **210**.
 - **Builder image:** a fixed local image `citus/packaging:ubuntu-focal-all` built from
   `dockerfiles/ubuntu-focal-all/Dockerfile` (step 6 of the workflow), which pins the
@@ -93,7 +93,7 @@ gh workflow run build-citus-focal.yml \
 ```
 
 Monitor the dispatched run and confirm **Publish packages = success** (not skipped).
-The focal PG16 `.deb` then lands on `citusdata/community`, focal distro **210**.
+The focal `.deb`s then land on `citusdata/community`, focal distro **210**.
 
 ## Expected, benign validation warning
 
