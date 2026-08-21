@@ -5,11 +5,11 @@
 
 Summary:	Counter Based Implementation for top-n Approximation
 Name:		%{sname}_%{pgmajorversion}
-Version:	2.7.0.citus
+Version:	2.7.1.citus
 Release:	1%{dist}
 License:	AGPLv3
 Group:		Applications/Databases
-Source0:	https://github.com/citusdata/postgresql-topn/archive/v2.7.0.tar.gz
+Source0:	https://github.com/citusdata/postgresql-topn/archive/v2.7.1.tar.gz
 URL:		https://github.com/citusdata/posgresql-topn
 BuildRequires:	postgresql%{pgmajorversion}-devel libxml2-devel
 BuildRequires:	libxslt-devel openssl-devel pam-devel readline-devel
@@ -57,6 +57,9 @@ PATH=%{pginstdir}/bin:$PATH
 %endif
 
 %changelog
+* Thu Aug 20 2026 - Ibrahim Halatci <ihalatci@microsoft.com> 2.7.1.citus-1
+- Support for PostgreSQL 19
+
 * Thu Jan 23 2025 - Mehmet Yilmaz <mehmetyilmaz@Microsoft.com> 2.7.0.citus-1
 - Support for PostgreSQL 17
 
