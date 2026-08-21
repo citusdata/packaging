@@ -3,3 +3,5 @@ exclude:
     ol/7: [15]
   release:
     ol/7: [15]
+    el/8: [19]  # no pg19 build image for almalinux-8
+    ol/8: [19]  # no pg19 build image for oraclelinux-8
