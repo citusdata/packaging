@@ -1,0 +1,174 @@
+name: Build PostGIS (focal)
+
+# Builds PostGIS .deb packages for Ubuntu 20.04 (focal) from upstream source
+# (PGDG removed focal entirely -- focal-pgdg 404s and the frozen archive mirror
+# stops at PostGIS 3.5.3), then signs them with debsigs (--sign=maint) using the
+# existing packaging key.
+#
+# Unlike build-pg-focal.yml there is no per-major matrix: the PostGIS Debian
+# packaging is multi-version by design (debian/pgversions + pg_buildext), so one
+# source build emits postgresql-<major>-postgis-3 for every requested major in a
+# single pass. That also means no assemble/de-duplicate job is needed -- the
+# shared packages are produced exactly once.
+#
+# PG11 is deliberately unsupported: PostGIS 3.6 requires PostgreSQL 12+.
+
+on:
+  workflow_dispatch:
+    inputs:
+      postgis_version:
+        description: "PostGIS upstream version to build (e.g. 3.6.4)"
+        required: true
+        default: "3.6.4"
+      pg_versions:
+        description: "Space-separated PostgreSQL majors (PostGIS 3.6 supports 12+)"
+        required: false
+        default: "12 13 14 15 16"
+      postgis_sha256:
+        description: "sha256 of postgis-<version>.tar.gz. Blank = use the pinned default in scripts/build_postgis_focal (only valid for that version)."
+        required: false
+        default: ""
+      run_tests:
+        description: "Run upstream regression suite (1=yes, much slower)"
+        required: false
+        default: "0"
+  push:
+    branches:
+      - postgis-focal
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-sign:
+    name: Build & sign PostGIS ${{ github.event.inputs.postgis_version || '3.6.4' }} (focal)
+    runs-on: ubuntu-latest
+    env:
+      PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+      PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+      POSTGIS_VERSION: ${{ github.event.inputs.postgis_version || '3.6.4' }}
+      PG_VERSIONS: ${{ github.event.inputs.pg_versions || '12 13 14 15 16' }}
+      POSTGIS_SHA256: ${{ github.event.inputs.postgis_sha256 || '' }}
+      RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build focal PostGIS builder image
+        run: |
+          docker build -t focal-postgis-builder \
+            -f dockerfiles/focal-postgis-builder/Dockerfile .
+
+      - name: Build PostGIS packages
+        run: |
+          mkdir -p packages
+          docker run --rm \
+            -e POSTGIS_VERSION="${POSTGIS_VERSION}" \
+            -e PG_VERSIONS="${PG_VERSIONS}" \
+            -e POSTGIS_SHA256="${POSTGIS_SHA256}" \
+            -e RUN_TESTS="${RUN_TESTS}" \
+            -v "${PWD}/packages:/packages" \
+            focal-postgis-builder
+          echo "Built packages:"
+          ls -1 packages/focal/postgis/*.deb
+
+      - name: Sign packages (debsigs --sign=maint)
+        # Use the prebuilt, deployed debsigner image (the one all Citus signing
+        # uses). Its entrypoint signs exactly "/packages/*/*.deb" (one dir level
+        # deep), so mount the parent of the output dir: with
+        # "${PWD}/packages/focal:/packages" the debs land at
+        # /packages/postgis/*.deb, which is what that glob expects.
+        run: |
+          if [ -z "${PACKAGING_SECRET_KEY}" ] || [ -z "${PACKAGING_PASSPHRASE}" ]; then
+            echo "::error::PACKAGING_SECRET_KEY / PACKAGING_PASSPHRASE secrets are not set" >&2
+            exit 1
+          fi
+          printf '%s' "${PACKAGING_PASSPHRASE}" | docker run --rm -i \
+            -e PACKAGING_SECRET_KEY \
+            -e PACKAGING_PASSPHRASE \
+            -v "${PWD}/packages/focal:/packages" \
+            citusdata/packaging:debsigner
+
+      - name: Verify signatures are embedded
+        run: |
+          rc=0
+          for deb in packages/focal/postgis/*.deb; do
+            if ar t "$deb" | grep -q '^_gpgmaint$'; then
+              echo "signed: $deb"
+            else
+              echo "::error::missing _gpgmaint signature in $deb" >&2
+              rc=1
+            fi
+          done
+          exit $rc
+
+      - name: Verify the set is self-contained
+        # Two invariants that have broken consumers before:
+        #   * every runtime must ship its own extension control file, so the
+        #     package can never be paired with another version's SQL
+        #   * no runtime may depend on a separate -scripts package
+        run: |
+          rc=0
+          for v in ${PG_VERSIONS}; do
+            deb="$(ls packages/focal/postgis/postgresql-${v}-postgis-3_*.deb)"
+            if ! dpkg-deb -c "$deb" | grep -q 'extension/postgis-[0-9.]*\.control'; then
+              echo "::error::PG${v} runtime ships no extension control file" >&2; rc=1
+            fi
+            if dpkg-deb -f "$deb" Depends | grep -q 'postgis-3-scripts'; then
+              echo "::error::PG${v} runtime still depends on a -scripts package" >&2; rc=1
+            fi
+          done
+          exit $rc
+
+      - name: Upload signed packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgis-focal-deb
+          path: |
+            packages/focal/postgis/*.deb
+            packages/focal/postgis/*.changes
+            packages/focal/postgis/*.buildinfo
+          if-no-files-found: error
+
+  install-smoke-test:
+    needs: build-and-sign
+    name: Install smoke test (focal)
+    runs-on: ubuntu-latest
+    env:
+      PG_VERSIONS: ${{ github.event.inputs.pg_versions || '12 13 14 15 16' }}
+      POSTGIS_VERSION: ${{ github.event.inputs.postgis_version || '3.6.4' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download built packages
+        uses: actions/download-artifact@v4
+        with:
+          name: postgis-focal-deb
+          path: debs
+
+      - name: Install and verify in a clean focal container
+        # The jobs above only prove the packages exist, are signed and are
+        # self-contained -- not that the extension can actually be created. This
+        # installs the set into a stock ubuntu:20.04 twice: clean, and over
+        # PGDG's PostGIS 3.5.3 (the in-place upgrade path), then runs
+        # CREATE EXTENSION on every major.
+        run: |
+          docker run --rm \
+            -v "${PWD}/debs:/debs:ro" \
+            -v "${PWD}/scripts/smoke_test_focal_postgis_debs:/usr/local/bin/smoke_test_focal_postgis_debs:ro" \
+            -e DEBS_DIR=/debs \
+            -e PG_VERSIONS="${PG_VERSIONS}" \
+            -e EXPECTED_POSTGIS="${POSTGIS_VERSION}" \
+            ubuntu:20.04 \
+            /usr/local/bin/smoke_test_focal_postgis_debs
