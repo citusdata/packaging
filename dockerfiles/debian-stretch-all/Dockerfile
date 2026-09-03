@@ -98,8 +98,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends jq \
     && rm -rf /var/lib/apt/lists/*
 
-# install packagecloud repos for pg_auto_failover
-RUN curl -s https://packagecloud.io/install/repositories/citusdata/community/script.deb.sh | bash \
+# install packagecloud repos for pg_auto_failover (amd64 only: the community
+# repo has no non-x86_64 packages and its installer aborts on other arches)
+RUN [ "$(dpkg --print-architecture)" != "amd64" ] || curl -s https://packagecloud.io/install/repositories/citusdata/community/script.deb.sh | bash \
     && rm -rf /var/lib/apt/lists/*
 
 # patch pg_buildext to use multiple processors
