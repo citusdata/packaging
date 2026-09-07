@@ -6,3 +6,5 @@ exclude:
     debian/bookworm: [12,13]   # if PGDG dropped 12/13 there
     ubuntu/noble: [12,13]
     ubuntu/jammy: [12,13]      # adjust per PGDG availability
+    el/8: [19]                 # PGDG does not publish PostgreSQL 19 for EL8
+    ol/8: [19]                 # PGDG does not publish PostgreSQL 19 for EL8
