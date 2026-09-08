@@ -96,7 +96,7 @@ jobs:
 
       - name: Build arm64 debsigner image
         if: matrix.arch == 'arm64'
-        run: docker build -t citusdata/packaging:debsigner -f dockerfiles/debsigner/Dockerfile .
+        run: docker build -t citusdata/packaging:debsigner dockerfiles/debsigner
 
       - name: Build packages
         run: |
