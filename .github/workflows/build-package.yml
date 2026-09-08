@@ -24,7 +24,6 @@ jobs:
         platform:
           # - el/7
           # - debian/buster
-          # - debian/bullseye
           - ubuntu/focal
           # - ubuntu/jammy
 
