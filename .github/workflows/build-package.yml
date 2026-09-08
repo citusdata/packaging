@@ -22,7 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - debian/bullseye
           - debian/bookworm
           - debian/trixie
           - ubuntu/jammy
