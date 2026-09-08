@@ -27,4 +27,7 @@ version_matrix:
   - 13.2:
       postgres_versions: [ 15, 16, 17 ]  
   - 14.0:
-      postgres_versions: [ 16, 17, 18 ]  
+      postgres_versions: [ 16, 17, 18 ]
+  # Nightly builds use the last entry; keep older release mappings intact.
+  - 15.0:
+      postgres_versions: [ 17, 18, 19 ]

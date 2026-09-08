@@ -52,7 +52,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Clone tools branch
-        run: git clone -b v0.8.36 --depth=1  https://github.com/citusdata/tools.git tools
+        # v0.8.39 fixes nightly exclusions incorrectly using release versions.
+        run: git clone -b v0.8.39 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: |
@@ -72,4 +73,3 @@ jobs:
           --passphrase "${PACKAGING_PASSPHRASE}" \
           --output_dir "$(pwd)/packages/" \
           --input_files_dir "$(pwd)"
-
