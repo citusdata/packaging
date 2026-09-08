@@ -23,7 +23,6 @@ jobs:
       matrix:
         platform:
           - el/8
-          - debian/bullseye
           - debian/bookworm
           - debian/trixie
           - ubuntu/noble
