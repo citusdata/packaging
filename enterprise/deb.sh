@@ -177,6 +177,12 @@ detect_os ()
   dist="${dist// /}"
 
   echo "Detected operating system as $os/$dist."
+
+  if { [ -z "${os}" ] || [ "${os,,}" = "debian" ]; } &&
+     { [ "${dist%%.*}" = "11" ] || [ "${dist,,}" = "bullseye" ]; }; then
+    echo "Debian 11 (bullseye) is no longer supported."
+    unknown_os
+  fi
 }
 
 detect_version_id () {
@@ -208,9 +214,6 @@ detect_codename ()
       10)
         codename='buster'
         ;;
-      11)
-        codename='bullseye'
-        ;;
       12)
         codename='bookworm'
         ;;
@@ -230,9 +233,6 @@ detect_codename ()
         codename="${dist}"
         ;;
       buster)
-        codename="${dist}"
-        ;;
-      bullseye)
         codename="${dist}"
         ;;
       bookworm)
