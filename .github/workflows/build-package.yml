@@ -23,7 +23,6 @@ jobs:
       matrix:
         platform:
           - debian/buster
-          - debian/bullseye
           - debian/bookworm
           - ubuntu/bionic
           - ubuntu/focal
