@@ -53,7 +53,6 @@ jobs:
         include:
           - TARGET_PLATFORM: almalinux,9
             POSTGRES_VERSION: 19
-          - TARGET_PLATFORM: debian,bullseye
           - TARGET_PLATFORM: debian,bookworm
           - TARGET_PLATFORM: debian,trixie
           - TARGET_PLATFORM: ubuntu,jammy

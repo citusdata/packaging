@@ -32,7 +32,6 @@ jobs:
 # temporarily removed from nightlies since pg15 beta is not being downloaded for ol/7
 # - ol/7
           - debian/buster
-          - debian/bullseye
           - ubuntu/bionic
           - ubuntu/focal
 

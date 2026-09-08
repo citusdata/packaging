@@ -37,6 +37,11 @@ if [[ "${os},${release}" =~ ^ubuntu,(focal|bionic)$ ]]; then
     exit 1
 fi
 
+if [[ "${os},${release}" = 'debian,bullseye' ]]; then
+    echo "${TARGET_PLATFORM} unsupported: Debian LTS ended on 2026-08-31" >&2
+    exit 1
+fi
+
 if [[ "${os}" = 'debian' ]] || [[ "${os}" = 'ubuntu' ]]; then
     tag="${os}-${release}-all"
     args+="build --pull --no-cache -t citus/${image_name}:${tag} -f ${dockerfiles_dir}/${tag}/Dockerfile .\n"

@@ -23,6 +23,11 @@ else
     image_name="packaging"
 fi
 
+if [[ "${TARGET_PLATFORM:-}" = 'debian,bullseye' ]]; then
+    echo "${TARGET_PLATFORM} unsupported: Debian LTS ended on 2026-08-31" >&2
+    exit 1
+fi
+
 echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USER_NAME}" --password-stdin
 
 declare args
