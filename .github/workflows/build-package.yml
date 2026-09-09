@@ -25,7 +25,6 @@ jobs:
           - el/9
           - ol/8
           - ol/9
-          - debian/bullseye
           - debian/bookworm
           - ubuntu/noble
           - ubuntu/jammy
