@@ -5,9 +5,10 @@ This branch (`citus-focal-12.1.x`) is a **temporary stop-gap** that publishes Ci
 distribution list, so this branch keeps focal alive for the `12.1.x` line until it is
 formally retired.
 
-It is intentionally **decoupled** from the normal `update_package_properties` flow used by
-the all-citus branches: the version metadata on this branch is bumped **manually** for
-each release (see below).
+The only workflow on this branch is `.github/workflows/build-citus-focal.yml`.
+General multi-platform builds, community nightlies, and `update_package_properties`
+are intentionally excluded. Version metadata is bumped **manually** for each release
+(see below), independently of the normal all-citus release flow.
 
 ## What this branch publishes
 
