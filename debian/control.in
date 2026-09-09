@@ -10,6 +10,7 @@ Homepage: https://github.com/citusdata/pg_cron
 Package: postgresql-PGVERSION-pgcron
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-PGVERSION
+Breaks: ${postgresql:Breaks}
 Description: Periodic job scheduler for PostgreSQL
  This extension runs a background worker that can schedule SQL commands
  to be run periodically.
