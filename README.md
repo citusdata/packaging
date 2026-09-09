@@ -42,6 +42,8 @@ The build type can be `release`, `nightly`, or any valid git reference. `release
 
 By default, `build_packages` builds on _all_ supported operating systems. Edit `os-list.csv` if you wish to build for fewer.
 
+Debian 11 (Bullseye) is no longer supported following the end of Debian LTS on August 31, 2026. Use Debian 12 (Bookworm) or Debian 13 (Trixie) instead.
+
 ### Updating Dockerfiles
 
 `update_dockerfiles` generates a new set of Dockerfiles. This repository has automated builds configured, so if you need to change the Docker images, run `update_dockerfiles`, commit the resulting Dockerfile changes, and push.
