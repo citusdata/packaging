@@ -1,7 +1,7 @@
 # vim:set ft=dockerfile:
 #
 # Builder image for tdigest packages targeting Ubuntu 20.04 (focal). One image
-# builds every focal-buildable PostgreSQL major at once (PG 12..16 by default);
+# builds every focal-buildable PostgreSQL major at once (PG 11..16 by default);
 # like PostGIS -- and unlike PostgreSQL core -- the tdigest Debian packaging is
 # multi-version by design (debian/pgversions + the pgxs_loop debhelper addon
 # drive pg_buildext), so a single source build emits postgresql-<major>-tdigest
@@ -33,13 +33,11 @@ RUN set -ex; \
     install -d /usr/share/keyrings; \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
       | gpg --dearmor -o /usr/share/keyrings/pgdg-archive.gpg; \
-    # 'main' carries the build tooling and the tdigest source package; each
-    # PostgreSQL major is a separate component. tdigest supports PG12+ here and
-    # Marlin still ships PG12, so component 12 is listed even though
-    # focal-pg-builder omits it.
-    echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main 12 13 14 15 16" \
+    # 'main' carries the build tooling, the tdigest source package and the PG11
+    # binaries; PG12..16 are each a separate component.
+    echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main 11 12 13 14 15 16" \
       > /etc/apt/sources.list.d/pgdg-archive.list; \
-    echo "deb-src [signed-by=/usr/share/keyrings/pgdg-archive.gpg] https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main 12 13 14 15 16" \
+    echo "deb-src [signed-by=/usr/share/keyrings/pgdg-archive.gpg] https://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main 11 12 13 14 15 16" \
       >> /etc/apt/sources.list.d/pgdg-archive.list; \
     apt-get update; \
     # base build tooling; per-build Build-Depends are resolved at run time by

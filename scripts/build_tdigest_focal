@@ -30,7 +30,7 @@
 # container.
 #
 # Examples:
-#   build_tdigest_focal                                   # 1.4.5 for PG12..16
+#   build_tdigest_focal                                   # 1.4.5 for PG11..16
 #   TDIGEST_VERSION=1.4.6 build_tdigest_focal
 #   PG_VERSIONS="15 16" RUN_TESTS=1 build_tdigest_focal
 
@@ -41,10 +41,9 @@ set -euo pipefail
 # ----------------------------------------------------------------------------
 TDIGEST_VERSION="${TDIGEST_VERSION:-1.4.5}"
 
-# tdigest supports PostgreSQL 10+, but focal-relevant Citus/Marlin ships PG12+,
-# so the default set matches the focal PostGIS pipeline. Add "11" here if a
-# PG11 build is ever needed.
-PG_VERSIONS="${PG_VERSIONS:-12 13 14 15 16}"
+# tdigest supports PostgreSQL 10+. focal shipped PG11..16, so the default set
+# covers every focal-buildable major; drop "11" if only PG12+ is needed.
+PG_VERSIONS="${PG_VERSIONS:-11 12 13 14 15 16}"
 
 # The last focal tdigest source package PGDG published. Its debian/ is frozen
 # (focal is EOL); override only if the archive is ever re-touched.

@@ -18,7 +18,7 @@
 #
 # Overridable via environment:
 #   DEBS_DIR            directory holding the *.deb set        (default /debs)
-#   PG_VERSIONS         majors to verify                       (default "12 13 14 15 16")
+#   PG_VERSIONS         majors to verify                       (default "11 12 13 14 15 16")
 #   EXPECTED_TDIGEST    expected extension version             (default 1.4.5)
 #   OLD_TDIGEST         PGDG version to upgrade from in test B (default 1.4.3-1.pgdg20.04+1)
 #   PGDG_ARCHIVE_SUITE  archive suite to enable                (default focal-pgdg)
@@ -26,7 +26,7 @@
 set -uo pipefail
 
 DEBS_DIR="${DEBS_DIR:-/debs}"
-PG_VERSIONS="${PG_VERSIONS:-12 13 14 15 16}"
+PG_VERSIONS="${PG_VERSIONS:-11 12 13 14 15 16}"
 EXPECTED_TDIGEST="${EXPECTED_TDIGEST:-1.4.5}"
 OLD_TDIGEST="${OLD_TDIGEST:-1.4.3-1.pgdg20.04+1}"
 PGDG_ARCHIVE_SUITE="${PGDG_ARCHIVE_SUITE:-focal-pgdg}"
@@ -59,7 +59,7 @@ note "[2/6] Enabling the PGDG archive"
 install -d /usr/share/keyrings
 curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
   | gpg --dearmor -o /usr/share/keyrings/pgdg-archive.gpg
-echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] ${PGDG_ARCHIVE_URL} ${PGDG_ARCHIVE_SUITE} main 12 13 14 15 16" \
+echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] ${PGDG_ARCHIVE_URL} ${PGDG_ARCHIVE_SUITE} main 11 12 13 14 15 16" \
   > /etc/apt/sources.list.d/pgdg-archive.list
 apt-get update -qq
 

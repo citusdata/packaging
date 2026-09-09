@@ -21,7 +21,7 @@ on:
       pg_versions:
         description: "Space-separated PostgreSQL majors (tdigest supports 10+)"
         required: false
-        default: "12 13 14 15 16"
+        default: "11 12 13 14 15 16"
       tdigest_sha256:
         description: "sha256 of tdigest-<version>.tar.gz. Blank = use the pinned default in scripts/build_tdigest_focal (only valid for that version)."
         required: false
@@ -49,7 +49,7 @@ jobs:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
       TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.5' }}
-      PG_VERSIONS: ${{ github.event.inputs.pg_versions || '12 13 14 15 16' }}
+      PG_VERSIONS: ${{ github.event.inputs.pg_versions || '11 12 13 14 15 16' }}
       TDIGEST_SHA256: ${{ github.event.inputs.tdigest_sha256 || '' }}
       RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
     steps:
@@ -142,7 +142,7 @@ jobs:
     name: Install smoke test (focal)
     runs-on: ubuntu-latest
     env:
-      PG_VERSIONS: ${{ github.event.inputs.pg_versions || '12 13 14 15 16' }}
+      PG_VERSIONS: ${{ github.event.inputs.pg_versions || '11 12 13 14 15 16' }}
       TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.5' }}
     steps:
       - name: Checkout repository
