@@ -1,0 +1,173 @@
+#!/bin/bash
+#
+# build_tdigest_focal -- rebuild tdigest Debian packages for Ubuntu 20.04 (focal).
+#
+# PGDG removed focal entirely (focal-pgdg 404s; the frozen apt-archive mirror
+# stops at tdigest 1.4.3), so a newer tdigest on focal has to be rebuilt from
+# upstream source.
+#
+# Approach (see dockerfiles/focal-tdigest-builder/Dockerfile for the rationale):
+#   upstream tdigest-<version>.tar.gz  +  the frozen focal-era debian/ packaging
+#   from PGDG's last focal tdigest source package
+#   -> dpkg-buildpackage inside a focal environment with the archived focal-pgdg
+#      build tooling available.
+#
+# Like PostGIS -- and unlike PostgreSQL core -- one source build emits packages
+# for *every* PostgreSQL major at once. tdigest is a plain PGXS extension whose
+# Debian packaging is multi-version by design (debian/pgversions + the
+# pgxs_loop debhelper addon drive pg_buildext), so a single source build emits
+# postgresql-<major>-tdigest for each requested major in one pass. There is no
+# per-major matrix here.
+#
+# tdigest's packaging is much simpler than PostGIS's: there is no arch-independent
+# -scripts package and no update-alternatives dance -- each runtime package ships
+# its own extension control file and SQL, so none of the PostGIS control-suffix /
+# alternatives workarounds are needed.
+#
+# Output: unsigned *.deb in ${OUTPUT_DIR} (default /packages/focal/tdigest).
+# Signing is a separate step performed by the debsigner image (debsigs
+# --sign=maint), so the build and the signing key never live in the same
+# container.
+#
+# Examples:
+#   build_tdigest_focal                                   # 1.4.5 for PG12..16
+#   TDIGEST_VERSION=1.4.6 build_tdigest_focal
+#   PG_VERSIONS="15 16" RUN_TESTS=1 build_tdigest_focal
+
+set -euo pipefail
+
+# ----------------------------------------------------------------------------
+# Inputs (override via env)
+# ----------------------------------------------------------------------------
+TDIGEST_VERSION="${TDIGEST_VERSION:-1.4.5}"
+
+# tdigest supports PostgreSQL 10+, but focal-relevant Citus/Marlin ships PG12+,
+# so the default set matches the focal PostGIS pipeline. Add "11" here if a
+# PG11 build is ever needed.
+PG_VERSIONS="${PG_VERSIONS:-12 13 14 15 16}"
+
+# The last focal tdigest source package PGDG published. Its debian/ is frozen
+# (focal is EOL); override only if the archive is ever re-touched.
+PACKAGING_SRC_VERSION="${PACKAGING_SRC_VERSION:-1.4.3-1.pgdg20.04+1}"
+
+# sha256 of the upstream tarball. Pinned by default: the GitHub tag archive
+# serves no detached signature, so this is the only integrity check available
+# and it must not silently degrade to "whatever was served".
+TDIGEST_SHA256="${TDIGEST_SHA256:-4b84834e88a87f2b3538fbd2ac56033642b7e14b2744e78344b16d6e609733af}"
+
+DEB_REVISION="${DEB_REVISION:-1.citus20.04+1}"
+TARGET_VERSION="${TARGET_VERSION:-${TDIGEST_VERSION}-${DEB_REVISION}}"
+
+# Set RUN_TESTS=1 to run the upstream regression suite (much slower, and pulls
+# in postgresql-all for a full test matrix).
+RUN_TESTS="${RUN_TESTS:-0}"
+
+OUTPUT_DIR="${OUTPUT_DIR:-/packages/focal/tdigest}"
+WORK="${WORK_DIR:-/build}"
+UPSTREAM_URL="${UPSTREAM_URL:-https://github.com/tvondra/tdigest/archive/refs/tags/v${TDIGEST_VERSION}.tar.gz}"
+
+export DEBEMAIL="${DEBEMAIL:-packaging@citusdata.com}"
+export DEBFULLNAME="${DEBFULLNAME:-Citus Data}"
+export DEBIAN_FRONTEND=noninteractive
+
+echo "==> Building tdigest ${TDIGEST_VERSION} as ${TARGET_VERSION} for PG${PG_VERSIONS// /,} (focal)"
+
+mkdir -p "${WORK}" "${OUTPUT_DIR}"
+cd "${WORK}"
+
+echo "==> [1/6] Fetch frozen focal debian/ packaging (tdigest ${PACKAGING_SRC_VERSION})"
+apt-get update
+# apt-get source validates against the archive's signed Release file.
+apt-get source "tdigest=${PACKAGING_SRC_VERSION}"
+PKG_DIR="$(find "${WORK}" -maxdepth 1 -type d -name 'tdigest-*' -exec test -d '{}/debian' \; -print | head -1)"
+[ -n "${PKG_DIR}" ] || { echo "ERROR: could not locate unpacked packaging source" >&2; exit 1; }
+
+echo "==> [2/6] Fetch and verify upstream tdigest-${TDIGEST_VERSION}.tar.gz"
+curl -4 -fsSL -o "tdigest-${TDIGEST_VERSION}.tar.gz" "${UPSTREAM_URL}"
+echo "${TDIGEST_SHA256}  tdigest-${TDIGEST_VERSION}.tar.gz" | sha256sum -c -
+
+SRCDIR="${WORK}/tdigest-${TDIGEST_VERSION}"
+rm -rf "${SRCDIR}"
+tar xzf "tdigest-${TDIGEST_VERSION}.tar.gz"
+cp -a "${PKG_DIR}/debian" "${SRCDIR}/debian"
+cd "${SRCDIR}"
+
+echo "==> [3/6] Triage quilt patches against the new upstream"
+if [ -f debian/patches/series ]; then
+  KEPT=""
+  while read -r patch; do
+    [ -z "${patch}" ] && continue
+    case "${patch}" in \#*) continue ;; esac
+    if patch -p1 --dry-run --silent < "debian/patches/${patch}" >/dev/null 2>&1; then
+      echo "    keep  ${patch}"; KEPT="${KEPT}${patch}\n"
+    else
+      echo "    drop  ${patch} (does not apply to ${TDIGEST_VERSION})"
+    fi
+  done < debian/patches/series
+  printf "%b" "${KEPT}" > debian/patches/series
+else
+  echo "    no debian/patches/series -- nothing to triage"
+fi
+
+echo "==> [4/6] Target PostgreSQL majors: ${PG_VERSIONS}"
+# debian/control ships with every major PGDG built (10..17); regenerate it from
+# debian/control.in so only the requested majors are declared and built.
+printf '%s\n' ${PG_VERSIONS} > debian/pgversions
+pg_buildext updatecontrol
+echo "    binary packages now declared:"
+grep '^Package:' debian/control | sed 's/^/      /'
+
+echo "==> [5/6] Set version to ${TARGET_VERSION} and install Build-Depends"
+dch --newversion "${TARGET_VERSION}" --distribution focal --force-distribution \
+    "Rebuild of tdigest ${TDIGEST_VERSION} for focal (upstream PGDG focal-pgdg discontinued)."
+
+BUILD_OPTIONS="parallel=$(nproc)"
+BUILD_PROFILES=""
+if [ "${RUN_TESTS}" != "1" ]; then
+  # nocheck drops the postgresql-all <!nocheck> Build-Depends (a full server
+  # matrix pulled in only for the upstream test suite) and skips dh_auto_test.
+  BUILD_OPTIONS="${BUILD_OPTIONS} nocheck"
+  BUILD_PROFILES="nocheck"
+fi
+export DEB_BUILD_OPTIONS="${BUILD_OPTIONS}"
+export DEB_BUILD_PROFILES="${BUILD_PROFILES}"
+
+mk-build-deps --install --remove \
+  --tool 'apt-get -o Debug::pkgProblemResolver=yes --yes --no-install-recommends' \
+  debian/control
+
+echo "==> [6/6] Build binary packages (DEB_BUILD_OPTIONS='${BUILD_OPTIONS}')"
+dpkg-buildpackage -b -uc -us
+
+echo "==> Collect artifacts into ${OUTPUT_DIR}"
+for v in ${PG_VERSIONS}; do
+  cp -v "${WORK}"/postgresql-${v}-tdigest_*.deb "${OUTPUT_DIR}/"
+  # Debug-symbol packages are emitted as .ddeb on Ubuntu. Ship them as .deb (the
+  # on-disk format is identical) so they flow through the same signing,
+  # verification and publishing as everything else. Consumers commonly install
+  # with an `*.deb` glob, which does not match `.ddeb`; because a dbgsym depends
+  # on its runtime with an exact `=` version, silently dropping it strands the
+  # previously installed dbgsym and breaks `apt --fix-broken install`.
+  for ddeb in "${WORK}"/postgresql-${v}-tdigest-dbgsym_*.ddeb; do
+    [ -e "${ddeb}" ] || continue
+    cp -v "${ddeb}" "${OUTPUT_DIR}/$(basename "${ddeb}" .ddeb).deb"
+  done
+done
+cp -v "${WORK}"/*.buildinfo "${WORK}"/*.changes "${OUTPUT_DIR}/" 2>/dev/null || true
+
+echo "==> Verify runtime <-> dbgsym pairing"
+for v in ${PG_VERSIONS}; do
+  rt="$(dpkg-deb -f "${OUTPUT_DIR}"/postgresql-${v}-tdigest_*.deb Version)"
+  for dbg in "${OUTPUT_DIR}"/postgresql-${v}-tdigest-dbgsym_*.deb; do
+    [ -e "${dbg}" ] || continue
+    dep="$(dpkg-deb -f "${dbg}" Depends)"
+    if [ "${dep}" != "postgresql-${v}-tdigest (= ${rt})" ]; then
+      echo "ERROR: PG${v} dbgsym wants '${dep}' but runtime is '${rt}'" >&2
+      exit 1
+    fi
+  done
+  echo "    PG${v} OK (${rt})"
+done
+
+echo "==> DONE. Packages:"
+ls -1 "${OUTPUT_DIR}"/*.deb
