@@ -1,3 +1,10 @@
+pgcron (1.6.8.citus-1) stable; urgency=low
+
+  * Official 1.6.8 release of PG Cron
+  * Build for supported PostgreSQL 14 through 18
+
+ -- Ibrahim Halatci <ihalatci@microsoft.com>  Wed, 09 Sep 2026 15:33:31 +0000
+
 pgcron (1.6.5.citus-1) stable; urgency=low
 
   * Official 1.6.5 release of PG Cron
