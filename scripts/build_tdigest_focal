@@ -12,17 +12,14 @@
 #   -> dpkg-buildpackage inside a focal environment with the archived focal-pgdg
 #      build tooling available.
 #
-# Like PostGIS -- and unlike PostgreSQL core -- one source build emits packages
-# for *every* PostgreSQL major at once. tdigest is a plain PGXS extension whose
-# Debian packaging is multi-version by design (debian/pgversions + the
-# pgxs_loop debhelper addon drive pg_buildext), so a single source build emits
-# postgresql-<major>-tdigest for each requested major in one pass. There is no
-# per-major matrix here.
+# One source build emits packages for *every* PostgreSQL major at once. tdigest
+# is a plain PGXS extension whose Debian packaging is multi-version by design
+# (debian/pgversions + the pgxs_loop debhelper addon drive pg_buildext), so a
+# single source build emits postgresql-<major>-tdigest for each requested major
+# in one pass. There is no per-major matrix here.
 #
-# tdigest's packaging is much simpler than PostGIS's: there is no arch-independent
-# -scripts package and no update-alternatives dance -- each runtime package ships
-# its own extension control file and SQL, so none of the PostGIS control-suffix /
-# alternatives workarounds are needed.
+# Each runtime package ships its own extension control file and SQL; there is no
+# separate -scripts package and no update-alternatives handling to worry about.
 #
 # Output: unsigned *.deb in ${OUTPUT_DIR} (default /packages/focal/tdigest).
 # Signing is a separate step performed by the debsigner image (debsigs
@@ -30,7 +27,7 @@
 # container.
 #
 # Examples:
-#   build_tdigest_focal                                   # 1.4.5 for PG11..16
+#   build_tdigest_focal                                   # 1.4.6 for PG11..16
 #   TDIGEST_VERSION=1.4.6 build_tdigest_focal
 #   PG_VERSIONS="15 16" RUN_TESTS=1 build_tdigest_focal
 
@@ -39,10 +36,10 @@ set -euo pipefail
 # ----------------------------------------------------------------------------
 # Inputs (override via env)
 # ----------------------------------------------------------------------------
-TDIGEST_VERSION="${TDIGEST_VERSION:-1.4.5}"
+TDIGEST_VERSION="${TDIGEST_VERSION:-1.4.6}"
 
 # tdigest supports PostgreSQL 10+. focal shipped PG11..16, so the default set
-# covers every focal-buildable major; drop "11" if only PG12+ is needed.
+# covers every focal-buildable major
 PG_VERSIONS="${PG_VERSIONS:-11 12 13 14 15 16}"
 
 # The last focal tdigest source package PGDG published. Its debian/ is frozen
@@ -52,7 +49,7 @@ PACKAGING_SRC_VERSION="${PACKAGING_SRC_VERSION:-1.4.3-1.pgdg20.04+1}"
 # sha256 of the upstream tarball. Pinned by default: the GitHub tag archive
 # serves no detached signature, so this is the only integrity check available
 # and it must not silently degrade to "whatever was served".
-TDIGEST_SHA256="${TDIGEST_SHA256:-4b84834e88a87f2b3538fbd2ac56033642b7e14b2744e78344b16d6e609733af}"
+TDIGEST_SHA256="${TDIGEST_SHA256:-5158d3a57e96883262a299d559ffb18da80616825b13f29f1c8b3113dd467a95}"
 
 DEB_REVISION="${DEB_REVISION:-1.citus20.04+1}"
 TARGET_VERSION="${TARGET_VERSION:-${TDIGEST_VERSION}-${DEB_REVISION}}"

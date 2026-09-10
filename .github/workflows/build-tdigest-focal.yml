@@ -5,19 +5,19 @@ name: Build tdigest (focal)
 # stops at tdigest 1.4.3), then signs them with debsigs (--sign=maint) using the
 # existing packaging key.
 #
-# Like build-postgis-focal.yml there is no per-major matrix: the tdigest Debian
-# packaging is multi-version by design (debian/pgversions + pg_buildext), so one
-# source build emits postgresql-<major>-tdigest for every requested major in a
-# single pass. That also means no assemble/de-duplicate job is needed -- each
-# runtime package is self-contained and produced exactly once.
+# There is no per-major matrix: the tdigest Debian packaging is multi-version by
+# design (debian/pgversions + pg_buildext), so one source build emits
+# postgresql-<major>-tdigest for every requested major in a single pass. That
+# also means no assemble/de-duplicate job is needed -- each runtime package is
+# self-contained and produced exactly once.
 
 on:
   workflow_dispatch:
     inputs:
       tdigest_version:
-        description: "tdigest upstream version to build (e.g. 1.4.5)"
+        description: "tdigest upstream version to build (e.g. 1.4.6)"
         required: true
-        default: "1.4.5"
+        default: "1.4.6"
       pg_versions:
         description: "Space-separated PostgreSQL majors (tdigest supports 10+)"
         required: false
@@ -43,12 +43,12 @@ concurrency:
 
 jobs:
   build-and-sign:
-    name: Build & sign tdigest ${{ github.event.inputs.tdigest_version || '1.4.5' }} (focal)
+    name: Build & sign tdigest ${{ github.event.inputs.tdigest_version || '1.4.6' }} (focal)
     runs-on: ubuntu-latest
     env:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
-      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.5' }}
+      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.6' }}
       PG_VERSIONS: ${{ github.event.inputs.pg_versions || '11 12 13 14 15 16' }}
       TDIGEST_SHA256: ${{ github.event.inputs.tdigest_sha256 || '' }}
       RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
@@ -111,18 +111,23 @@ jobs:
           exit $rc
 
       - name: Verify the set is self-contained
-        # Every runtime must ship its own extension control file and SQL, so a
-        # package can never be paired with another version's SQL and there is no
-        # separate -scripts package to depend on.
+        # Every runtime must ship its own extension control file and the full SQL
+        # tree, so a package can never be paired with another version's SQL and
+        # there is no separate -scripts package to depend on. tdigest is installed
+        # from the base script and reaches the built version through the shipped
+        # upgrade chain, whose terminal script names that version (e.g.
+        # tdigest--1.4.5--1.4.6.sql), so match either that or a direct
+        # tdigest--<version>.sql.
         run: |
           rc=0
           for v in ${PG_VERSIONS}; do
             deb="$(ls packages/focal/tdigest/postgresql-${v}-tdigest_*.deb)"
-            if ! dpkg-deb -c "$deb" | grep -q 'extension/tdigest\.control'; then
+            contents="$(dpkg-deb -c "$deb")"
+            if ! grep -q 'extension/tdigest\.control' <<<"$contents"; then
               echo "::error::PG${v} runtime ships no extension control file" >&2; rc=1
             fi
-            if ! dpkg-deb -c "$deb" | grep -q "extension/tdigest--${TDIGEST_VERSION}\.sql"; then
-              echo "::error::PG${v} runtime ships no tdigest--${TDIGEST_VERSION}.sql" >&2; rc=1
+            if ! grep -qE "extension/tdigest--([0-9.]+--)?${TDIGEST_VERSION}\.sql" <<<"$contents"; then
+              echo "::error::PG${v} runtime ships no SQL producing tdigest ${TDIGEST_VERSION}" >&2; rc=1
             fi
           done
           exit $rc
@@ -143,7 +148,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PG_VERSIONS: ${{ github.event.inputs.pg_versions || '11 12 13 14 15 16' }}
-      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.5' }}
+      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.6' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

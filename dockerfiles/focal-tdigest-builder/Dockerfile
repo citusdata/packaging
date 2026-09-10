@@ -2,18 +2,16 @@
 #
 # Builder image for tdigest packages targeting Ubuntu 20.04 (focal). One image
 # builds every focal-buildable PostgreSQL major at once (PG 11..16 by default);
-# like PostGIS -- and unlike PostgreSQL core -- the tdigest Debian packaging is
-# multi-version by design (debian/pgversions + the pgxs_loop debhelper addon
-# drive pg_buildext), so a single source build emits postgresql-<major>-tdigest
-# for each major in one pass.
+# the tdigest Debian packaging is multi-version by design (debian/pgversions +
+# the pgxs_loop debhelper addon drive pg_buildext), so a single source build
+# emits postgresql-<major>-tdigest for each major in one pass.
 #
 # Why this exists:
 #   apt.postgresql.org (PGDG) no longer ships focal binaries -- focal-pgdg 404s
 #   and the frozen apt-archive mirror tops out at tdigest 1.4.3. Anything newer
-#   (e.g. 1.4.5 for the memory-safety fixes) has to be rebuilt from upstream
-#   source.
+#   (e.g. 1.4.6) has to be rebuilt from upstream source.
 #
-# Strategy (mirrors dockerfiles/focal-postgis-builder/Dockerfile):
+# Strategy:
 #   - Upstream source: tdigest-<version>.tar.gz from GitHub, sha256-pinned.
 #   - Debian packaging: the frozen focal-era debian/ from PGDG's last focal
 #     tdigest source package (1.4.3-1.pgdg20.04+1), fetched with `apt-get source`
