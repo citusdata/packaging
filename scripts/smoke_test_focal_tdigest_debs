@@ -1,0 +1,138 @@
+#!/bin/bash
+#
+# smoke_test_focal_tdigest_debs -- install the built tdigest .deb set inside a
+# clean Ubuntu 20.04 (focal) container and prove it actually works.
+#
+# The build pipeline already checks the packages exist, are signed, and pair
+# correctly with their dbgsym. None of that proves the extension is usable, so
+# this installs the set into a stock ubuntu:20.04 and runs CREATE EXTENSION plus
+# a real aggregate query on every major.
+#
+# It tests both paths that matter:
+#   A. clean install on a stock focal + PGDG PostgreSQL
+#   B. install *over* PGDG's tdigest 1.4.3 and ALTER EXTENSION ... UPDATE, which
+#      is what an in-place upgrade on an existing host actually does
+#
+# Usage (inside a stock ubuntu:20.04 container, as root):
+#   DEBS_DIR=/debs smoke_test_focal_tdigest_debs
+#
+# Overridable via environment:
+#   DEBS_DIR            directory holding the *.deb set        (default /debs)
+#   PG_VERSIONS         majors to verify                       (default "11 12 13 14 15 16")
+#   EXPECTED_TDIGEST    expected extension version             (default 1.4.6)
+#   OLD_TDIGEST         PGDG version to upgrade from in test B (default 1.4.3-1.pgdg20.04+1)
+#   PGDG_ARCHIVE_SUITE  archive suite to enable                (default focal-pgdg)
+
+set -uo pipefail
+
+DEBS_DIR="${DEBS_DIR:-/debs}"
+PG_VERSIONS="${PG_VERSIONS:-11 12 13 14 15 16}"
+EXPECTED_TDIGEST="${EXPECTED_TDIGEST:-1.4.6}"
+OLD_TDIGEST="${OLD_TDIGEST:-1.4.3-1.pgdg20.04+1}"
+PGDG_ARCHIVE_SUITE="${PGDG_ARCHIVE_SUITE:-focal-pgdg}"
+PGDG_ARCHIVE_URL="${PGDG_ARCHIVE_URL:-https://apt-archive.postgresql.org/pub/repos/apt}"
+
+export DEBIAN_FRONTEND=noninteractive
+export LANG=C.UTF-8
+
+fail=0
+note() { echo "==> $*"; }
+err()  { echo "::error::$*" >&2; fail=1; }
+
+shopt -s nullglob
+debs=("${DEBS_DIR}"/*.deb)
+shopt -u nullglob
+[ ${#debs[@]} -gt 0 ] || { echo "ERROR: no .deb files found in ${DEBS_DIR}" >&2; exit 1; }
+
+note "[1/6] Preparing container environment (${#debs[@]} packages)"
+# postgresql-NN.postinst ends in `invoke-rc.d postgresql start $VERSION` under
+# `set -e`, and there is no systemd in a container. A policy-rc.d denying the
+# action makes invoke-rc.d return 0 so the postinst still creates the cluster;
+# clusters are started explicitly below.
+printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d
+chmod +x /usr/sbin/policy-rc.d
+
+apt-get update -qq
+apt-get install -y -qq --no-install-recommends ca-certificates curl gnupg >/dev/null
+
+note "[2/6] Enabling the PGDG archive"
+install -d /usr/share/keyrings
+curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+  | gpg --dearmor -o /usr/share/keyrings/pgdg-archive.gpg
+echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] ${PGDG_ARCHIVE_URL} ${PGDG_ARCHIVE_SUITE} main 11 12 13 14 15 16" \
+  > /etc/apt/sources.list.d/pgdg-archive.list
+apt-get update -qq
+
+psql_v() { su postgres -c "psql --cluster $1/main -qtAX -c \"$2\"" 2>&1; }
+
+ensure_cluster() {
+  pg_lsclusters -h | awk '{print $1"/"$2}' | grep -qx "$1/main" \
+    || pg_createcluster "$1" main >/dev/null 2>&1
+  pg_ctlcluster "$1" main start >/dev/null 2>&1
+}
+
+# Median of 1..1000 is ~500. t-digest is approximate, so accept a small window.
+check_percentile() {
+  local v="$1" p
+  p="$(psql_v "${v}" "SELECT round(tdigest_percentile(i, 100, 0.5)) FROM generate_series(1,1000) i;")"
+  awk -v p="${p}" 'BEGIN{exit !(p+0>=480 && p+0<=520)}'
+}
+
+note "[3/6] Scenario A: clean install"
+for v in ${PG_VERSIONS}; do
+  apt-get install -y -qq postgresql-${v} >/dev/null 2>&1
+done
+dpkg -i --force-all "${DEBS_DIR}"/*.deb >/dev/null 2>&1
+if ! apt-get --fix-broken install -y >/dev/null 2>&1; then
+  err "apt --fix-broken install failed after clean install"
+fi
+
+for v in ${PG_VERSIONS}; do
+  ensure_cluster "${v}"
+  psql_v "${v}" "CREATE EXTENSION tdigest;" >/dev/null 2>&1
+  ext="$(psql_v "${v}" "SELECT extversion FROM pg_extension WHERE extname='tdigest';")"
+  if [ "${ext}" = "${EXPECTED_TDIGEST}" ] && check_percentile "${v}"; then
+    echo "    PG${v} OK   ext=${ext}"
+  else
+    err "PG${v} clean install: ext='${ext}' (expected ${EXPECTED_TDIGEST}) or percentile check failed"
+  fi
+  pg_ctlcluster "${v}" main stop >/dev/null 2>&1
+done
+
+note "[4/6] Scenario B: upgrade over PGDG tdigest ${OLD_TDIGEST}"
+for v in ${PG_VERSIONS}; do
+  apt-get remove -y -qq postgresql-${v}-tdigest >/dev/null 2>&1
+  pg_dropcluster "${v}" main >/dev/null 2>&1
+  pg_createcluster "${v}" main >/dev/null 2>&1
+  apt-get install -y -qq --allow-downgrades \
+    postgresql-${v}-tdigest=${OLD_TDIGEST} >/dev/null 2>&1
+  ensure_cluster "${v}"
+  psql_v "${v}" "CREATE EXTENSION tdigest;" >/dev/null 2>&1
+  pg_ctlcluster "${v}" main stop >/dev/null 2>&1
+done
+
+# Mirrors how consumers apply the set: force-all dpkg, then let apt settle.
+dpkg -i --force-all "${DEBS_DIR}"/*.deb >/dev/null 2>&1
+if ! apt-get --fix-broken install -y >/dev/null 2>&1; then
+  err "apt --fix-broken install failed after upgrade over ${OLD_TDIGEST}"
+fi
+
+note "[5/6] Verifying the extension upgrades and works after the package upgrade"
+for v in ${PG_VERSIONS}; do
+  ensure_cluster "${v}"
+  out="$(psql_v "${v}" "ALTER EXTENSION tdigest UPDATE;")"
+  ext="$(psql_v "${v}" "SELECT extversion FROM pg_extension WHERE extname='tdigest';")"
+  if [ "${ext}" = "${EXPECTED_TDIGEST}" ] && check_percentile "${v}"; then
+    echo "    PG${v} OK   ext=${ext}"
+  else
+    err "PG${v} after upgrade: ext='${ext}' (expected ${EXPECTED_TDIGEST}) ${out}"
+  fi
+  pg_ctlcluster "${v}" main stop >/dev/null 2>&1
+done
+
+note "[6/6] Result"
+if [ "${fail}" -ne 0 ]; then
+  echo "SMOKE TEST FAILED" >&2
+  exit 1
+fi
+echo "SMOKE TEST PASSED"
