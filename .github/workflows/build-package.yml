@@ -22,7 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - debian/bullseye
           - debian/bookworm
           - debian/trixie
           - ubuntu/jammy
@@ -47,7 +46,7 @@ jobs:
           echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> $GITHUB_ENV
 
       - name: Clone tools branch
-        run: git clone -b v0.8.36 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.40 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Install package dependencies
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
@@ -79,7 +78,7 @@ jobs:
 
       - name: Build arm64 debsigner image
         if: matrix.arch == 'arm64'
-        run: docker build -t citusdata/packaging:debsigner -f tooling/dockerfiles/debsigner/Dockerfile tooling
+        run: docker build -t citusdata/packaging:debsigner tooling/dockerfiles/debsigner
 
       - name: Build packages
         run: |
