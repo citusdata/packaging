@@ -50,7 +50,7 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
 
       - name: Clone tools branch
-        run: git clone -b v0.8.36 --depth=1  https://github.com/citusdata/tools.git tools
+        run: git clone -b v0.8.40 --depth=1  https://github.com/citusdata/tools.git tools
 
       - name: Set git name and email
         run: |
