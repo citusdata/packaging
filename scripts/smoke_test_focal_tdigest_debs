@@ -10,27 +10,33 @@
 #
 # It tests both paths that matter:
 #   A. clean install on a stock focal + PGDG PostgreSQL
-#   B. install *over* PGDG's tdigest 1.4.3 and ALTER EXTENSION ... UPDATE, which
+#   B. install *over* PGDG's archived tdigest and ALTER EXTENSION ... UPDATE, which
 #      is what an in-place upgrade on an existing host actually does
 #
 # Usage (inside a stock ubuntu:20.04 container, as root):
-#   DEBS_DIR=/debs smoke_test_focal_tdigest_debs
+#   DEBS_DIR=/debs EXPECTED_TDIGEST=<resolved-version> smoke_test_focal_tdigest_debs
 #
 # Overridable via environment:
 #   DEBS_DIR            directory holding the *.deb set        (default /debs)
 #   PG_VERSIONS         majors to verify                       (default "11 12 13 14 15 16")
-#   EXPECTED_TDIGEST    expected extension version             (default 1.4.6)
-#   OLD_TDIGEST         PGDG version to upgrade from in test B (default 1.4.3-1.pgdg20.04+1)
+#   EXPECTED_TDIGEST    expected extension version             (required)
+#   OLD_TDIGEST         PGDG version to upgrade from in test B (default archive candidate per major)
 #   PGDG_ARCHIVE_SUITE  archive suite to enable                (default focal-pgdg)
 
-set -uo pipefail
+set -euo pipefail
 
 DEBS_DIR="${DEBS_DIR:-/debs}"
 PG_VERSIONS="${PG_VERSIONS:-11 12 13 14 15 16}"
-EXPECTED_TDIGEST="${EXPECTED_TDIGEST:-1.4.6}"
-OLD_TDIGEST="${OLD_TDIGEST:-1.4.3-1.pgdg20.04+1}"
+EXPECTED_TDIGEST="${EXPECTED_TDIGEST:?Set EXPECTED_TDIGEST to the resolved build version}"
+OLD_TDIGEST="${OLD_TDIGEST:-}"
 PGDG_ARCHIVE_SUITE="${PGDG_ARCHIVE_SUITE:-focal-pgdg}"
 PGDG_ARCHIVE_URL="${PGDG_ARCHIVE_URL:-https://apt-archive.postgresql.org/pub/repos/apt}"
+for v in ${PG_VERSIONS}; do
+  case "${v}" in
+    11|12|13|14|15|16) ;;
+    *) echo "ERROR: unsupported PostgreSQL major '${v}'; supported range is 11–16" >&2; exit 1 ;;
+  esac
+done
 
 export DEBIAN_FRONTEND=noninteractive
 export LANG=C.UTF-8
@@ -63,12 +69,37 @@ echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] ${PGDG_ARCHIVE_URL} $
   > /etc/apt/sources.list.d/pgdg-archive.list
 apt-get update -qq
 
+# Resolve before installing our packages so their versions cannot influence the
+# APT candidate. Archived package versions may differ between PostgreSQL majors.
+declare -A old_versions
+for v in ${PG_VERSIONS}; do
+  old="${OLD_TDIGEST:-$(apt-cache policy "postgresql-${v}-tdigest" | awk '/Candidate:/ {print $2}')}"
+  if [ -z "${old}" ] || [ "${old}" = '(none)' ]; then
+    echo "ERROR: no archived tdigest upgrade baseline for PG${v}" >&2; exit 1
+  fi
+  old_versions[${v}]="${old}"
+  note "PG${v} upgrade baseline: ${old}"
+done
+
 psql_v() { su postgres -c "psql --cluster $1/main -qtAX -c \"$2\"" 2>&1; }
 
 ensure_cluster() {
   pg_lsclusters -h | awk '{print $1"/"$2}' | grep -qx "$1/main" \
     || pg_createcluster "$1" main >/dev/null 2>&1
   pg_ctlcluster "$1" main start >/dev/null 2>&1
+}
+
+# apt --fix-broken may remove packages to resolve dependencies. Check that both
+# runtime and symbols from the shipped set remain installed after each path.
+check_packages() {
+  local v="$1" package expected actual
+  for package in "postgresql-${v}-tdigest" "postgresql-${v}-tdigest-dbgsym"; do
+    expected="$(dpkg-deb -f "${DEBS_DIR}/${package}"_*.deb Version)"
+    actual="$(dpkg-query -W -f='${Status} ${Version}' "${package}")"
+    if [ "${actual}" != "install ok installed ${expected}" ]; then
+      err "${package}: '${actual}' (expected installed ${expected})"
+    fi
+  done
 }
 
 # Median of 1..1000 is ~500. t-digest is approximate, so accept a small window.
@@ -80,14 +111,15 @@ check_percentile() {
 
 note "[3/6] Scenario A: clean install"
 for v in ${PG_VERSIONS}; do
-  apt-get install -y -qq postgresql-${v} >/dev/null 2>&1
+  apt-get install -y -qq "postgresql-${v}" >/dev/null 2>&1
 done
-dpkg -i --force-all "${DEBS_DIR}"/*.deb >/dev/null 2>&1
+dpkg -i "${debs[@]}" || apt-get --fix-broken install -y
 if ! apt-get --fix-broken install -y >/dev/null 2>&1; then
   err "apt --fix-broken install failed after clean install"
 fi
 
 for v in ${PG_VERSIONS}; do
+  check_packages "${v}"
   ensure_cluster "${v}"
   psql_v "${v}" "CREATE EXTENSION tdigest;" >/dev/null 2>&1
   ext="$(psql_v "${v}" "SELECT extversion FROM pg_extension WHERE extname='tdigest';")"
@@ -99,26 +131,33 @@ for v in ${PG_VERSIONS}; do
   pg_ctlcluster "${v}" main stop >/dev/null 2>&1
 done
 
-note "[4/6] Scenario B: upgrade over PGDG tdigest ${OLD_TDIGEST}"
+note "[4/6] Scenario B: upgrade over archived PGDG tdigest"
 for v in ${PG_VERSIONS}; do
-  apt-get remove -y -qq postgresql-${v}-tdigest >/dev/null 2>&1
+  old="${old_versions[${v}]}"
+  apt-get remove -y -qq "postgresql-${v}-tdigest" >/dev/null 2>&1
   pg_dropcluster "${v}" main >/dev/null 2>&1
   pg_createcluster "${v}" main >/dev/null 2>&1
   apt-get install -y -qq --allow-downgrades \
-    postgresql-${v}-tdigest=${OLD_TDIGEST} >/dev/null 2>&1
+    "postgresql-${v}-tdigest=${old}" \
+    "postgresql-${v}-tdigest-dbgsym=${old}" >/dev/null
   ensure_cluster "${v}"
   psql_v "${v}" "CREATE EXTENSION tdigest;" >/dev/null 2>&1
+  ext="$(psql_v "${v}" "SELECT extversion FROM pg_extension WHERE extname='tdigest';")"
+  [ "${ext}" = "${old%%-*}" ] || {
+    echo "ERROR: PG${v} upgrade baseline is '${ext}', expected ${old%%-*}" >&2; exit 1;
+  }
   pg_ctlcluster "${v}" main stop >/dev/null 2>&1
 done
 
-# Mirrors how consumers apply the set: force-all dpkg, then let apt settle.
-dpkg -i --force-all "${DEBS_DIR}"/*.deb >/dev/null 2>&1
+# Install both runtime and symbols, then let apt settle dependencies.
+dpkg -i "${debs[@]}" || apt-get --fix-broken install -y
 if ! apt-get --fix-broken install -y >/dev/null 2>&1; then
-  err "apt --fix-broken install failed after upgrade over ${OLD_TDIGEST}"
+  err "apt --fix-broken install failed after upgrade over archived packages"
 fi
 
 note "[5/6] Verifying the extension upgrades and works after the package upgrade"
 for v in ${PG_VERSIONS}; do
+  check_packages "${v}"
   ensure_cluster "${v}"
   out="$(psql_v "${v}" "ALTER EXTENSION tdigest UPDATE;")"
   ext="$(psql_v "${v}" "SELECT extversion FROM pg_extension WHERE extname='tdigest';")"

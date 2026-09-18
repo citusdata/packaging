@@ -8,13 +8,14 @@
 #
 # Why this exists:
 #   apt.postgresql.org (PGDG) no longer ships focal binaries -- focal-pgdg 404s
-#   and the frozen apt-archive mirror tops out at tdigest 1.4.3. Anything newer
-#   (e.g. 1.4.6) has to be rebuilt from upstream source.
+#   and the apt-archive mirror is frozen. New releases have to be rebuilt
+#   from upstream source.
 #
 # Strategy:
-#   - Upstream source: tdigest-<version>.tar.gz from GitHub, sha256-pinned.
+#   - Upstream source: latest GitHub release asset and its published SHA-256,
+#     or a specific tag tarball with an explicitly supplied checksum.
 #   - Debian packaging: the frozen focal-era debian/ from PGDG's last focal
-#     tdigest source package (1.4.3-1.pgdg20.04+1), fetched with `apt-get source`
+#     tdigest source package, selected and fetched with `apt-get source`
 #     so it is authenticated by the archive's signed Release.
 #   - Build tooling restored from the PGDG *archive*, which keeps the removed
 #     focal-pgdg suite.
@@ -49,6 +50,8 @@ RUN set -ex; \
         dpkg-dev \
         debhelper \
         dh-exec \
+        jq \
+        unzip \
         postgresql-common-dev \
         postgresql-server-dev-all \
         xz-utils; \
@@ -59,6 +62,7 @@ RUN set -ex; \
 RUN dpkg-query -W -f='${Package} ${Version}\n' debhelper postgresql-common-dev dh-exec
 
 COPY scripts/build_tdigest_focal /usr/local/bin/build_tdigest_focal
+COPY scripts/resolve_tdigest_focal /usr/local/bin/resolve_tdigest_focal
 RUN chmod +x /usr/local/bin/build_tdigest_focal
 
 VOLUME /packages

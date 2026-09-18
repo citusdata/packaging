@@ -1,8 +1,8 @@
 name: Build tdigest (focal)
 
 # Builds tdigest .deb packages for Ubuntu 20.04 (focal) from upstream source
-# (PGDG removed focal entirely -- focal-pgdg 404s and the frozen archive mirror
-# stops at tdigest 1.4.3), then signs them with debsigs (--sign=maint) using the
+# (PGDG removed focal entirely -- focal-pgdg 404s), then signs them with
+# debsigs (--sign=maint) using the
 # existing packaging key.
 #
 # There is no per-major matrix: the tdigest Debian packaging is multi-version by
@@ -15,15 +15,15 @@ on:
   workflow_dispatch:
     inputs:
       tdigest_version:
-        description: "tdigest upstream version to build (e.g. 1.4.6)"
-        required: true
-        default: "1.4.6"
+        description: "tdigest upstream version; blank or latest discovers the latest stable release"
+        required: false
+        default: "latest"
       pg_versions:
-        description: "Space-separated PostgreSQL majors (tdigest supports 10+)"
+        description: "Space-separated PostgreSQL majors (supported: 11–16)"
         required: false
         default: "11 12 13 14 15 16"
       tdigest_sha256:
-        description: "sha256 of tdigest-<version>.tar.gz. Blank = use the pinned default in scripts/build_tdigest_focal (only valid for that version)."
+        description: "Optional SHA-256 for the GitHub tag tarball. Blank = use the release ZIP and its GitHub-published digest."
         required: false
         default: ""
       run_tests:
@@ -43,18 +43,27 @@ concurrency:
 
 jobs:
   build-and-sign:
-    name: Build & sign tdigest ${{ github.event.inputs.tdigest_version || '1.4.6' }} (focal)
+    name: Build & sign tdigest ${{ github.event.inputs.tdigest_version || 'latest' }} (focal)
     runs-on: ubuntu-latest
+    outputs:
+      tdigest_version: ${{ steps.source.outputs.TDIGEST_VERSION }}
     env:
       PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
       PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
-      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.6' }}
+      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || 'latest' }}
       PG_VERSIONS: ${{ github.event.inputs.pg_versions || '11 12 13 14 15 16' }}
       TDIGEST_SHA256: ${{ github.event.inputs.tdigest_sha256 || '' }}
       RUN_TESTS: ${{ github.event.inputs.run_tests || '0' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Validate majors and resolve tdigest source
+        id: source
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash scripts/resolve_tdigest_focal | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v4
@@ -74,6 +83,8 @@ jobs:
             -e TDIGEST_VERSION="${TDIGEST_VERSION}" \
             -e PG_VERSIONS="${PG_VERSIONS}" \
             -e TDIGEST_SHA256="${TDIGEST_SHA256}" \
+            -e UPSTREAM_URL="${UPSTREAM_URL}" \
+            -e UPSTREAM_FORMAT="${UPSTREAM_FORMAT}" \
             -e RUN_TESTS="${RUN_TESTS}" \
             -v "${PWD}/packages:/packages" \
             focal-tdigest-builder
@@ -115,13 +126,13 @@ jobs:
         # tree, so a package can never be paired with another version's SQL and
         # there is no separate -scripts package to depend on. tdigest is installed
         # from the base script and reaches the built version through the shipped
-        # upgrade chain, whose terminal script names that version (e.g.
-        # tdigest--1.4.5--1.4.6.sql), so match either that or a direct
+        # upgrade chain, whose terminal script names that version, so match
+        # either tdigest--<previous>--<version>.sql or a direct
         # tdigest--<version>.sql.
         run: |
           rc=0
           for v in ${PG_VERSIONS}; do
-            deb="$(ls packages/focal/tdigest/postgresql-${v}-tdigest_*.deb)"
+            deb="$(ls "packages/focal/tdigest/postgresql-${v}-tdigest_"*.deb)"
             contents="$(dpkg-deb -c "$deb")"
             if ! grep -q 'extension/tdigest\.control' <<<"$contents"; then
               echo "::error::PG${v} runtime ships no extension control file" >&2; rc=1
@@ -140,6 +151,7 @@ jobs:
             packages/focal/tdigest/*.deb
             packages/focal/tdigest/*.changes
             packages/focal/tdigest/*.buildinfo
+            packages/focal/tdigest/tdigest-source.env
           if-no-files-found: error
 
   install-smoke-test:
@@ -148,7 +160,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PG_VERSIONS: ${{ github.event.inputs.pg_versions || '11 12 13 14 15 16' }}
-      TDIGEST_VERSION: ${{ github.event.inputs.tdigest_version || '1.4.6' }}
+      TDIGEST_VERSION: ${{ needs.build-and-sign.outputs.tdigest_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -163,7 +175,7 @@ jobs:
         # The jobs above only prove the packages exist, are signed and are
         # self-contained -- not that the extension can actually be created. This
         # installs the set into a stock ubuntu:20.04 twice: clean, and over
-        # PGDG's tdigest 1.4.3 (the in-place upgrade path), then runs
+        # PGDG's archived tdigest (the in-place upgrade path), then runs
         # CREATE EXTENSION / ALTER EXTENSION UPDATE on every major.
         run: |
           docker run --rm \
