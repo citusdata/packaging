@@ -59,7 +59,8 @@ RUN set -ex; \
 
 # Fail the image build early if the archived focal-pgdg debhelper (>= 13) is not
 # what we picked up (debhelper-compat (= 13) is required by the packaging).
-RUN dpkg-query -W -f='${Package} ${Version}\n' debhelper postgresql-common-dev dh-exec
+RUN dpkg-query -W -f='${Package} ${Version}\n' debhelper postgresql-common-dev dh-exec \
+    && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' debhelper)" ge 13
 
 COPY scripts/build_tdigest_focal /usr/local/bin/build_tdigest_focal
 COPY scripts/resolve_tdigest_focal /usr/local/bin/resolve_tdigest_focal

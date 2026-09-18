@@ -20,7 +20,7 @@
 #   DEBS_DIR            directory holding the *.deb set        (default /debs)
 #   PG_VERSIONS         majors to verify                       (default "11 12 13 14 15 16")
 #   EXPECTED_TDIGEST    expected extension version             (required)
-#   OLD_TDIGEST         PGDG version to upgrade from in test B (default archive candidate per major)
+#   OLD_TDIGEST         PGDG baseline override (default newest compatible runtime/dbgsym pair)
 #   PGDG_ARCHIVE_SUITE  archive suite to enable                (default focal-pgdg)
 
 set -euo pipefail
@@ -70,15 +70,45 @@ echo "deb [signed-by=/usr/share/keyrings/pgdg-archive.gpg] ${PGDG_ARCHIVE_URL} $
 apt-get update -qq
 
 # Resolve before installing our packages so their versions cannot influence the
-# APT candidate. Archived package versions may differ between PostgreSQL majors.
+# APT candidates. Prefer a genuine extension upgrade; fall back to same-version
+# package replacement. Never attempt to downgrade an extension.
 declare -A old_versions
+upgrade_majors=()
 for v in ${PG_VERSIONS}; do
-  old="${OLD_TDIGEST:-$(apt-cache policy "postgresql-${v}-tdigest" | awk '/Candidate:/ {print $2}')}"
-  if [ -z "${old}" ] || [ "${old}" = '(none)' ]; then
-    echo "ERROR: no archived tdigest upgrade baseline for PG${v}" >&2; exit 1
+  versions="$(apt-cache madison "postgresql-${v}-tdigest" | awk '{print $3}')"
+  debug_versions="$(apt-cache madison "postgresql-${v}-tdigest-dbgsym" | awk '{print $3}')"
+  older="" same=""
+  for version in ${versions}; do
+    [ -z "${OLD_TDIGEST}" ] || [ "${version}" = "${OLD_TDIGEST}" ] || continue
+    grep -Fxq "${version}" <<< "${debug_versions}" || continue
+    upstream="${version#*:}"
+    upstream="${upstream%-*}"
+    if dpkg --compare-versions "${upstream}" lt "${EXPECTED_TDIGEST}"; then
+      if [ -z "${older}" ] || dpkg --compare-versions "${version}" gt "${older}"; then
+        older="${version}"
+      fi
+    elif dpkg --compare-versions "${upstream}" eq "${EXPECTED_TDIGEST}"; then
+      if [ -z "${same}" ] || dpkg --compare-versions "${version}" gt "${same}"; then
+        same="${version}"
+      fi
+    fi
+  done
+  old="${older:-${same}}"
+  if [ -z "${old}" ]; then
+    if [ -n "${OLD_TDIGEST}" ]; then
+      echo "ERROR: PG${v} OLD_TDIGEST=${OLD_TDIGEST} requires an available runtime/dbgsym pair no newer than ${EXPECTED_TDIGEST}" >&2
+      exit 1
+    fi
+    note "PG${v}: skipping upgrade scenario; no compatible archived runtime/dbgsym pair for ${EXPECTED_TDIGEST} (clean install still runs)"
+    continue
   fi
   old_versions[${v}]="${old}"
-  note "PG${v} upgrade baseline: ${old}"
+  upgrade_majors+=("${v}")
+  if [ -n "${older}" ]; then
+    note "PG${v} extension-upgrade baseline: ${old}"
+  else
+    note "PG${v} same-extension-version package-replacement baseline: ${old}"
+  fi
 done
 
 psql_v() { su postgres -c "psql --cluster $1/main -qtAX -c \"$2\"" 2>&1; }
@@ -132,7 +162,7 @@ for v in ${PG_VERSIONS}; do
 done
 
 note "[4/6] Scenario B: upgrade over archived PGDG tdigest"
-for v in ${PG_VERSIONS}; do
+for v in "${upgrade_majors[@]}"; do
   old="${old_versions[${v}]}"
   apt-get remove -y -qq "postgresql-${v}-tdigest" >/dev/null 2>&1
   pg_dropcluster "${v}" main >/dev/null 2>&1
@@ -143,20 +173,24 @@ for v in ${PG_VERSIONS}; do
   ensure_cluster "${v}"
   psql_v "${v}" "CREATE EXTENSION tdigest;" >/dev/null 2>&1
   ext="$(psql_v "${v}" "SELECT extversion FROM pg_extension WHERE extname='tdigest';")"
-  [ "${ext}" = "${old%%-*}" ] || {
-    echo "ERROR: PG${v} upgrade baseline is '${ext}', expected ${old%%-*}" >&2; exit 1;
+  upstream="${old#*:}"
+  upstream="${upstream%-*}"
+  [ "${ext}" = "${upstream}" ] || {
+    echo "ERROR: PG${v} upgrade baseline is '${ext}', expected ${upstream}" >&2; exit 1;
   }
   pg_ctlcluster "${v}" main stop >/dev/null 2>&1
 done
 
 # Install both runtime and symbols, then let apt settle dependencies.
-dpkg -i "${debs[@]}" || apt-get --fix-broken install -y
-if ! apt-get --fix-broken install -y >/dev/null 2>&1; then
-  err "apt --fix-broken install failed after upgrade over archived packages"
+if [ "${#upgrade_majors[@]}" -gt 0 ]; then
+  dpkg -i "${debs[@]}" || apt-get --fix-broken install -y
+  if ! apt-get --fix-broken install -y >/dev/null 2>&1; then
+    err "apt --fix-broken install failed after upgrade over archived packages"
+  fi
 fi
 
 note "[5/6] Verifying the extension upgrades and works after the package upgrade"
-for v in ${PG_VERSIONS}; do
+for v in "${upgrade_majors[@]}"; do
   check_packages "${v}"
   ensure_cluster "${v}"
   out="$(psql_v "${v}" "ALTER EXTENSION tdigest UPDATE;")"
