@@ -46,6 +46,11 @@ pgdg_check ()
 
     echo "done."
   fi
+
+  # Oracle Linux 9 lacks releasever_minor; RPM preserves this config on upgrades.
+  if [ "${os}" = "ol" ] && [ "${dist}" = "9" ]; then
+    sed -i 's/\$releasever_major\.\$releasever_minor/$releasever_major/g' /etc/yum.repos.d/pgdg-redhat-all.repo || exit 1
+  fi
 }
 
 epel_check()
