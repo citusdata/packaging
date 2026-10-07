@@ -32,9 +32,9 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for postgresql16-server..."
-  if yum list -q postgresql16-server &> /dev/null; then
-    echo "Detected postgresql16-server..."
+  echo "Checking for pgdg-redhat-repo..."
+  if rpm -q pgdg-redhat-repo &> /dev/null; then
+    echo "Detected pgdg-redhat-repo..."
   else
     echo -n "Installing pgdg repo... "
 
@@ -42,14 +42,32 @@ pgdg_check ()
       dnf -qy module disable postgresql
     fi
 
-    yum install -d0 -e0 -y "${repo_url}"
+    yum install -d0 -e0 -y "${repo_url}" || {
+      echo "Failed to install pgdg-redhat-repo."
+      exit 1
+    }
 
     echo "done."
   fi
 
-  # Oracle Linux 9 lacks releasever_minor; RPM preserves this config on upgrades.
-  if [ "${os}" = "ol" ] && [ "${dist}" = "9" ]; then
-    sed -i 's/\$releasever_major\.\$releasever_minor/$releasever_major/g' /etc/yum.repos.d/pgdg-redhat-all.repo || exit 1
+  # PGDG EL9+ URLs use releasever_minor, which is empty on rolling releases.
+  # The repo RPM marks this file config(noreplace), preserving the fix on upgrades.
+  repo_file=/etc/yum.repos.d/pgdg-redhat-all.repo
+  if [ ! -r "${repo_file}" ]; then
+    echo "Missing or unreadable PGDG repository file: ${repo_file}."
+    exit 1
+  fi
+  if grep -q '\$releasever_major\.\$releasever_minor' "${repo_file}"; then
+    if ! releasever_minor=$(python3 -c 'import dnf; b = dnf.Base(); b.conf.read(); print(b.conf.substitutions.get("releasever_minor") or "")' 2>/dev/null); then
+      echo "Unable to determine DNF releasever_minor; leaving ${repo_file} unchanged."
+      exit 1
+    fi
+    if [ -z "${releasever_minor}" ]; then
+      sed -i 's/\$releasever_major\.\$releasever_minor/$releasever_major/g' "${repo_file}" || {
+        echo "Failed to update ${repo_file}."
+        exit 1
+      }
+    fi
   fi
 }
 
