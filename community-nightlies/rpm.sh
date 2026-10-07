@@ -32,42 +32,87 @@ curl_check ()
 
 pgdg_check ()
 {
-  echo "Checking for pgdg-redhat-repo..."
-  if rpm -q pgdg-redhat-repo &> /dev/null; then
-    echo "Detected pgdg-redhat-repo..."
-  else
-    echo -n "Installing pgdg repo... "
-
-    if [ "${dist}" = "8" ]; then
-      dnf -qy module disable postgresql
+  pg_package=postgresql16-server
+  echo "Checking for ${pg_package} package sources..."
+  if ! rpm -q pgdg-redhat-repo &> /dev/null; then
+    install_pgdg=no
+    if [ "${dist}" != "10" ]; then
+      if yum list -q "${pg_package}" &> /dev/null; then
+        echo "Detected ${pg_package}; preserving the existing PostgreSQL repository."
+      else
+        install_pgdg=yes
+      fi
+    # EL10 AppStream packages can use the same names as PGDG packages.
+    elif ! package_vendors=$(dnf -q repoquery --available --qf '%{vendor}' "${pg_package}" 2>/dev/null); then
+      echo "Unable to determine the source of ${pg_package}; skipping public PGDG installation."
+    elif [ -z "${package_vendors}" ]; then
+      echo "No available ${pg_package} package found; installing PGDG repository."
+      install_pgdg=yes
+    else
+      case "${os}" in
+        ol) native_vendor='Oracle America' ;;
+        almalinux) native_vendor='AlmaLinux' ;;
+        centos) native_vendor='CentOS' ;;
+        rhel|redhatenterpriseserver) native_vendor='Red Hat, Inc.' ;;
+        *) native_vendor='' ;;
+      esac
+      package_vendors=$(printf '%s\n' "${package_vendors}" | sort -u)
+      if printf '%s\n' "${package_vendors}" | grep -Fxq 'PostgreSQL Global Development Group'; then
+        echo "Found ${pg_package} from a PGDG mirror; skipping public PGDG installation."
+      elif [ -n "${native_vendor}" ] && [ "${package_vendors}" = "${native_vendor}" ]; then
+        echo "Found ${pg_package} only from ${native_vendor}."
+        install_pgdg=yes
+      else
+        echo "Ambiguous ${pg_package} package source (${package_vendors}); skipping public PGDG installation."
+      fi
     fi
-
-    yum install -d0 -e0 -y "${repo_url}" || {
-      echo "Failed to install pgdg-redhat-repo."
-      exit 1
-    }
-
-    echo "done."
-  fi
-
-  # PGDG EL9+ URLs use releasever_minor, which is empty on rolling releases.
-  # The repo RPM marks this file config(noreplace), preserving the fix on upgrades.
-  repo_file=/etc/yum.repos.d/pgdg-redhat-all.repo
-  if [ ! -r "${repo_file}" ]; then
-    echo "Missing or unreadable PGDG repository file: ${repo_file}."
-    exit 1
-  fi
-  if grep -q '\$releasever_major\.\$releasever_minor' "${repo_file}"; then
-    if ! releasever_minor=$(python3 -c 'import dnf; b = dnf.Base(); b.conf.read(); print(b.conf.substitutions.get("releasever_minor") or "")' 2>/dev/null); then
-      echo "Unable to determine DNF releasever_minor; leaving ${repo_file} unchanged."
-      exit 1
-    fi
-    if [ -z "${releasever_minor}" ]; then
-      sed -i 's/\$releasever_major\.\$releasever_minor/$releasever_major/g' "${repo_file}" || {
-        echo "Failed to update ${repo_file}."
+    if [ "${install_pgdg}" = yes ]; then
+      echo "Installing PGDG repository..."
+      if [ "${dist}" = "8" ]; then
+        dnf -qy module disable postgresql
+      fi
+      yum install -d0 -e0 -y "${repo_url}" || {
+        echo "Failed to install pgdg-redhat-repo."
         exit 1
       }
+      if ! rpm -q pgdg-redhat-repo &> /dev/null; then
+        echo "pgdg-redhat-repo installation completed without installing the package."
+        exit 1
+      fi
     fi
+  fi
+
+  if rpm -q pgdg-redhat-repo &> /dev/null; then
+    # PGDG EL9+ URLs use releasever_minor, which is empty on rolling releases.
+    # The repo RPM marks this file config(noreplace), preserving the fix on upgrades.
+    repo_file=/etc/yum.repos.d/pgdg-redhat-all.repo
+    if [ ! -e "${repo_file}" ]; then
+      echo "PGDG repository file not found; skipping PGDG URL rewrite."
+    elif [ ! -r "${repo_file}" ]; then
+      echo "Missing or unreadable PGDG repository file: ${repo_file}."
+      exit 1
+    else
+      if grep -q '\$releasever_major\.\$releasever_minor' "${repo_file}"; then
+        if ! releasever_minor=$(python3 -c 'import dnf; b = dnf.Base(); b.conf.read(); print(b.conf.substitutions.get("releasever_minor") or "")' 2>/dev/null); then
+          echo "Unable to determine DNF releasever_minor; leaving ${repo_file} unchanged."
+          exit 1
+        fi
+        if [ -z "${releasever_minor}" ]; then
+          sed -i 's/\$releasever_major\.\$releasever_minor/$releasever_major/g' "${repo_file}" || {
+            echo "Failed to update ${repo_file}."
+            exit 1
+          }
+        fi
+      else
+        grep_status=$?
+        if [ "${grep_status}" -ne 1 ]; then
+          echo "Failed to inspect ${repo_file} for PGDG URL placeholders."
+          exit 1
+        fi
+      fi
+    fi
+  else
+    echo "PGDG repository RPM is not installed; skipping PGDG URL rewrite."
   fi
 }
 
