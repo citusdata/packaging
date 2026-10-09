@@ -237,9 +237,19 @@ mk-build-deps --install --remove \
   --tool 'apt-get -o Debug::pkgProblemResolver=yes --yes --no-install-recommends' \
   debian/control
 
-echo "==> [6/6] Build binary packages (DEB_BUILD_OPTIONS='${BUILD_OPTIONS}')"
+# Root is only needed for apt above. Build unprivileged (fakeroot handles
+# packaging), since initdb refuses to run as root and RUN_TESTS=1 needs it.
+BUILD_USER="${BUILD_USER:-builder}"
+as_build_user() { "$@"; }
+if [ "$(id -u)" = "0" ]; then
+  id -u "${BUILD_USER}" > /dev/null 2>&1 || useradd --create-home --shell /bin/bash "${BUILD_USER}"
+  chown -R "${BUILD_USER}:" "${WORK}"
+  as_build_user() { runuser -u "${BUILD_USER}" -- "$@"; }
+fi
+
+echo "==> [6/6] Build binary packages as $(as_build_user id -un) (DEB_BUILD_OPTIONS='${BUILD_OPTIONS}')"
 export DEB_BUILD_OPTIONS="${BUILD_OPTIONS}"
-dpkg-buildpackage -b -uc -us
+as_build_user dpkg-buildpackage -b -uc -us
 
 echo "==> Collect artifacts into ${OUTPUT_DIR}"
 cp -v "${WORK}"/*.deb "${OUTPUT_DIR}/"
