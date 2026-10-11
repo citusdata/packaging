@@ -16,6 +16,8 @@
 #     uses focal's *default* toolchain (clang/llvm-dev = LLVM 10), so the
 #     resulting JIT depends on focal's libllvm10 (installable on focal), unlike
 #     newer packaging which requires clang-19/llvm-19.
+#   - Patch series: debian/patches from PGDG's jammy packaging of the same
+#     minor (live pool), so we ship the fixes PGDG ships for it.
 #   - Build tooling (debhelper 13, dh-exec, postgresql-common-dev) is restored
 #     from the PGDG *archive* (apt-archive.postgresql.org), which keeps the
 #     removed focal-pgdg suite.
