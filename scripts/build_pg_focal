@@ -10,6 +10,7 @@
 # Approach (see dockerfiles/focal-pg-builder/Dockerfile for the rationale):
 #   newer upstream orig.tar.bz2  +  the frozen focal-era debian/ packaging
 #   (the last "<major>.<x>-N.pgdg20.04+1" PGDG published for focal)
+#   +  the debian/patches PGDG ships for that same minor (from jammy)
 #   -> dpkg-buildpackage inside a focal environment that has the archived
 #      focal-pgdg build tooling available.
 #
@@ -34,7 +35,7 @@
 # Examples:
 #   PG_MAJOR=15 build_pg_focal                      # latest 15.x
 #   PG_MAJOR=16 PG_UPSTREAM_VERSION=16.15 build_pg_focal
-#   PG_MAJOR=17 PG_DROP_PATCHES="hurd-iovec foo" build_pg_focal
+#   PG_MAJOR=17 PG_DROP_PATCHES="foo bar" build_pg_focal
 
 set -euo pipefail
 
@@ -92,13 +93,8 @@ TARGET_VERSION="${PG_TARGET_VERSION:-${UPSTREAM}-1.pgdg20.04+1}" # produced pack
 ORIG_SHA256="${PG_ORIG_SHA256:-}"
 DEBIAN_SHA256="${PG_DEBIAN_SHA256:-}"
 
-# Patches in the frozen focal debian/ packaging that no longer apply to newer
-# upstream *at all* (e.g. merged upstream). Space-separated; each is dropped from
-# the quilt series only if present, so the default is safe for every major:
-#   * hurd-iovec was merged upstream as of 16.14 (pg_iovec.h guards IOV_MAX),
-#     so it fails to apply on 16.x/17.x but is absent from 13/14/15 packaging.
-# Context drift needs no entry here -- [4/6] refreshes the series instead.
-PG_DROP_PATCHES="${PG_DROP_PATCHES:-hurd-iovec}"
+# Patches to drop from the series, space-separated (each only if present).
+PG_DROP_PATCHES="${PG_DROP_PATCHES:-}"
 
 # Set RUN_TESTS=1 to run the upstream regression suite (slower, needs more deps).
 RUN_TESTS="${RUN_TESTS:-0}"
@@ -172,8 +168,20 @@ tar -xf "${DEBIAN_TARBALL}" -C "${SRCDIR}"     # unpacks debian/
 
 cd "${SRCDIR}"
 
-# Drop patches from the frozen focal packaging that no longer apply to the newer
-# upstream (each removed only if present, so this is a no-op where unneeded).
+# The frozen focal patch series stops at the last focal minor. Use the one PGDG
+# ships for this minor instead (identical across distros), from their jammy build.
+patches_tarball="$(curl -fsSL "${LIVE_POOL}/" \
+  | grep -oE "postgresql-${PG_MAJOR}_${UPSTREAM//./\\.}-[0-9]+\.pgdg22\.04\+[0-9]+\.debian\.tar\.xz" \
+  | sort -V | tail -1 || true)"
+[ -n "${patches_tarball}" ] || { echo "ERROR: no jammy packaging of ${UPSTREAM} in ${LIVE_POOL}." >&2; exit 1; }
+curl -fSL "${LIVE_POOL}/${patches_tarball}" -o "${WORK}/${patches_tarball}"
+echo "$(dsc_sha256 "${LIVE_POOL}/${patches_tarball%.debian.tar.xz}.dsc" "${patches_tarball}")  ${WORK}/${patches_tarball}" \
+  | sha256sum -c -
+rm -rf debian/patches
+tar -xf "${WORK}/${patches_tarball}" debian/patches
+echo "    patch series taken from ${patches_tarball}"
+
+# Drop patches listed in PG_DROP_PATCHES (each removed only if present).
 for p in ${PG_DROP_PATCHES}; do
   if grep -qx "${p}" debian/patches/series 2>/dev/null; then
     sed -i "/^${p}$/d" debian/patches/series
@@ -183,11 +191,9 @@ for p in ${PG_DROP_PATCHES}; do
 done
 
 echo "==> [4/6] Apply & refresh the quilt patch series against ${UPSTREAM}"
-# Frozen debian/ + newer upstream means patch *context* drifts: 14.24/15.19/16.15
-# added output_plugin_libraries inside the extension_destdir hunk's trailing
-# context. quilt applies that with fuzz; dpkg-source replays the same series in
-# [6/6] with "patch -F 0" and refuses it. So refresh the series against this
-# upstream (context only, no +/- line changes) and gate on zero fuzz here.
+# dpkg-source replays the series in [6/6] with "patch -F 0" and refuses any
+# fuzz, so refresh it against this upstream (context only, no +/- line changes)
+# and gate on zero fuzz here, where the failure is clear.
 export QUILTRC=/dev/null                                       # /etc/quilt.quiltrc is sourced after
 export QUILT_PATCHES=debian/patches                            # ... the environment and would win
 export QUILT_REFRESH_ARGS="-p ab --no-timestamps --no-index"   # keep PGDG's patch style
@@ -222,7 +228,7 @@ fi
 
 echo "==> [5/6] Set version to ${TARGET_VERSION} and install Build-Depends"
 dch --newversion "${TARGET_VERSION}" --distribution focal --force-distribution \
-    "Rebuild of PostgreSQL ${UPSTREAM} for focal (upstream PGDG focal-pgdg discontinued)."
+    "Rebuild of PostgreSQL ${UPSTREAM} for focal (upstream PGDG focal-pgdg discontinued). Patch series from ${patches_tarball%.debian.tar.xz}."
 
 BUILD_PROFILES=""
 BUILD_OPTIONS="parallel=$(nproc)"
