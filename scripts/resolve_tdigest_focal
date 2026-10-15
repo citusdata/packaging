@@ -1,0 +1,71 @@
+#!/bin/bash
+# Resolve once per build; stdout is also suitable for GITHUB_ENV/GITHUB_OUTPUT.
+# Automatic builds use the release asset's GitHub-published SHA-256 digest.
+# Explicit checksums retain support for historical GitHub tag tarballs.
+set -euo pipefail
+
+PG_VERSIONS="${PG_VERSIONS:-11 12 13 14 15 16}"
+read -r -a majors <<< "${PG_VERSIONS}"
+[[ "${PG_VERSIONS}" != *$'\n'* && ${#majors[@]} -gt 0 ]] || {
+  echo "ERROR: PG_VERSIONS must be a space-separated list of majors 11–16" >&2; exit 1;
+}
+for v in "${majors[@]}"; do
+  case "${v}" in
+    11|12|13|14|15|16) ;;
+    *) echo "ERROR: unsupported PostgreSQL major '${v}'; supported range is 11–16" >&2; exit 1 ;;
+  esac
+done
+
+TDIGEST_VERSION="${TDIGEST_VERSION:-latest}"
+TDIGEST_SHA256="${TDIGEST_SHA256:-}"
+UPSTREAM_URL="${UPSTREAM_URL:-}"
+UPSTREAM_FORMAT="${UPSTREAM_FORMAT:-tar.gz}"
+api=https://api.github.com/repos/tvondra/tdigest/releases
+headers=(-H 'Accept: application/vnd.github+json')
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  headers+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+fi
+
+if [ "${TDIGEST_VERSION}" = latest ]; then
+  release="$(curl -4 -fsSL --retry 3 "${headers[@]}" "${api}/latest")"
+  TDIGEST_VERSION="$(jq -er '.tag_name | sub("^v"; "")' <<< "${release}")"
+fi
+[[ "${TDIGEST_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+  echo "ERROR: expected a stable tdigest version (major.minor.patch) or latest" >&2; exit 1;
+}
+
+if [ -z "${TDIGEST_SHA256}" ]; then
+  [ -z "${UPSTREAM_URL}" ] || {
+    echo "ERROR: UPSTREAM_URL requires an explicit TDIGEST_SHA256" >&2; exit 1;
+  }
+  if [ -z "${release:-}" ]; then
+    release="$(curl -4 -fsSL --retry 3 "${headers[@]}" "${api}/tags/v${TDIGEST_VERSION}")"
+  fi
+  asset="$(jq -er --arg name "t-digest-${TDIGEST_VERSION}.zip" '
+    .assets[] | select(.name == $name and .state == "uploaded")
+  ' <<< "${release}")" || {
+    echo "ERROR: release has no source asset; provide TDIGEST_SHA256 for the tag tarball" >&2; exit 1;
+  }
+  TDIGEST_SHA256="$(jq -er '.digest | select(startswith("sha256:")) | ltrimstr("sha256:")' <<< "${asset}")" || {
+    echo "ERROR: release asset has no SHA-256 digest; provide TDIGEST_SHA256 for the tag tarball" >&2; exit 1;
+  }
+  UPSTREAM_URL="$(jq -er '.browser_download_url' <<< "${asset}")"
+  UPSTREAM_FORMAT=zip
+else
+  UPSTREAM_URL="${UPSTREAM_URL:-https://github.com/tvondra/tdigest/archive/refs/tags/v${TDIGEST_VERSION}.tar.gz}"
+fi
+
+[[ "${TDIGEST_SHA256}" =~ ^[[:xdigit:]]{64}$ ]] || {
+  echo "ERROR: TDIGEST_SHA256 must contain exactly 64 hexadecimal digits" >&2; exit 1;
+}
+[[ "${UPSTREAM_URL}" == https://* && "${UPSTREAM_URL}" != *[[:space:]]* ]] || {
+  echo "ERROR: UPSTREAM_URL must be an HTTPS URL without whitespace" >&2; exit 1;
+}
+case "${UPSTREAM_FORMAT}" in
+  tar.gz|zip) ;;
+  *) echo "ERROR: unsupported UPSTREAM_FORMAT '${UPSTREAM_FORMAT}'" >&2; exit 1 ;;
+esac
+
+echo "Resolved tdigest ${TDIGEST_VERSION} (${UPSTREAM_FORMAT}, SHA-256 ${TDIGEST_SHA256})" >&2
+printf '%s\n' "TDIGEST_VERSION=${TDIGEST_VERSION}" "TDIGEST_SHA256=${TDIGEST_SHA256}" \
+  "UPSTREAM_URL=${UPSTREAM_URL}" "UPSTREAM_FORMAT=${UPSTREAM_FORMAT}"
