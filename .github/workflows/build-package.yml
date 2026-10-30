@@ -30,6 +30,7 @@ jobs:
           - debian/trixie
           - ubuntu/noble
           - ubuntu/jammy
+          - ubuntu/resolute
         # arm64 debs are gated behind the DEB_BUILD_MULTI_ARCH repo variable
         # (default OFF -> amd64 only, so the existing release pipeline is unchanged).
         arch: ${{ fromJSON(vars.DEB_BUILD_MULTI_ARCH == 'true' && '["amd64", "arm64"]' || '["amd64"]') }}
