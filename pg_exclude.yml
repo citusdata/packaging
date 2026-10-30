@@ -1,0 +1,4 @@
+exclude:
+  release:
+    ubuntu/resolute: [12, 13]
+  nightly: {}
