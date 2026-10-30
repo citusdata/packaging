@@ -12,6 +12,11 @@ on:
       - "**"
 
   workflow_dispatch:
+    inputs:
+      resolute_only:
+        description: "Build and publish only Ubuntu Resolute (backfill)"
+        type: boolean
+        default: false
 
 jobs:
   build_package:
@@ -30,10 +35,28 @@ jobs:
           - debian/trixie
           - ubuntu/noble
           - ubuntu/jammy
+          - ubuntu/resolute
+        resolute_only: ${{ fromJSON(inputs.resolute_only && '[true]' || '[false]') }}
         # arm64 debs are gated behind the DEB_BUILD_MULTI_ARCH repo variable
         # (default OFF -> amd64 only, so the existing release pipeline is unchanged).
         arch: ${{ fromJSON(vars.DEB_BUILD_MULTI_ARCH == 'true' && '["amd64", "arm64"]' || '["amd64"]') }}
         exclude:
+          - platform: el/8
+            resolute_only: true
+          - platform: el/9
+            resolute_only: true
+          - platform: ol/8
+            resolute_only: true
+          - platform: ol/9
+            resolute_only: true
+          - platform: debian/bookworm
+            resolute_only: true
+          - platform: debian/trixie
+            resolute_only: true
+          - platform: ubuntu/noble
+            resolute_only: true
+          - platform: ubuntu/jammy
+            resolute_only: true
           # el/*, ol/* are RPM targets; arm64 RPM parity is out of scope here.
           - platform: el/8
             arch: arm64
@@ -117,8 +140,12 @@ jobs:
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
           --main_branch "${MAIN_BRANCH}"
+      - name: Verify published Resolute packages
+        if: matrix.platform == 'ubuntu/resolute' && github.ref_name == env.MAIN_BRANCH
+        run: bash .github/scripts/verify-resolute.sh
   trigger_package_tests:
     name: Trigger package tests
+    if: ${{ !inputs.resolute_only }}
     needs: build_package
     runs-on: ubuntu-latest
     steps:
