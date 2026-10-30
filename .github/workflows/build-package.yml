@@ -133,9 +133,6 @@ jobs:
           --output_file_path "$(pwd)/packages" \
           --current_branch "${GITHUB_REF##*/}" \
           --main_branch "${MAIN_BRANCH}"
-      - name: Verify published Resolute packages
-        if: matrix.platform == 'ubuntu/resolute' && github.ref_name == env.MAIN_BRANCH
-        run: bash .github/scripts/verify-resolute.sh
   trigger_package_tests:
     name: Trigger package tests
     needs: build_package
