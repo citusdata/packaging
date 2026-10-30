@@ -32,7 +32,7 @@ apt-get update
 apt-get install -y --no-install-recommends ca-certificates curl
 curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /usr/share/keyrings/pgdg.asc
 curl -fsSL https://packagecloud.io/citusdata/community/gpgkey -o /usr/share/keyrings/citus.asc
-echo 'deb [signed-by=/usr/share/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt resolute-pgdg main 19' > /etc/apt/sources.list.d/pgdg.list
+echo 'deb [signed-by=/usr/share/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt resolute-pgdg main' > /etc/apt/sources.list.d/pgdg.list
 echo 'deb [signed-by=/usr/share/keyrings/citus.asc] https://packagecloud.io/citusdata/community/ubuntu/ resolute main' > /etc/apt/sources.list.d/citus.list
 apt-get update
 apt-get install -y --no-install-recommends "$@"

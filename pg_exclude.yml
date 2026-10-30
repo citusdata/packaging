@@ -1,4 +1,8 @@
 exclude:
   release:
-    ubuntu/resolute: [11, 12, 13]
+    debian/bookworm: [19]
+    debian/trixie: [19]
+    ubuntu/jammy: [19]
+    ubuntu/noble: [19]
+    ubuntu/resolute: [11, 12, 13, 19]
   nightly: {}
