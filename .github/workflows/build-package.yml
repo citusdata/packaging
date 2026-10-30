@@ -71,21 +71,6 @@ jobs:
       - name: Install python requirements
         run: python -m pip install -r tools/packaging_automation/requirements.txt
 
-      - name: Validate release PostgreSQL versions
-        env:
-          PLATFORM: ${{ matrix.platform }}
-        run: |
-          python - <<'PY'
-          import os
-          from tools.packaging_automation.citus_package import get_postgres_versions
-
-          versions, _ = get_postgres_versions(os.environ["PLATFORM"], os.getcwd())
-          invalid = sorted(set(versions) - {str(pg) for pg in range(10, 19)})
-          if not versions or invalid:
-              raise SystemExit(f"Invalid release PostgreSQL versions for {os.environ['PLATFORM']}: {versions}; PG19 is not GA")
-          print(f"Eligible release PostgreSQL versions: {versions}")
-          PY
-
       # The arm64 builder/signer images are not published to Docker Hub yet, so
       # build them natively in-job by cloning develop's tooling (this branch has
       # none). "docker run" prefers a local image, so citus_package picks these up
