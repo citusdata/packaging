@@ -21,8 +21,12 @@ base:
   - ".*: warning: 'RSA_generate_key_ex' is deprecated \\[-Wdeprecated-declarations\\]"
   - ".*: warning: 'EVP_PKEY_assign' is deprecated.*"
   - "^cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead$"
-  - "\\d+ warnings generated."
+  - "\\d+ warnings? generated."
   - ".*: warning: no previous declaration for '.*' \\[-Wmissing-variable-declarations\\]"
+  # C23 libc const-preserving return types; retain the released source APIs.
+  - "^(?:.*/)?(?:cdc_decoder_utils|citus_safe_lib|worker_data_fetch_protocol)\\.c:\\d+:\\d+: warning: .*\\[-W(?:discarded-qualifiers|incompatible-pointer-types-discards-qualifiers)\\]$"
+  # COPY's binary signature is exactly 11 bytes, not a NUL-terminated string.
+  - "^.*/multi_copy\\.c:\\d+:\\d+: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute \\(12 chars into 11 available\\) \\[-Wunterminated-string-initialization\\]$"
 
 debian:
   - ".*: W: invalid-license Commercial"
