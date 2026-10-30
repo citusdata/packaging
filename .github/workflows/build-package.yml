@@ -12,11 +12,6 @@ on:
       - "**"
 
   workflow_dispatch:
-    inputs:
-      resolute_only:
-        description: "Build and publish only Ubuntu Resolute (backfill)"
-        type: boolean
-        default: false
 
 jobs:
   build_package:
@@ -32,19 +27,9 @@ jobs:
           - ubuntu/jammy
           - ubuntu/noble
           - ubuntu/resolute
-        resolute_only: ${{ fromJSON(inputs.resolute_only && '[true]' || '[false]') }}
         # arm64 debs are gated behind the DEB_BUILD_MULTI_ARCH repo variable
         # (default OFF -> amd64 only, so the existing release pipeline is unchanged).
         arch: ${{ fromJSON(vars.DEB_BUILD_MULTI_ARCH == 'true' && '["amd64", "arm64"]' || '["amd64"]') }}
-        exclude:
-          - platform: debian/bookworm
-            resolute_only: true
-          - platform: debian/trixie
-            resolute_only: true
-          - platform: ubuntu/jammy
-            resolute_only: true
-          - platform: ubuntu/noble
-            resolute_only: true
 
     steps:
       - name: Checkout repository
