@@ -10,7 +10,7 @@ env:
 jobs:
   discover:
     name: Discover platforms & versions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.build_matrix.outputs.matrix }}
       citus_version: ${{ steps.resolve_versions.outputs.citus_version }}
@@ -72,7 +72,7 @@ jobs:
   test_package:
     name: "PG${{ matrix.pg_version }}/Citus${{ needs.discover.outputs.citus_version }} - ${{ matrix.platform }}"
     needs: discover
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}

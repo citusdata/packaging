@@ -23,8 +23,8 @@ concurrency:
 jobs:
   build_package:
     name: Build package
-    # arm64 legs run on native ARM64 runners; amd64 stays on ubuntu-latest.
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    # arm64 legs run on native ARM64 runners; amd64 stays on ubuntu-24.04.
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     strategy:
       fail-fast: false
       matrix:
