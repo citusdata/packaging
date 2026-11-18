@@ -54,7 +54,7 @@ concurrency:
 jobs:
   setup:
     name: Resolve build matrix
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
@@ -73,7 +73,7 @@ jobs:
   build-and-sign:
     needs: setup
     name: Build & sign PG${{ matrix.pg_major }} (focal)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
@@ -160,7 +160,7 @@ jobs:
   assemble:
     needs: build-and-sign
     name: Assemble combined co-installable set
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Download all per-major package sets
         uses: actions/download-artifact@v4
@@ -233,7 +233,7 @@ jobs:
   install-smoke-test:
     needs: assemble
     name: Install smoke test (focal)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

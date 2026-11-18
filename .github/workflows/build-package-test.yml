@@ -22,7 +22,7 @@ concurrency:
 jobs:
   check_docker_files_integrity:
     name: Check if docker files are compliant with templates
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -34,7 +34,7 @@ jobs:
 
   build_package:
     name: Build package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
