@@ -9,6 +9,10 @@ name: Build PostgreSQL core (focal)
 # demand by dispatching pg_major=17. workflow_dispatch can also target a single
 # major and pin its minor / orig sha256.
 #
+# Triggers: workflow_dispatch, push to pg-focal, and pull requests that touch
+# the focal build (so every push to such a PR rebuilds and smoke-tests 13..16).
+# Fork PRs are skipped: they get no Docker Hub / signing secrets.
+#
 # This is intentionally a *standalone* pipeline: it does not use the extension
 # build flow (citus_package / pg_buildext / the build-package.yml matrix), which
 # assumes PostgreSQL itself comes from PGDG.
@@ -43,6 +47,12 @@ on:
   push:
     branches:
       - pg-focal
+  pull_request:
+    paths:
+      - .github/workflows/build-pg-focal.yml
+      - scripts/build_pg_focal
+      - scripts/smoke_test_focal_debs
+      - dockerfiles/focal-pg-builder/**
 
 permissions:
   contents: read
@@ -54,6 +64,8 @@ concurrency:
 jobs:
   setup:
     name: Resolve build matrix
+    # Every other job needs this one, so skipping it here skips fork PRs entirely.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
