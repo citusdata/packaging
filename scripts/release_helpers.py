@@ -7,6 +7,7 @@ import glob
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -14,6 +15,7 @@ TAG_RE = re.compile(r"^v([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})(?:_(beta|rc)([0
 SEMVER_RE = re.compile(r"^v?([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})$")
 MAJOR_MINOR_RE = re.compile(r"^v?([0-9]{1,2})\.([0-9]{1,2})(?:\.[0-9]{1,2})?")
 FORCE_DOCKER_RE = re.compile(r"^\s*(?:[-*]\s+)?Force-Docker:\s*(true|false)\s*$", re.IGNORECASE)
+ZERO_SHA = "0" * 40
 
 
 def parse_tag(tag: str) -> dict[str, object]:
@@ -124,6 +126,46 @@ def detect_force_docker(commit_text: str) -> bool:
     return val
 
 
+def collect_push_commit_messages(repo_dir: str, event_before: str = "") -> str:
+    """Return chronological commit messages for event_before..HEAD, merge HEAD^1..HEAD, or HEAD."""
+    git = ["git", "-C", repo_dir]
+    before = (event_before or "").strip()
+    head = subprocess.check_output([*git, "rev-parse", "HEAD"], text=True).strip()
+    if before and before != ZERO_SHA and before != head:
+        is_anc = (
+            subprocess.run(
+                [*git, "merge-base", "--is-ancestor", before, "HEAD"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            ).returncode
+            == 0
+        )
+        if is_anc:
+            return subprocess.check_output(
+                [*git, "log", "--reverse", "--format=%B", f"{before}..HEAD"], text=True
+            )
+    is_merge = (
+        subprocess.run(
+            [*git, "rev-parse", "--verify", "-q", "HEAD^2"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    )
+    if is_merge:
+        return subprocess.check_output(
+            [*git, "log", "--reverse", "--format=%B", "HEAD^1..HEAD"], text=True
+        )
+    return subprocess.check_output([*git, "log", "-1", "--format=%B", "HEAD"], text=True)
+
+
+def resolve_force_docker(repo_dir: str, event_before: str = "", pr_body: str = "") -> bool:
+    """Evaluate PR body fallback followed by chronological pushed commit messages."""
+    commit_msgs = collect_push_commit_messages(repo_dir, event_before)
+    combined = f"{pr_body}\n{commit_msgs}" if pr_body else commit_msgs
+    return detect_force_docker(combined)
+
+
 def extract_nightly_version(packages_dir: str) -> str:
     debs = [f for f in glob.glob(f"{packages_dir}/**/*.deb", recursive=True) if "-dbgsym_" not in os.path.basename(f)]
     if debs:
@@ -171,7 +213,12 @@ def main(argv: list[str]) -> int:
         entries = build_test_matrix(json.loads(argv[4]), Path(argv[2]).read_text(encoding="utf-8"), argv[3], argv[5], excl)
         print(json.dumps({"include": entries}, separators=(",", ":")))
     elif cmd == "force-docker":
-        print("true" if detect_force_docker(sys.stdin.read()) else "false")
+        if len(argv) >= 3:
+            before = argv[3] if len(argv) >= 4 else ""
+            ok = resolve_force_docker(argv[2], before, os.environ.get("PR_BODY", ""))
+        else:
+            ok = detect_force_docker(sys.stdin.read())
+        print("true" if ok else "false")
     elif cmd == "nightly-ver":
         print(extract_nightly_version(argv[2]))
     elif cmd == "upload":

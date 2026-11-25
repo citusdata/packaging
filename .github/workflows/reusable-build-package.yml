@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 20
+          fetch-depth: 0
       - uses: actions/checkout@v6
         with:
           ref: develop
@@ -104,18 +104,15 @@ jobs:
         if: github.ref == 'refs/heads/all-citus'
         env:
           FORCE_DOCKER_INPUT: ${{ inputs.force_docker }}
+          EVENT_BEFORE: ${{ github.event.before }}
         run: |
           # shellcheck source=/dev/null
           source pkgvars
           if [ "${FORCE_DOCKER_INPUT}" = "true" ]; then
             force_docker="true"
           else
-            if git rev-parse --verify -q HEAD^2 >/dev/null; then
-              msg=$(git log --reverse --format=%B HEAD^1..HEAD)
-            else
-              msg=$(git log -1 --format=%B HEAD)
-            fi
-            force_docker=$(printf '%s\n' "${msg}" | python3 tooling/scripts/release_helpers.py force-docker)
+            pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" --jq '([.[] | select(.base.ref == "all-citus" and .merged_at != null)] | sort_by(.merged_at) | .[-1].body) // ""' 2>/dev/null) || pr_body=""
+            force_docker=$(PR_BODY="${pr_body}" python3 tooling/scripts/release_helpers.py force-docker "$(pwd)" "${EVENT_BEFORE}")
           fi
           printf 'citus_version=%s\npkg_revision=%s\ndeb_version=%s\nforce_docker=%s\n' \
             "${pkglatest%.citus-*}" "${pkglatest}" "${pkglatest//_/-}" "${force_docker}" >> "$GITHUB_OUTPUT"

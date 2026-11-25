@@ -132,6 +132,71 @@ class ForceDockerDetectionTests(unittest.TestCase):
         )
         self.assertFalse(rh.detect_force_docker("Mention Force-Docker: true in prose"))
 
+    def test_rebase_merge_pr_body_fallback_and_override_scenarios(self):
+        import subprocess
+        import tempfile
+
+        def git(repo: str, *args: str) -> str:
+            return subprocess.check_output(["git", "-C", repo, *args], text=True).strip()
+
+        with tempfile.TemporaryDirectory() as td:
+            git(td, "init", "-q", "-b", "all-citus")
+            git(td, "config", "user.name", "Test")
+            git(td, "config", "user.email", "test@example.com")
+            (pathlib.Path(td) / "pkgvars").write_text("pkglatest=14.2.0.citus-1\n", encoding="utf-8")
+            git(td, "add", "pkgvars")
+            git(td, "commit", "-q", "-m", "Base commit")
+            base_sha = git(td, "rev-parse", "HEAD")
+
+            # Scenario 1: multi-commit rebase-merge (trailer on first commit, follow-up fix commit has none)
+            (pathlib.Path(td) / "pkgvars").write_text("pkglatest=14.3.0.citus-1\n", encoding="utf-8")
+            git(td, "commit", "-q", "-am", "Bump to citus 14.3.0\n\nForce-Docker: true")
+            (pathlib.Path(td) / "note.txt").write_text("lint fix\n", encoding="utf-8")
+            git(td, "add", "note.txt")
+            git(td, "commit", "-q", "-m", "Fix changelog formatting")
+            self.assertTrue(rh.resolve_force_docker(td, event_before=base_sha, pr_body=""))
+            # Without event_before, HEAD alone would miss commit 1 unless PR body has the trailer
+            self.assertFalse(rh.resolve_force_docker(td, event_before="0" * 40, pr_body=""))
+
+            # Scenario 2: body-stripped squash-merge recovered via merged PR body fallback
+            git(td, "reset", "--hard", "-q", base_sha)
+            (pathlib.Path(td) / "pkgvars").write_text("pkglatest=14.3.0.citus-1\n", encoding="utf-8")
+            git(td, "commit", "-q", "-am", "Bump to citus 14.3.0 (#123)")
+            self.assertTrue(
+                rh.resolve_force_docker(
+                    td, event_before=base_sha, pr_body="Automated update.\n\nForce-Docker: true"
+                )
+            )
+
+            # Scenario 3: explicit Force-Docker: false commit overrides PR body Force-Docker: true
+            (pathlib.Path(td) / "note.txt").write_text("override\n", encoding="utf-8")
+            git(td, "add", "note.txt")
+            git(td, "commit", "-q", "-m", "Disable docker force\n\nForce-Docker: false")
+            self.assertFalse(
+                rh.resolve_force_docker(
+                    td, event_before=base_sha, pr_body="Automated update.\n\nForce-Docker: true"
+                )
+            )
+
+            # Scenario 4: merge commit fallback when event_before is empty, unreachable, diverged, or HEAD
+            git(td, "reset", "--hard", "-q", base_sha)
+            git(td, "checkout", "-q", "-b", "diverged-old")
+            (pathlib.Path(td) / "old.txt").write_text("diverged\n", encoding="utf-8")
+            git(td, "add", "old.txt")
+            git(td, "commit", "-q", "-m", "Diverged commit")
+            diverged_sha = git(td, "rev-parse", "HEAD")
+
+            git(td, "checkout", "-q", "all-citus")
+            git(td, "checkout", "-q", "-b", "release/all-citus-v14.3.0")
+            (pathlib.Path(td) / "pkgvars").write_text("pkglatest=14.3.0.citus-1\n", encoding="utf-8")
+            git(td, "commit", "-q", "-am", "Bump to citus 14.3.0\n\nForce-Docker: true")
+            git(td, "checkout", "-q", "all-citus")
+            git(td, "merge", "-q", "--no-ff", "release/all-citus-v14.3.0", "-m", "Merge PR #124")
+            merge_head = git(td, "rev-parse", "HEAD")
+            for before in ("", "a" * 40, diverged_sha, merge_head):
+                with self.subTest(before=before):
+                    self.assertTrue(rh.resolve_force_docker(td, event_before=before, pr_body=""))
+
 
 class RunTestVersionParsingTests(unittest.TestCase):
     def test_exact_revision_and_nightly_mapping(self):
