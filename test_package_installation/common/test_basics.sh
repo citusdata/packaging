@@ -74,12 +74,16 @@ fi
 ## verify Citus extension version
 
 citus_version=$(run_psql_cmd "$FIRST_NODE_PORT" "SHOW citus.version;")
-if [[ "$citus_version" != "${EXPECTED_CITUS_FULL_VERSION}"* ]]; then
+if [[ "${EXPECTED_CITUS_FULL_VERSION}" == +git.* ]]; then
+    if [[ "$citus_version" != *"${EXPECTED_CITUS_FULL_VERSION}"* ]]; then
+        echo "Error: Citus nightly version verification failed. Expected version to contain '${EXPECTED_CITUS_FULL_VERSION}', got: $citus_version" >&2
+        exit 1
+    fi
+elif [[ "$citus_version" != "${EXPECTED_CITUS_FULL_VERSION}"* ]]; then
     echo "Error: Citus version verification failed. Expected version to start with '${EXPECTED_CITUS_FULL_VERSION}', got: $citus_version" >&2
     exit 1
-else
-    echo "Verified Citus version: $citus_version"
 fi
+echo "Verified Citus version: $citus_version"
 
 ## create a distributed table
 

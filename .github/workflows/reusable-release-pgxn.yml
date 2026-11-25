@@ -1,0 +1,40 @@
+name: Reusable Release on PGXN
+
+on:
+  workflow_call:
+
+jobs:
+  release_check:
+    if: github.ref != 'refs/heads/pgxn-citus'
+    name: Release check
+    runs-on: ubuntu-24.04
+    container: pgxn/pgxn-tools
+    steps:
+      - uses: actions/checkout@v6
+      - run: pgxn-bundle
+
+  release_pgxn:
+    if: github.ref == 'refs/heads/pgxn-citus'
+    name: Actual Release on PGXN
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+      - uses: citusdata/packaging/.github/actions/setup-tools@develop
+      - name: Release package
+        env:
+          MAIN_BRANCH: pgxn-citus
+          PGXN_USERNAME: ${{ secrets.PGXN_USER_NAME }}
+          PGXN_PASSWORD: ${{ secrets.PGXN_PASSWORD }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y zip
+          # shellcheck source=/dev/null
+          source pkgvars
+          ./scripts/fetch_and_build_pgxn release
+          ./scripts/release_pgxn "$(pwd)/citus-${pkglatest}.zip"

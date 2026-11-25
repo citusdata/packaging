@@ -10,21 +10,35 @@ env:
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 on:
   push:
-    branches:
-      - "**"
+    branches: ["**"]
   schedule:
     - cron: "30 1 * * *"
   workflow_dispatch:
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  resolve_nightly_ref:
+    name: Pin Citus main commit SHA
+    runs-on: ubuntu-24.04
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
+    steps:
+      - id: sha
+        run: |
+          sha=$(git ls-remote https://github.com/citusdata/citus.git refs/heads/main | awk '{print $1}')
+          [ -n "${sha}" ] || { echo "Failed to resolve citusdata/citus main SHA" >&2; exit 1; }
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+
   build_package:
     name: Build package
-    # arm64 legs run on native ARM64 runners; amd64 stays on ubuntu-24.04.
+    needs: resolve_nightly_ref
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    outputs:
+      nightly_version: ${{ steps.record_version.outputs.nightly_version }}
     strategy:
       fail-fast: false
       matrix:
@@ -35,86 +49,78 @@ jobs:
           - ubuntu/jammy
           - ubuntu/noble
           - ubuntu/resolute
-        # arm64 debs are gated behind the DEB_BUILD_MULTI_ARCH repo variable
-        # (default OFF -> amd64 only, so the existing pipeline is unchanged).
         arch: ${{ fromJSON(vars.DEB_BUILD_MULTI_ARCH == 'true' && '["amd64", "arm64"]' || '["amd64"]') }}
         exclude:
-          # el/8 is an RPM target; arm64 RPM parity is out of scope here.
           - platform: el/8
             arch: arm64
-
     steps:
-      - name: Checkout repository
+      - uses: actions/checkout@v6
+      - if: hashFiles('scripts/release_helpers.py') == ''
         uses: actions/checkout@v6
-
-      - name: Generate GitHub App token
-        id: app-token
+        with:
+          ref: develop
+          path: tooling
+      - id: app-token
         uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_KEY }}
           owner: citusdata
-
-      - name: Export App token to environment
-        run: |
+      - run: |
           echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
           echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
-
-      # This step is to fetch the images unanonymously to have higher bandwidth
-      - name: Login to Docker Hub
-        uses: docker/login-action@v4
+      - uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USER_NAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: Clone tools branch
-        run: git clone -b v0.8.40 --depth=1  https://github.com/citusdata/tools.git tools
-
-      - name: Clone build branch
-        run: git clone -b "${MAIN_BRANCH}" --depth=1  https://github.com/citusdata/packaging.git packaging
-
-      - name: Install package dependencies
+      - uses: citusdata/packaging/.github/actions/setup-tools@develop
+      - id: inputs
+        env:
+          NIGHTLY_SHA: ${{ needs.resolve_nightly_ref.outputs.sha }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
-
-      - name: Install python requirements
-        run: python -m pip install -r tools/packaging_automation/requirements.txt
-
-      # The arm64 builder/signer images are not published to Docker Hub yet, so
-      # build them natively in-job. "docker run" prefers a local image, so
-      # citus_package picks these up automatically; amd64 keeps pulling from Docker Hub.
-      - name: Build arm64 builder image
+          if [ -f pkgvars ]; then
+            input_dir="$(pwd)"
+          else
+            git clone -b "${MAIN_BRANCH}" --depth=1 https://github.com/citusdata/packaging.git packaging
+            input_dir="$(pwd)/packaging"
+          fi
+          sed -i "s/^nightlyref=.*/nightlyref=${NIGHTLY_SHA}/" "${input_dir}/pkgvars"
+          echo "input_dir=${input_dir}" >> "$GITHUB_OUTPUT"
+      - name: Build arm64 builder and debsigner images
         if: matrix.arch == 'arm64'
-        run: |
-          export TEST=true
-          export TARGET_PLATFORM="${PLATFORM/\//,}"
-          ./update_image
         env:
           PLATFORM: ${{ matrix.platform }}
-
-      - name: Build arm64 debsigner image
-        if: matrix.arch == 'arm64'
-        run: docker build -t citusdata/packaging:debsigner dockerfiles/debsigner
-
+        run: |
+          t="."; [ -d tooling ] && t="tooling"
+          (cd "${t}" && TEST=true TARGET_PLATFORM="${PLATFORM/\//,}" ./update_image)
+          docker build -t citusdata/packaging:debsigner "${t}/dockerfiles/debsigner"
       - name: Build packages
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          INPUT_DIR: ${{ steps.inputs.outputs.input_dir }}
         run: |
-          python -m  tools.packaging_automation.citus_package \
-          --gh_token "${GH_TOKEN}" \
-          --platform "${{ matrix.platform }}" \
-          --build_type "nightly" \
-          --secret_key "${PACKAGING_SECRET_KEY}" \
-          --passphrase "${PACKAGING_PASSPHRASE}" \
-          --output_dir "$(pwd)/packages/" \
-          --input_files_dir "$(pwd)/packaging" \
-          --is_test
+          python -m tools.packaging_automation.citus_package \
+            --gh_token "${GH_TOKEN}" --platform "${PLATFORM}" --build_type "nightly" \
+            --secret_key "${PACKAGING_SECRET_KEY}" --passphrase "${PACKAGING_PASSPHRASE}" \
+            --output_dir "$(pwd)/packages/" --input_files_dir "${INPUT_DIR}" --is_test
+      - id: record_version
+        run: |
+          t="."; [ -d tooling ] && t="tooling"
+          echo "nightly_version=$(python3 "${t}/scripts/release_helpers.py" nightly-ver "$(pwd)/packages")" >> "$GITHUB_OUTPUT"
+      - name: Publish packages (idempotent)
+        if: github.ref == 'refs/heads/develop'
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          python scripts/release_helpers.py upload \
+            "$(pwd)/packages" "${PLATFORM}" "${PACKAGE_CLOUD_REPO_NAME}" "${GITHUB_REF##*/}" "develop"
 
-      - name: Publish packages
-        run: |
-          python -m  tools.packaging_automation.upload_to_package_cloud \
-          --platform "${{ matrix.platform }}" \
-          --package_cloud_api_token "${PACKAGE_CLOUD_API_TOKEN}" \
-          --repository_name "${PACKAGE_CLOUD_REPO_NAME}" \
-          --output_file_path "$(pwd)/packages" \
-          --current_branch "${GITHUB_REF##*/}" \
-          --main_branch "develop"
+  test_nightlies:
+    name: Test published nightly packages
+    needs: build_package
+    if: github.ref == 'refs/heads/develop' && needs.build_package.outputs.nightly_version != ''
+    uses: citusdata/packaging/.github/workflows/test-package-installation.yml@develop
+    with:
+      citus_version: ${{ needs.build_package.outputs.nightly_version }}
+      channel: community-nightlies
+      retry_attempts: 6

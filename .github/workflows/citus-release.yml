@@ -1,0 +1,204 @@
+name: Citus Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      citus_tag:
+        description: "Citus git tag to release (e.g. v14.3.0 or v15.0.0_beta1)"
+        required: true
+        type: string
+      force_docker:
+        description: "Force Docker PR even if not on Docker's active line"
+        required: false
+        default: false
+        type: boolean
+      changelog_name:
+        description: "Maintainer full name for debian/rpm changelogs"
+        required: true
+        type: string
+      changelog_email:
+        description: "Maintainer email for debian/rpm changelogs"
+        required: true
+        type: string
+      changelog_entry:
+        description: "Optional custom changelog entry"
+        required: false
+        default: ""
+        type: string
+
+concurrency:
+  group: citus-release-${{ inputs.citus_tag }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare_all_citus:
+    name: Validate tag and prepare all-citus PR
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.validate.outputs.version }}
+      pg_min_major: ${{ steps.validate.outputs.pg_min_major }}
+      pr_url: ${{ steps.pr.outputs.pull-request-url }}
+      skipped: ${{ steps.validate.outputs.already_current }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+      - uses: actions/checkout@v6
+        with:
+          ref: all-citus
+          path: work
+          token: ${{ steps.app-token.outputs.token }}
+      - name: Validate tag and resolve PG minimum major
+        id: validate
+        env:
+          CITUS_TAG: ${{ inputs.citus_tag }}
+        run: |
+          python3 scripts/release_helpers.py parse-tag "${CITUS_TAG}" >> "$GITHUB_OUTPUT"
+          git ls-remote --exit-code --tags https://github.com/citusdata/citus.git "refs/tags/${CITUS_TAG}"
+          pg_min=$(python3 scripts/release_helpers.py pg-min-major work/postgres-matrix.yml "${CITUS_TAG}")
+          echo "pg_min_major=${pg_min}" >> "$GITHUB_OUTPUT"
+          ver="${CITUS_TAG#v}"
+          current=$(grep '^pkglatest=' work/pkgvars | cut -d= -f2-)
+          [ "${current}" = "${ver}.citus-1" ] && echo "already_current=true" >> "$GITHUB_OUTPUT" || echo "already_current=false" >> "$GITHUB_OUTPUT"
+      - if: steps.validate.outputs.already_current != 'true'
+        uses: ./.github/actions/setup-tools
+      - name: Update all-citus package properties
+        id: prep
+        if: steps.validate.outputs.already_current != 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          CITUS_TAG: ${{ inputs.citus_tag }}
+          VERSION: ${{ steps.validate.outputs.version }}
+          FORCE_DOCKER: ${{ inputs.force_docker }}
+          CHANGELOG_NAME: ${{ inputs.changelog_name }}
+          CHANGELOG_EMAIL: ${{ inputs.changelog_email }}
+          CHANGELOG_ENTRY: ${{ inputs.changelog_entry }}
+        run: |
+          git -C work config user.name "${CHANGELOG_NAME}"
+          git -C work config user.email "${CHANGELOG_EMAIL}"
+          orig_sha=$(git -C work rev-parse HEAD)
+          python -m tools.packaging_automation.update_package_properties \
+            --gh_token "${GH_TOKEN}" --prj_name citus --tag_name "${CITUS_TAG}" \
+            --email "${CHANGELOG_EMAIL}" --name "${CHANGELOG_NAME}" \
+            --pipeline --is_test --fancy_ver_no 1 \
+            --changelog_entry "${CHANGELOG_ENTRY}" --exec_path "$(pwd)/work"
+          temp_branch=$(git -C work rev-parse --abbrev-ref HEAD)
+          git -C work reset --mixed "${orig_sha}"
+          [ "${temp_branch}" != "all-citus" ] && git -C work checkout all-citus && git -C work branch -D "${temp_branch}"
+          trailer=""; [ "${FORCE_DOCKER}" = "true" ] && trailer=$'\n\nForce-Docker: true'
+          printf 'commit_message<<EOF_MSG\nBump to citus %s%s\nEOF_MSG\n' "${VERSION}" "${trailer}" >> "$GITHUB_OUTPUT"
+          printf 'pr_body<<EOF_BODY\nAutomated packaging update for %s.%s\nEOF_BODY\n' "${CITUS_TAG}" "${trailer}" >> "$GITHUB_OUTPUT"
+      - id: pr
+        if: steps.validate.outputs.already_current != 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          path: work
+          base: all-citus
+          branch: release/all-citus-${{ inputs.citus_tag }}
+          title: "Bump to citus ${{ steps.validate.outputs.version }}"
+          commit-message: ${{ steps.prep.outputs.commit_message }}
+          body: ${{ steps.prep.outputs.pr_body }}
+          author: "${{ inputs.changelog_name }} <${{ inputs.changelog_email }}>"
+          delete-branch: true
+
+  prepare_pgxn:
+    name: Prepare pgxn-citus PR and tracking issue
+    needs: prepare_all_citus
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+      - uses: actions/checkout@v6
+        with:
+          ref: pgxn-citus
+          path: work
+          token: ${{ steps.app-token.outputs.token }}
+      - name: Check PGXN forward-only semver guard
+        id: guard
+        env:
+          CITUS_TAG: ${{ inputs.citus_tag }}
+        run: |
+          current=$(grep '^pkglatest=' work/pkgvars | cut -d= -f2-)
+          python3 scripts/release_helpers.py pgxn-check "${CITUS_TAG}" "${current}" >> "$GITHUB_OUTPUT"
+      - if: steps.guard.outputs.should_update == 'true'
+        uses: ./.github/actions/setup-tools
+      - name: Update pgxn-citus files
+        if: steps.guard.outputs.should_update == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          VERSION: ${{ needs.prepare_all_citus.outputs.version }}
+          PG_MIN_MAJOR: ${{ needs.prepare_all_citus.outputs.pg_min_major }}
+          CHANGELOG_NAME: ${{ inputs.changelog_name }}
+          CHANGELOG_EMAIL: ${{ inputs.changelog_email }}
+        run: |
+          git -C work config user.name "${CHANGELOG_NAME}"
+          git -C work config user.email "${CHANGELOG_EMAIL}"
+          orig_sha=$(git -C work rev-parse HEAD)
+          python -m tools.packaging_automation.update_pgxn \
+            --prj_ver "${VERSION}" --pg_min_major "${PG_MIN_MAJOR}" \
+            --gh_token "${GH_TOKEN}" --pipeline --is_test --exec_path "$(pwd)/work"
+          temp_branch=$(git -C work rev-parse --abbrev-ref HEAD)
+          git -C work reset --mixed "${orig_sha}"
+          [ "${temp_branch}" != "pgxn-citus" ] && git -C work checkout pgxn-citus && git -C work branch -D "${temp_branch}"
+      - id: pr
+        if: steps.guard.outputs.should_update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          path: work
+          base: pgxn-citus
+          branch: release/pgxn-citus-${{ inputs.citus_tag }}
+          title: "Bump pgxn to version ${{ needs.prepare_all_citus.outputs.version }}"
+          commit-message: "Bump pgxn to version ${{ needs.prepare_all_citus.outputs.version }}"
+          body: "Automated PGXN update for ${{ inputs.citus_tag }} (PostgreSQL >= ${{ needs.prepare_all_citus.outputs.pg_min_major }}.0.0)."
+          author: "${{ inputs.changelog_name }} <${{ inputs.changelog_email }}>"
+          delete-branch: true
+      - name: Upsert Release tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CITUS_TAG: ${{ inputs.citus_tag }}
+          FORCE_DOCKER: ${{ inputs.force_docker }}
+          ALL_PR: ${{ needs.prepare_all_citus.outputs.pr_url }}
+          ALL_SKIP: ${{ needs.prepare_all_citus.outputs.skipped }}
+          PGXN_PR: ${{ steps.pr.outputs.pull-request-url }}
+          PGXN_OK: ${{ steps.guard.outputs.should_update }}
+          PGXN_REASON: ${{ steps.guard.outputs.reason }}
+        run: |
+          title="Release ${CITUS_TAG}"
+          if [ "${ALL_SKIP}" = "true" ]; then
+            all_line="already at target version"
+          else
+            all_line="${ALL_PR:-no diff (see workflow run)}"
+          fi
+          if [ "${PGXN_OK}" != "true" ]; then
+            pgxn_line="skipped (${PGXN_REASON})"
+          else
+            pgxn_line="${PGXN_PR:-no diff (see workflow run)}"
+          fi
+          body=$(printf '%s\n' "Release checklist for \`${CITUS_TAG}\`:" "" \
+            "- [ ] Review and merge \`all-citus\` PR: ${all_line}" \
+            "- [ ] Verify pre-GA local install test, packagecloud upload, and post-GA smoke check" \
+            "- [ ] Review and merge \`pgxn-citus\` PR: ${pgxn_line}" \
+            "- [ ] Review and merge \`citusdata/docker\` PR (auto-dispatched after \`all-citus\` publish; \`force_docker=${FORCE_DOCKER}\`) and verify auto tag")
+          num=$(gh issue list --repo "${GITHUB_REPOSITORY}" --state open --search "\"${title}\" in:title" --json number,title --jq ".[] | select(.title == \"${title}\") | .number" | head -n1)
+          if [ -n "${num}" ]; then
+            gh issue edit "${num}" --repo "${GITHUB_REPOSITORY}" --body "${body}"
+          else
+            gh issue create --repo "${GITHUB_REPOSITORY}" --title "${title}" --body "${body}"
+          fi
