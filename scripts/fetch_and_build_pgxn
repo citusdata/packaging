@@ -52,6 +52,7 @@ if [ -z "${pkglatest}" ]; then
     exit $noinput
 fi
 
+trap 'rm -f ~/.curlrc' EXIT
 echo "header=\"Authorization: token ${GITHUB_TOKEN}\"" > ~/.curlrc
 
 repopath="citusdata/${hubproj}"

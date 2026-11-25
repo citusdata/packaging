@@ -1,51 +1,59 @@
 name: Update Version on PGXN Config Files
 
-env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
 on:
   workflow_dispatch:
     inputs:
       project_version:
-        description: "Version number to be released e.g 10.0.3"
+        description: "Version number to be released e.g 14.3.0"
         required: true
+        type: string
+      pg_min_major:
+        description: "Minimum supported PostgreSQL major version (e.g. 16)"
+        required: true
+        type: string
       microsoft_email:
-        description: "Email to be written on changelogs"
-        default: "gindibay@microsoft.com"
-        required: false
+        description: "Email to be written on commits"
+        required: true
+        type: string
       name:
-        description: "Name to be written on changelogs"
-        default: "Gurkan Indibay"
-        required: false
+        description: "Name to be written on commits"
+        required: true
+        type: string
 
 jobs:
   update_pgxn:
     name: Update pgxn configuration
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libssl-dev python3-testresources
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
 
-      - name: Clone Tools branch
-        run: git clone --depth 1 --branch v0.8.35 https://github.com/citusdata/tools.git
-
-      - name: Install Python requirements
-        run: python -m pip install -r tools/packaging_automation/requirements.txt
-
-      - name: Set git name and email
-        run: |
-          git config --global user.email "${{ github.event.inputs.microsoft_email }}" && \
-          git config --global user.name "${{ github.event.inputs.name }}"
+      - name: Setup packaging tools
+        uses: citusdata/packaging/.github/actions/setup-tools@develop
 
       - name: Update pgxn files
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PROJECT_VERSION: ${{ inputs.project_version }}
+          PG_MIN_MAJOR: ${{ inputs.pg_min_major }}
+          CHANGELOG_EMAIL: ${{ inputs.microsoft_email }}
+          CHANGELOG_NAME: ${{ inputs.name }}
         run: |
+          git config --global user.email "${CHANGELOG_EMAIL}"
+          git config --global user.name "${CHANGELOG_NAME}"
           python -m tools.packaging_automation.update_pgxn \
-          --prj_ver ${{ github.event.inputs.project_version }} \
-          --gh_token "${GH_TOKEN}" \
-          --pipeline \
-          --exec_path "$(pwd)"
+            --prj_ver "${PROJECT_VERSION}" \
+            --pg_min_major "${PG_MIN_MAJOR}" \
+            --gh_token "${GH_TOKEN}" \
+            --pipeline \
+            --exec_path "$(pwd)"
