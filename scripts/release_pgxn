@@ -9,14 +9,12 @@ success=0
 failure=1
 badinput=65
 
-pgxnuser='citusdata'
+pgxnuser="${PGXN_USERNAME:-citusdata}"
 pgxnurl='https://manager.pgxn.org/upload'
 
 # shellcheck disable=SC2012
 archive=$1
 
-
-echo "Password: ${PGXN_PASSWORD}"
 echo "User: ${pgxnuser}"
 
 # TODO: use pgxnclient in Travis to only release on new versions
