@@ -24,6 +24,10 @@ on:
         description: "If filled, changelog other than default entry will be written"
         default: ""
         required: false
+
+permissions:
+  contents: read
+
 jobs:
   update_package_properties:
     name: Update package properties

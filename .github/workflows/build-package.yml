@@ -12,6 +12,9 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: read
+
 jobs:
   build:
     uses: citusdata/packaging/.github/workflows/reusable-build-package.yml@develop

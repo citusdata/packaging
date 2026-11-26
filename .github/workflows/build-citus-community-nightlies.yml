@@ -6,6 +6,9 @@ on:
     paths-ignore: [".github/**"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   nightly:
     uses: citusdata/packaging/.github/workflows/build-citus-community-nightlies.yml@develop
