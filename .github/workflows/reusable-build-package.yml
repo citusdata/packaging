@@ -12,6 +12,9 @@ concurrency:
   group: build-package-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/all-citus' }}
 
+permissions:
+  contents: read
+
 jobs:
   build_package:
     name: Build package

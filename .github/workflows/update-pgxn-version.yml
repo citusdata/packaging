@@ -13,6 +13,9 @@ on:
         default: ""
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   update_pgxn:
     name: Update pgxn configuration

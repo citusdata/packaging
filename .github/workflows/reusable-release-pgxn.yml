@@ -3,6 +3,9 @@ name: Reusable Release on PGXN
 on:
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   release_check:
     if: github.ref != 'refs/heads/pgxn-citus'
