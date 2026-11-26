@@ -1,0 +1,156 @@
+name: Reusable Build and Publish Citus Package
+
+on:
+  workflow_call:
+    inputs:
+      force_docker:
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: build-package-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/all-citus' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build_package:
+    name: Build package
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    outputs:
+      citus_version: ${{ steps.meta.outputs.citus_version }}
+      pkg_revision: ${{ steps.meta.outputs.pkg_revision }}
+      deb_version: ${{ steps.meta.outputs.deb_version }}
+      force_docker: ${{ steps.meta.outputs.force_docker }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - el/8
+          - el/9
+          - ol/8
+          - ol/9
+          - debian/bookworm
+          - debian/trixie
+          - ubuntu/noble
+          - ubuntu/jammy
+          - ubuntu/resolute
+        arch: ${{ fromJSON(vars.DEB_BUILD_MULTI_ARCH == 'true' && '["amd64", "arm64"]' || '["amd64"]') }}
+        exclude:
+          - platform: el/8
+            arch: arm64
+          - platform: el/9
+            arch: arm64
+          - platform: ol/8
+            arch: arm64
+          - platform: ol/9
+            arch: arm64
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          ref: develop
+          path: tooling
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+      - run: |
+          echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+          echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+      - uses: citusdata/packaging/.github/actions/setup-tools@develop
+      - if: matrix.arch == 'arm64'
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build arm64 builder and debsigner images
+        if: matrix.arch == 'arm64'
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          (cd tooling && TEST=false TARGET_PLATFORM="${PLATFORM/\//,}" ./update_image)
+          docker build -t citusdata/packaging:debsigner tooling/dockerfiles/debsigner
+      - name: Build packages
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          PACKAGING_SECRET_KEY: ${{ secrets.PACKAGING_SECRET_KEY }}
+          PACKAGING_PASSPHRASE: ${{ secrets.PACKAGING_PASSPHRASE }}
+        run: |
+          python -m tools.packaging_automation.citus_package \
+            --gh_token "${GH_TOKEN}" --platform "${PLATFORM}" --build_type "release" \
+            --secret_key "${PACKAGING_SECRET_KEY}" --passphrase "${PACKAGING_PASSPHRASE}" \
+            --output_dir "$(pwd)/packages/" --input_files_dir "$(pwd)" --output_validation
+      - name: Pre-GA local install test
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          # shellcheck source=/dev/null
+          source pkgvars
+          bash tooling/scripts/smoke_test_local_packages "${PLATFORM}" "$(pwd)/packages/${PLATFORM/\//-}" "${pkglatest%.citus-*}"
+      - name: Publish packages (idempotent)
+        if: github.ref == 'refs/heads/all-citus'
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          PACKAGE_CLOUD_API_TOKEN: ${{ secrets.PACKAGE_CLOUD_API_TOKEN }}
+        run: |
+          python tooling/scripts/release_helpers.py upload \
+            "$(pwd)/packages" "${PLATFORM}" "citusdata/community" "${GITHUB_REF##*/}" "all-citus"
+      - name: Export release metadata
+        id: meta
+        if: github.ref == 'refs/heads/all-citus'
+        env:
+          FORCE_DOCKER_INPUT: ${{ inputs.force_docker }}
+          EVENT_BEFORE: ${{ github.event.before }}
+        run: |
+          # shellcheck source=/dev/null
+          source pkgvars
+          if [ "${FORCE_DOCKER_INPUT}" = "true" ]; then
+            force_docker="true"
+          else
+            pr_body=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" --jq '([.[] | select(.base.ref == "all-citus" and .merged_at != null)] | sort_by(.merged_at) | .[-1].body) // ""' 2>/dev/null) || pr_body=""
+            force_docker=$(PR_BODY="${pr_body}" python3 tooling/scripts/release_helpers.py force-docker "$(pwd)" "${EVENT_BEFORE}")
+          fi
+          printf 'citus_version=%s\npkg_revision=%s\ndeb_version=%s\nforce_docker=%s\n' \
+            "${pkglatest%.citus-*}" "${pkglatest}" "${pkglatest//_/-}" "${force_docker}" >> "$GITHUB_OUTPUT"
+
+  post_ga_smoke:
+    name: Post-GA package installation smoke
+    needs: build_package
+    if: github.ref == 'refs/heads/all-citus'
+    uses: citusdata/packaging/.github/workflows/test-package-installation.yml@develop
+    with:
+      citus_version: ${{ needs.build_package.outputs.pkg_revision }}
+      channel: community
+      retry_attempts: 6
+
+  dispatch_docker:
+    name: Dispatch citusdata/docker update
+    needs: [build_package, post_ga_smoke]
+    if: github.ref == 'refs/heads/all-citus'
+    runs-on: ubuntu-24.04
+    steps:
+      - id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: citusdata
+      - name: Dispatch docker update_version workflow
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          VERSION: ${{ needs.build_package.outputs.citus_version }}
+          DEB_VERSION: ${{ needs.build_package.outputs.deb_version }}
+          FORCE_DOCKER: ${{ needs.build_package.outputs.force_docker }}
+        run: |
+          gh workflow run update_version.yml \
+            --repo citusdata/docker --ref master \
+            -f "source_tag=v${VERSION}" \
+            -f "deb_version=${DEB_VERSION}" \
+            -f "force_docker=${FORCE_DOCKER}"

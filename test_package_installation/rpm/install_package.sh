@@ -1,47 +1,56 @@
 #!/bin/bash
 
 # Installs PostgreSQL and Citus packages on an EL/OL (RPM-based) system.
-#
-# Note: need to run this as root
-#
-# Usage: install_package.sh <pg_major_version> <citus_full_version> <os_version>
-# Example: install_package.sh 18 14.0.0 8
+# Usage: install_package.sh <pg_major_version> <citus_version_or_revision> <os_version>
 
 set -euo pipefail
 
-if [ "$#" -ne 3 ]; then
-    echo "Error: some arguments are missing." >&2
-    echo "Usage: $0 <pg_major_version> <citus_full_version> <os_version>" >&2
-    exit 1
-fi
+[ "$#" -eq 3 ] || { echo "Usage: $0 <pg_major_version> <citus_version_or_revision> <os_version>" >&2; exit 1; }
 
 PG_MAJOR_VERSION="$1"
-CITUS_FULL_VERSION="$2"
+CITUS_PKG_VERSION="$2"
 OS_VERSION="$3"
+[[ "${CITUS_PKG_VERSION}" == *".citus-"* ]] || CITUS_PKG_VERSION="${CITUS_PKG_VERSION}.citus-1"
+CHANNEL="${CITUS_CHANNEL:-community}"
+RETRIES="${CITUS_INSTALL_RETRIES:-1}"
+RETRY_DELAY="${CITUS_INSTALL_RETRY_DELAY:-30}"
 
 yum -y update
+yum install -y "https://download.postgresql.org/pub/repos/yum/reporpms/EL-${OS_VERSION}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+# Oracle Linux 9 leaves dnf $releasever_minor empty, causing pgdg-redhat-repo >= 42.0-71
+# to expand rhel-$releasever_major.$releasever_minor-$basearch as rhel-9.-x86_64 (404).
+if [ -f /etc/yum.repos.d/pgdg-redhat-all.repo ] && grep -Fq '$releasever_major.$releasever_minor' /etc/yum.repos.d/pgdg-redhat-all.repo; then
+    dnf_py=$(command -v /usr/libexec/platform-python || command -v python3 || true)
+    if [ -n "${dnf_py}" ] && rel_minor=$("${dnf_py}" -c 'import dnf; print(dnf.Base().conf.substitutions.get("releasever_minor", ""))' 2>/dev/null) && [ -z "${rel_minor}" ]; then
+        sed -i 's/\$releasever_major\.\$releasever_minor/$releasever/g' /etc/yum.repos.d/pgdg-redhat-all.repo
+    fi
+fi
+yum -qy module disable postgresql || true
+yum install -y "postgresql${PG_MAJOR_VERSION}-server"
 
-## install postgres
-
-echo "Installing PostgreSQL ..."
-
-yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-${OS_VERSION}-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-
-# disable the built-in PostgreSQL module
-yum -qy module disable postgresql
-
-yum install -y postgresql${PG_MAJOR_VERSION}-server
-
-## install citus
-
-echo "Installing Citus ..."
-
-curl --fail https://install.citusdata.com/community/rpm.sh > add-citus-repo.sh
+curl --fail "https://install.citusdata.com/${CHANNEL}/rpm.sh" > add-citus-repo.sh
 bash add-citus-repo.sh
 
-citus_major_minor_version="${CITUS_FULL_VERSION%.*}"
-citus_major_minor_version_without_dot="${citus_major_minor_version//./}"
+mm=$(sed -E 's/^([0-9]+\.[0-9]+).*/\1/' <<< "${CITUS_PKG_VERSION}")
+mm_nodot="${mm//./}"
+if [[ "${CITUS_PKG_VERSION}" == *[_-]beta* ]]; then
+    pkg_name="citus${mm_nodot}_beta_${PG_MAJOR_VERSION}"
+else
+    pkg_name="citus${mm_nodot}_${PG_MAJOR_VERSION}"
+fi
+pkg_spec="${pkg_name}-${CITUS_PKG_VERSION}.el${OS_VERSION}"
 
-yum install -y citus${citus_major_minor_version_without_dot}_${PG_MAJOR_VERSION}-${CITUS_FULL_VERSION}.citus-1.el${OS_VERSION}
+for attempt in $(seq 1 "${RETRIES}"); do
+    if [ "${attempt}" -gt 1 ]; then
+        echo "Package ${pkg_spec} not indexed yet; retrying in ${RETRY_DELAY}s (${attempt}/${RETRIES})..."
+        sleep "${RETRY_DELAY}"
+        yum clean metadata
+    fi
+    if yum install -y "${pkg_spec}"; then
+        echo "PostgreSQL and Citus packages installed successfully."
+        exit 0
+    fi
+done
 
-echo "PostgreSQL and Citus packages installed successfully."
+echo "Error: failed to install exact package ${pkg_spec} after ${RETRIES} attempt(s)." >&2
+exit 1

@@ -36,9 +36,8 @@ apt-get -y install postgresql-server-dev-${PG_MAJOR_VERSION}
 
 ## clone citus repository
 
-echo "Cloning Citus repository (tag v${CITUS_FULL_VERSION}) ..."
-
-CITUS_TAG="v${CITUS_FULL_VERSION}"
+CITUS_TAG="${CITUS_GIT_REF:-v${CITUS_FULL_VERSION}}"
+echo "Cloning Citus repository (ref ${CITUS_TAG}) ..."
 CITUS_REPO_DIR="/citus"
 
 apt-get -y install git build-essential

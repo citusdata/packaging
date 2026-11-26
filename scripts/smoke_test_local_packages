@@ -1,0 +1,79 @@
+#!/bin/bash
+# Pre-GA local package install smoke test inside a clean matching distro container.
+set -euo pipefail
+
+[ "$#" -eq 3 ] || { echo "Usage: $0 <os/release> <packages_dir> <expected_citus_version>" >&2; exit 1; }
+PLATFORM="$1"; PACKAGES_DIR="$2"; EXPECTED_VERSION="$3"
+IFS='/' read -r OS_NAME OS_VER <<< "${PLATFORM}"
+case "${OS_NAME}" in
+    debian|ubuntu) IMAGE="${OS_NAME}:${OS_VER}" ;;
+    el) IMAGE="almalinux:${OS_VER}" ;;
+    ol) IMAGE="oraclelinux:${OS_VER}" ;;
+    *) echo "Unsupported platform: ${PLATFORM}" >&2; exit 1 ;;
+esac
+
+EXPECTED_PREFIX="${EXPECTED_VERSION}"
+if [[ "${EXPECTED_VERSION}" == *[_-]* ]]; then
+    EXPECTED_PREFIX="${EXPECTED_VERSION%%[_-]*}"
+    EXPECTED_PREFIX="${EXPECTED_PREFIX%.*}"
+fi
+
+docker run --rm -v "${PACKAGES_DIR}:/packages:ro" \
+    -e OS_NAME="${OS_NAME}" -e OS_VER="${OS_VER}" -e EXPECTED_PREFIX="${EXPECTED_PREFIX}" \
+    "${IMAGE}" bash -euo pipefail -c '
+verify_pg() {
+    local pg="$1" bin="$2" dir="/tmp/smoke-${1}" port=$((15400 + $1))
+    rm -rf "${dir}" && mkdir -p "${dir}" && chown postgres:postgres "${dir}"
+    su - postgres -c "${bin}/initdb -D ${dir} >/dev/null && echo \"shared_preload_libraries = '\''citus'\''\" >> ${dir}/postgresql.conf"
+    su - postgres -c "${bin}/pg_ctl -D ${dir} -o \"-p ${port}\" -l ${dir}/pg.log start >/dev/null"
+    trap "su - postgres -c \"${bin}/pg_ctl -D ${dir} -m immediate stop >/dev/null\" || true" RETURN
+    su - postgres -c "${bin}/psql -X -qAt -p ${port} -c \"CREATE EXTENSION citus;\""
+    local actual
+    actual=$(su - postgres -c "${bin}/psql -X -qAt -p ${port} -c \"SELECT citus_version();\"")
+    echo "PG${pg} citus_version(): ${actual}"
+    [[ "${actual}" == *"Citus ${EXPECTED_PREFIX}"* ]] || { echo "Expected Citus ${EXPECTED_PREFIX}, got: ${actual}" >&2; exit 1; }
+}
+shopt -s nullglob
+if [ "${OS_NAME}" = "debian" ] || [ "${OS_NAME}" = "ubuntu" ]; then
+    export DEBIAN_FRONTEND=noninteractive
+    pkgs=(); comp="main"
+    for f in /packages/postgresql-*-citus*.deb; do
+        b=$(basename "$f"); [[ "${b}" == *-dbgsym_* ]] && continue
+        pkgs+=("$f"); [[ "${b}" == postgresql-19-* ]] && comp="main 19"
+    done
+    [ "${#pkgs[@]}" -gt 0 ] || { echo "No .deb packages found in /packages" >&2; exit 1; }
+    apt-get -y update && apt-get -y install curl ca-certificates
+    install -d /usr/share/postgresql-common/pgdg
+    curl -sSfL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    . /etc/os-release
+    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg ${comp}" > /etc/apt/sources.list.d/pgdg.list
+    apt-get -y update
+    for pkg in "${pkgs[@]}"; do
+        pg=$(sed -E "s/^postgresql-([0-9]+)-citus.*/\1/" <<< "$(basename "${pkg}")")
+        [[ "${pg}" =~ ^[0-9]+$ ]] || { echo "Cannot parse PG version from ${pkg}" >&2; exit 1; }
+        apt-get -y install "postgresql-${pg}" "${pkg}"
+        verify_pg "${pg}" "/usr/lib/postgresql/${pg}/bin"
+    done
+else
+    pkgs=()
+    for f in /packages/citus*.rpm; do
+        b=$(basename "$f"); [[ "${b}" == *-debuginfo-* || "${b}" == *-debugsource-* ]] && continue
+        pkgs+=("$f")
+    done
+    [ "${#pkgs[@]}" -gt 0 ] || { echo "No .rpm packages found in /packages" >&2; exit 1; }
+    yum install -y "https://download.postgresql.org/pub/repos/yum/reporpms/EL-${OS_VER}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    if [ -f /etc/yum.repos.d/pgdg-redhat-all.repo ] && grep -Fq "\$releasever_major.\$releasever_minor" /etc/yum.repos.d/pgdg-redhat-all.repo; then
+        dnf_py=$(command -v /usr/libexec/platform-python || command -v python3 || true)
+        if [ -n "${dnf_py}" ] && rel_minor=$("${dnf_py}" -c "import dnf; print(dnf.Base().conf.substitutions.get(\"releasever_minor\", \"\"))" 2>/dev/null) && [ -z "${rel_minor}" ]; then
+            sed -i "s/[\$]releasever_major\.[\$]releasever_minor/\$releasever/g" /etc/yum.repos.d/pgdg-redhat-all.repo
+        fi
+    fi
+    yum -qy module disable postgresql || true
+    for pkg in "${pkgs[@]}"; do
+        pg=$(sed -E "s/^citus.*_([0-9]+)-.*/\1/" <<< "$(basename "${pkg}")")
+        [[ "${pg}" =~ ^[0-9]+$ ]] || { echo "Cannot parse PG version from ${pkg}" >&2; exit 1; }
+        yum install -y "postgresql${pg}-server" && yum install -y --nogpgcheck "${pkg}"
+        verify_pg "${pg}" "/usr/pgsql-${pg}/bin"
+    done
+fi
+'

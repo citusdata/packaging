@@ -1,14 +1,20 @@
 name: Update Version on PGXN Config Files
 
-env:
-  PROJECT_VERSION: ${{ github.event.inputs.project_version }}
-
 on:
   workflow_dispatch:
     inputs:
       project_version:
-        description: "Version number to be released e.g 10.0.3"
+        description: "Version number to be released e.g 14.3.0"
         required: true
+        type: string
+      pg_min_major:
+        description: "Minimum supported PostgreSQL major version (optional; derived from all-citus/postgres-matrix.yml if empty)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
   update_pgxn:
@@ -30,21 +36,31 @@ jobs:
           echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
           echo "GITHUB_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+      - name: Checkout pgxn-citus
+        uses: actions/checkout@v6
+        with:
+          ref: pgxn-citus
+          path: work
+          token: ${{ steps.app-token.outputs.token }}
 
-      - name: Clone Tools branch
-        run: git clone --branch v0.8.40 https://github.com/citusdata/tools.git
-
-      - name: Install Python requirements
-        run: python -m pip install -r tools/packaging_automation/requirements.txt
+      - name: Setup packaging tools
+        uses: ./.github/actions/setup-tools
 
       - name: Update pgxn files
+        env:
+          PROJECT_VERSION: ${{ inputs.project_version }}
+          PG_MIN_MAJOR: ${{ inputs.pg_min_major }}
         run: |
+          if [ -z "${PG_MIN_MAJOR}" ]; then
+            git fetch origin all-citus --depth=1
+            git show origin/all-citus:postgres-matrix.yml > /tmp/postgres-matrix.yml
+            PG_MIN_MAJOR=$(python3 scripts/release_helpers.py pg-min-major /tmp/postgres-matrix.yml "${PROJECT_VERSION}")
+          fi
+          git -C work config user.name "citus-bot"
+          git -C work config user.email "packaging@citusdata.com"
           python -m tools.packaging_automation.update_pgxn \
-          --prj_ver ${PROJECT_VERSION} \
-          --gh_token ${GH_TOKEN} \
-          --pipeline \
-          --exec_path "$(pwd)"
+            --prj_ver "${PROJECT_VERSION}" \
+            --pg_min_major "${PG_MIN_MAJOR}" \
+            --gh_token "${GH_TOKEN}" \
+            --pipeline \
+            --exec_path "$(pwd)/work"

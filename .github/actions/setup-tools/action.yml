@@ -1,0 +1,27 @@
+name: Setup Citus packaging tools
+description: Clone citusdata/tools at pinned tag outside checkout and install deps.
+inputs:
+  ref:
+    default: "v0.8.42"
+  install_build_deps:
+    default: "true"
+outputs:
+  tools_path:
+    value: ${{ steps.clone.outputs.tools_path }}
+runs:
+  using: composite
+  steps:
+    - if: inputs.install_build_deps == 'true'
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev libssl-dev python3-testresources
+    - id: clone
+      shell: bash
+      env:
+        TOOLS_REF: ${{ inputs.ref }}
+        TOOLS_ROOT: ${{ runner.temp }}
+      run: |
+        rm -rf "${TOOLS_ROOT}/tools"
+        git clone --depth=1 --branch "${TOOLS_REF}" https://github.com/citusdata/tools.git "${TOOLS_ROOT}/tools"
+        python -m pip install -r "${TOOLS_ROOT}/tools/packaging_automation/requirements.txt"
+        echo "PYTHONPATH=${TOOLS_ROOT}${PYTHONPATH:+:${PYTHONPATH}}" >> "$GITHUB_ENV"
+        echo "tools_path=${TOOLS_ROOT}/tools" >> "$GITHUB_OUTPUT"

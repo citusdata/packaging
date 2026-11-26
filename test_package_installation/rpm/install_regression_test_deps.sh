@@ -44,9 +44,8 @@ yum install -y postgresql${PG_MAJOR_VERSION}-contrib
 
 ## clone citus repository
 
-echo "Cloning Citus repository (tag v${CITUS_FULL_VERSION}) ..."
-
-CITUS_TAG="v${CITUS_FULL_VERSION}"
+CITUS_TAG="${CITUS_GIT_REF:-v${CITUS_FULL_VERSION}}"
+echo "Cloning Citus repository (ref ${CITUS_TAG}) ..."
 CITUS_REPO_DIR="/citus"
 
 yum install -y git
