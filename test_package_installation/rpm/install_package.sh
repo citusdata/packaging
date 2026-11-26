@@ -17,6 +17,14 @@ RETRY_DELAY="${CITUS_INSTALL_RETRY_DELAY:-30}"
 
 yum -y update
 yum install -y "https://download.postgresql.org/pub/repos/yum/reporpms/EL-${OS_VERSION}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+# Oracle Linux 9 leaves dnf $releasever_minor empty, causing pgdg-redhat-repo >= 42.0-71
+# to expand rhel-$releasever_major.$releasever_minor-$basearch as rhel-9.-x86_64 (404).
+if [ -f /etc/yum.repos.d/pgdg-redhat-all.repo ] && grep -Fq '$releasever_major.$releasever_minor' /etc/yum.repos.d/pgdg-redhat-all.repo; then
+    dnf_py=$(command -v /usr/libexec/platform-python || command -v python3 || true)
+    if [ -n "${dnf_py}" ] && rel_minor=$("${dnf_py}" -c 'import dnf; print(dnf.Base().conf.substitutions.get("releasever_minor", ""))' 2>/dev/null) && [ -z "${rel_minor}" ]; then
+        sed -i 's/\$releasever_major\.\$releasever_minor/$releasever/g' /etc/yum.repos.d/pgdg-redhat-all.repo
+    fi
+fi
 yum -qy module disable postgresql || true
 yum install -y "postgresql${PG_MAJOR_VERSION}-server"
 

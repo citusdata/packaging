@@ -62,6 +62,12 @@ else
     done
     [ "${#pkgs[@]}" -gt 0 ] || { echo "No .rpm packages found in /packages" >&2; exit 1; }
     yum install -y "https://download.postgresql.org/pub/repos/yum/reporpms/EL-${OS_VER}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    if [ -f /etc/yum.repos.d/pgdg-redhat-all.repo ] && grep -Fq "\$releasever_major.\$releasever_minor" /etc/yum.repos.d/pgdg-redhat-all.repo; then
+        dnf_py=$(command -v /usr/libexec/platform-python || command -v python3 || true)
+        if [ -n "${dnf_py}" ] && rel_minor=$("${dnf_py}" -c "import dnf; print(dnf.Base().conf.substitutions.get(\"releasever_minor\", \"\"))" 2>/dev/null) && [ -z "${rel_minor}" ]; then
+            sed -i "s/[\$]releasever_major\.[\$]releasever_minor/\$releasever/g" /etc/yum.repos.d/pgdg-redhat-all.repo
+        fi
+    fi
     yum -qy module disable postgresql || true
     for pkg in "${pkgs[@]}"; do
         pg=$(sed -E "s/^citus.*_([0-9]+)-.*/\1/" <<< "$(basename "${pkg}")")
