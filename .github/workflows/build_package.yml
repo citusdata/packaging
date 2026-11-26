@@ -6,6 +6,9 @@ on:
     paths-ignore: [".github/**"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   release:
     uses: citusdata/packaging/.github/workflows/reusable-release-pgxn.yml@develop
